@@ -565,8 +565,4 @@ char *s;
 }
 
 
-main (void) {
-	return yyparse();
-	}
-
 

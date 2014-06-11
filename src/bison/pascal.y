@@ -561,13 +561,13 @@ factor     : ID { $$ = newExpNode(IdK);
                   $$->lineno = lineno;
                 }
            |  const_value  
-                  {$$ = $1}
+                  {$$ = $1;}
            |  LP  expression  RP
-                  {$$ = $1}
+                  {$$ = $1;}
            |  NOT  factor 
-                  {$$ = $2} 
+                  {$$ = $2;} 
            |  MINUS  factor
-                  {$$ = $2}  
+                  {$$ = $2;}  
            |  ID  { savedName = copyString(tokenString);
                    savedLineNo = lineno;}
               LB  expression  RB
@@ -600,8 +600,8 @@ args_list  :  args_list  COMMA  expression
 
 %%
 
-int yyerror(char * message)
-{ fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
+int yyerror(char * message){ 
+  fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
   fprintf(listing,"Current token: ");
   printToken(yychar,tokenString);
   Error = TRUE;
@@ -611,7 +611,7 @@ int yyerror(char * message)
 // static int yylex(void)
 // { return getToken(); }
 
-TreeNode * parse(void)
-{ yyparse();
+TreeNode * parse(void){
+  yyparse();
   return savedTree;
 }

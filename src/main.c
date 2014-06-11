@@ -54,10 +54,13 @@ int main( int argc, char * argv[] )
   }
   listing = stdout; /* send listing to screen */
   fprintf(listing,"\nTINY COMPILATION: %s\n",pgm);
+  //scan begin
 
   while (getToken()!=ENDFILE);
+  fprintf(listing, "after getToken\n");
 
   syntaxTree = parse();
+  fprintf(listing, "after parse\n");
   if (TraceParse) {
     fprintf(listing,"\nSyntax tree:\n");
     printTree(syntaxTree);
