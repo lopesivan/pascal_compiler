@@ -1,617 +1,574 @@
 %{
 #define YYPARSER /* distinguishes Yacc output from other code files */
 
+#include <stdio.h>
 #include "globals.h"
 #include "util.h"
 #include "scan.h"
-#include "parse.h"
 
 #define YYSTYPE TreeNode *
-static char * savedName; /* for use in assignments */
-static int savedLineNo;  /* ditto */
-static TreeNode * savedTree; /* stores syntax tree for later return */
+    static std::string savedName; /* for use in assignments */
+    static int lineno;  /* ditto */
+    static TreeNode * savedTree = nullptr; /* stores syntax tree for later return */
+
+    extern "C"{
+        int yylex(void);
+    int yyerror(char *message);
+    char* yytext;
+}
 
 %}
+%debug
 
+%union {
+    TreeNode* tree_node;
+    Id_Node*  id_node;
+    Program_Node* program_node; 
+    Program_head_Node* program_head_node;
+    Routine_Node* routine_node;
+    Routine_head_Node* routine_head_node;
+    
+    Const_part_Node* const_part_node;
+    Const_expr_list_Node* const_expr_list_node;
+    Const_value_Node* const_value_node;
+    int     constInt;
+    double  constDouble;
+    char    constChar;
+    
+    Type_part_Node* type_part_node;
+    Type_decl_list_Node* type_decl_list_node;
+    Type_definition_Node* type_definition_node;
+    Type_decl_Node* type_decl_node;
+    Array_type_decl_Node* array_type_decl_node;
+    Record_type_decl_Node* record_type_decl_node;
+    Field_decl_list_Node* field_decl_list_node;
+    Field_decl_Node* field_decl_node;
+    Simple_type_decl_Node* simple_type_decl_node;
+    Name_list_Node* name_list_node;
+    Var_part_Node* var_part_node;
+    Var_decl_list_Node* var_decl_list_node;
+    Var_decl_Node* var_decl_node;
 
-%token  ID
-%token  INTEGER
-%token  REAL
-%token  CHAR
+    Routine_part_Node* routine_part_node;      
+
+    Routine_body_Node* routine_body_node;
+}
+
+%token  IDENTIFIER
+%token<constInt>  INTEGER
+%token<constDouble>  REAL
+%token<constChar>  CHAR
 %token  STRING
 %token PROGRAM DOT SEMI COMMA EQUAL CONST ARRAY TYPE LB RB OF RECORD END COLON LP RP DOTDOT MINUS VAR FUNCTION NOT GE GT LE LT
 %token PLUS MUL DIV AND MOD UNEQUAL OR ASSIGN P_BEGIN IF ELSE THEN REPEAT UNTIL WHILE DO FOR GOTO CASE TO DOWNTO READ
-%token TYPEINTEGER TYPEREAL TYPECHAR TYPESTRING TYPEBOOL FALSE TRUE PROCEDURE 
+%token TYPEINTEGER TYPEREAL TYPECHAR TYPESTRING TYPEBOOL P_FALSE P_TRUE PROCEDURE 
 
+%start program
 
-%%
-program   : program_head  routine  DOT
-               { $$ = newModuleNode(ProgramK);
-                 $$->child[0] = $1;
-                 $$->child[1] = $2;
-                 $$->lineno=lineno;
-               }
-          ;
-program_head  : PROGRAM  ID  
-                { $$->attr.name = copyString(tokenString);
-                }
-                SEMI
-              ;
-
-routine : routine_head  routine_body
-              { $$ = newModuleNode(RoutineK);
-                $$->child[0] = $1;
-                $$->child[1] = $2;
-                $$->lineno=lineno;
-              } 
-              |{$$=NULL;}
-              ;
-routine_head : const_part  type_part  var_part  routine_part
-              {
-                $$ = newModuleNode(Routine_headK);
-                $$->child[0]=$1;
-                $$->child[1]=$2;
-                $$->child[2]=$3;
-                $$->child[3]=$4;
-                $$->lineno=lineno;
-              };
-const_part : CONST  const_expr_list  { $$ = $2;}
-              |{$$=NULL;}
-              ;
-const_expr_list : const_expr_list  ID  
-                      { savedName = copyString(tokenString);
-                        savedLineNo = lineno; 
-                      }
-                  EQUAL const_value SEMI
-                      {TreeNode * t=$1;
-                           if(t!=NULL)
-                           {    while(t->sibling!=NULL)
-                                   t=t->sibling;
-                                t->sibling=newStmtNode(EqualK);
-                                t->sibling->child[0]=$5;
-                                t->sibling->attr.name = savedName;
-                                t->sibling->lineno =savedLineNo;
-                                $$ =$1;
-                           }
-                           else
-                           {
-                                $$ =$1;
-                           }
-                      }
-		|  ID { savedName = copyString(tokenString);savedLineNo = lineno;}
-                   EQUAL  const_value  SEMI
-                      { $$ =newStmtNode(EqualK);
-                        $$->child[0]=$4;
-                        $$->attr.name = savedName;
-                        $$->lineno =savedLineNo;
-                      }
-                ;
-const_value   :  INTEGER  
-                    { $$ =newExpNode(ConstIntK);
-                      $$->attr.int_val=atoi(tokenString);
-                      $$->lineno =lineno;
-                    }
-              |  REAL
-                    { $$ =newExpNode(ConstDoubleK);
-                      $$->attr.double_val=atof(tokenString);
-                      $$->lineno =lineno;
-                    } 
-              |  CHAR  
-                    { $$ =newExpNode(ConstCharK);
-                      $$->attr.char_val=tokenString;
-                      $$->lineno =lineno;
-                    }
-              |  STRING  
-                    { $$ =newExpNode(ConstStrK);
-                      $$->attr.string_val=malloc((strlen(tokenString)+1)*sizeof(char));
-                      strcpy($$->attr.string_val,tokenString);
-                      $$->lineno =lineno;
-                    }
-              ;
-type_part : TYPE type_decl_list { $$ = $2;}
-              | {$$=NULL} ;
-type_decl_list : type_decl_list  type_definition  
-                 { TreeNode * t = $1;
-                   if (t != NULL)
-                   { while (t->sibling != NULL)
-                        t = t->sibling;
-                     t->sibling = $2;
-                     $$ = $1; }
-                     else $$ = $2;
-                 }
-              |  type_definition { $$ = $1; }
-              ;
-type_definition : ID { savedName = copyString(tokenString);
-                         savedLineNo = lineno; }
-                   EQUAL  type_decl  SEMI
-                   { $$ =newStmtNode(EqualK);
-                     $$->child[0]=$4;
-                     $$->attr.name = savedName;
-                     $$->lineno =savedLineNo;  
-                   };
-type_decl    : simple_type_decl {$$=$1;}  
-             |  array_type_decl  {$$=$1;}
-             |  record_type_decl {$$=$1;};
-array_type_decl : ARRAY  LB  simple_type_decl  RB  OF  type_decl
-                   { $$ =newDeclNode(ArrayK);
-                     $$->child[0]=$3;
-                     $$->child[1]=$6;
-                     $$->lineno =lineno;
-                   };
-record_type_decl : RECORD  field_decl_list  END{$$=$2;};
-field_decl_list : field_decl_list  field_decl
-                   {TreeNode* t = $1;
-                        if (t != NULL)
-                        { while (t->sibling != NULL)
-                              t = t->sibling;
-                              t->sibling = $2;
-                              $$ = $1; 
-                        }
-                        else $$ = $2;
-                   }  
-                |  field_decl{$$=$1;};
-field_decl : name_list  COLON  type_decl  SEMI
-              { $$ =newDeclNode(FieldK);
-                $$->child[0]=$1;
-                $$->child[1]=$3;
-                $$->lineno =lineno;
-              };
-simple_type_decl : TYPEINTEGER{$$->type=Int;}  
-                |  TYPEREAL{$$->type=Double;}
-                |  TYPECHAR{$$->type=Char;}
-                |  TYPESTRING{$$->type=String;}
-                |  TYPEBOOL {$$->type=Bool;}
-                |  ID  { $$ = newExpNode(IdK);
-                         $$->attr.name =copyString(tokenString);
-                         $$->lineno = lineno;
-                       }
-                |  LP  name_list  RP{$$=$2;}  
-                |  const_value  DOTDOT  const_value
-                   {
-                     $$ =newDeclNode(SimpleK);
-                     $$->child[0]=$1;
-                     $$->child[1]=$3;
-                     $$->lineno =lineno;
-                   }  
-                |  MINUS  const_value  DOTDOT  const_value
-                   {
-                     $$ =newDeclNode(SimpleK);
-                     $$->child[2]=$1;
-                     $$->child[3]=$3;
-                     $$->lineno =lineno;
-                   } 
-                |  MINUS  const_value  DOTDOT  MINUS  const_value
-                   {
-                     $$ =newDeclNode(SimpleK);
-                     $$->child[4]=$1;
-                     $$->child[5]=$3;
-                     $$->lineno =lineno;
-                   } 
-                |  ID { savedName = copyString(tokenString);
-                         savedLineNo = lineno; } 
-                   DOTDOT  ID
-                   {
-                     $$ =newDeclNode(SimpleK);
-                     $$->attr.name=savedName;
-                     $$->child[6]->attr.name=copyString(tokenString);
-                     $$->lineno =savedLineNo;
-                   } 
-                ;
-name_list : name_list  COMMA  ID 
-             { TreeNode* t = $1;
-                   if (t != NULL)
-                   { while (t->sibling != NULL)
-                        t = t->sibling;
-                     t->sibling=newExpNode(IdK);
-                     t->sibling->attr.name=copyString(tokenString);
-                     $$ = $1; 
-                   }
-                   else 
-                   {
-                     $$ = newExpNode(IdK);
-		     $$->attr.name=copyString(tokenString);
-                   }
-             }
-             |  ID { $$ = newExpNode(IdK);
-                  $$->attr.name =copyString(tokenString);
-                  $$->lineno = lineno;
-                }
-             ;
-var_part : VAR  var_decl_list {$$=$2;} 
-             |  {$$=NULL};
-var_decl_list : var_decl_list  var_decl
-                {TreeNode* t = $1;
-                        if (t != NULL)
-                        { while (t->sibling != NULL)
-                              t = t->sibling;
-                              t->sibling = $2;
-                              $$ = $1; 
-                        }
-                        else $$ = $2;
-                   }  
-             |  var_decl{$$=$1;};
-var_decl : name_list  COLON  type_decl  SEMI
-             { $$ =newDeclNode(FieldK);
-               $$->child[0]=$1;
-               $$->child[1]=$3;
-               $$->lineno =lineno;
-             };
-routine_part : routine_part  function_decl 
-                {TreeNode* t = $1;
-                        if (t != NULL)
-                        { while (t->sibling != NULL)
-                              t = t->sibling;
-                              t->sibling = $2;
-                              $$ = $1; 
-                        }
-                        else $$ = $2;
-                   }   
-             |  routine_part  procedure_decl
-                {TreeNode* t = $1;
-                        if (t != NULL)
-                        { while (t->sibling != NULL)
-                              t = t->sibling;
-                              t->sibling = $2;
-                              $$ = $1; 
-                        }
-                        else $$ = $2;
-                   }  
-             |  function_decl {$$=$1;} 
-             |  procedure_decl{$$=$1;};
-function_decl : FUNCTION  ID 
-                 { savedName = copyString(tokenString);
-                   savedLineNo = lineno; 
-                 }
-                 parameters  COLON  simple_type_decl
-                 { $$ = newModuleNode(FunctionK);
-                   $$->child[0] = $4;
-                   $$->child[1] = $6;
-                   $$->attr.name=savedName;
-                   $$->lineno=savedLineNo;
-                 };
-procedure_decl :PROCEDURE ID 
-                 { savedName = copyString(tokenString);
-                   savedLineNo = lineno; 
-                 }
-                 parameters  SEMI  routine  SEMI
-                 { $$ = newModuleNode(ProcedureK);
-                   $$->child[0] = $4;
-                   $$->child[1] = $6;
-                   $$->attr.name=savedName;
-                   $$->lineno=savedLineNo;
-                 };
-parameters : LP  para_decl_list  RP  {$$=$2;}
-                |{$$=NULL};
-para_decl_list : para_decl_list  SEMI  para_type_list
-                   {TreeNode* t = $1;
-                        if (t != NULL)
-                        { while (t->sibling != NULL)
-                              t = t->sibling;
-                              t->sibling = $2;
-                              $$ = $1; 
-                        }
-                        else $$ = $2;
-                   };
-para_type_list : var_para_list COLON  simple_type_decl
-                  { $$ =newDeclNode(ParaK);
-                    $$->child[0]=$1;
-                    $$->child[2]=$3;
-                    $$->lineno =lineno;
-                  }
-              |  val_para_list  COLON  simple_type_decl
-                  { $$ =newDeclNode(ParaK);
-                    $$->child[1]=$1;
-                    $$->child[2]=$3;
-                    $$->lineno =lineno;
-                  }; 
-var_para_list : VAR  name_list {$$=$2;};
-val_para_list : name_list {$$=$1;};
-routine_body : compound_stmt {$$=$1;};
-compound_stmt : P_BEGIN  stmt_list  END {$$=$2;};
-stmt_list : stmt_list  stmt  SEMI 
-              { TreeNode* t = $1;
-                   if (t != NULL)
-                   { while (t->sibling != NULL)
-                        t = t->sibling;
-                     t->sibling = $2;
-                     $$ = $1; }
-                     else $$ = $2;
-                 }
-              |  {$$=NULL};
-stmt : INTEGER  COLON  non_label_stmt  
-         { $$ = newStmtNode(LabelK);
-           $$->child[0] = $3;
-           $$->attr.goto_label=$1->attr.int_val;
-           $$->lineno = savedLineNo;
-         }
-        |  non_label_stmt{$$=$1;};
-non_label_stmt : assign_stmt {$$=$1;}
-                | proc_stmt {$$=$1;}
-                | compound_stmt{$$=$1;} 
-                | if_stmt {$$=$1;}
-                | repeat_stmt  {$$=$1;}
-                | while_stmt  {$$=$1;}
-                | for_stmt {$$=$1;}
-                | case_stmt  {$$=$1;}
-                | goto_stmt  {$$=$1;}
-                ;
-assign_stmt : ID { savedName = copyString(tokenString);
-                   savedLineNo = lineno; }
-               ASSIGN  expression
-                 { $$ = newStmtNode(AssignK);
-                   $$->child[0] = $4;
-                   $$->attr.name = savedName;
-                   $$->lineno = savedLineNo;
-                 }
-           | ID { savedName = copyString(tokenString);
-                   savedLineNo = lineno; }
-             LB expression RB ASSIGN expression
-                { $$ = newStmtNode(AssignK);
-                  $$->attr.name = savedName;
-                  $$->child[1] = $4;
-                  $$->child[2] = $7;
-                  $$->lineno = savedLineNo;
-                }
-           | ID  { savedName = copyString(tokenString);
-                   savedLineNo = lineno; }
-             DOT  
-             ID { $$ = newStmtNode(AssignK);
-                  $$->attr.name = savedName;
-                  $$->child[3]=newExpNode(IdK);
-                  $$->child[3]->attr.name = copyString(tokenString);
-                  $$->lineno =lineno;
-                  }
-            ASSIGN  expression
-                { 
-                  $$->child[4] = $7;
-                  $$->lineno = savedLineNo;
-                };
-proc_stmt : ID{$$=newExpNode(IdK);$$->attr.name = copyString(tokenString);$$->lineno=lineno;}
-          |  ID  { savedName = copyString(tokenString);
-                   savedLineNo = lineno; }
-             LP  args_list  RP
-             {$$ = newStmtNode(ProcK);
-              $$->attr.name = savedName;
-              $$->child[1]=$3;
-              $$->lineno = savedLineNo;
-             }
-          |  READ  LP  factor  RP ;
-
-if_stmt : IF  expression  THEN  stmt  else_clause
-                { $$ = newStmtNode(IfK);
-                   $$->child[0] = $2;
-                   $$->child[1] = $4;
-                   $$->child[2] = $5;
-                   $$->lineno=lineno;
-                };
-else_clause : ELSE stmt {$$ = $2}| ;
-repeat_stmt : REPEAT  stmt_list  UNTIL  expression
-                { $$ = newStmtNode(RepeatK);
-                  $$->child[0] = $2;
-                  $$->child[1] = $4;
-                  $$->lineno=lineno;
-                }
-            ;
-while_stmt : WHILE  expression  DO stmt
-                { $$ = newStmtNode(WhileK);
-                  $$->child[0] = $2;
-                  $$->child[1] = $4;
-                  $$->lineno=lineno;
-                }
-            ;
-for_stmt : FOR  ID { savedName = copyString(tokenString);
-                   savedLineNo = lineno; }
-            ASSIGN  expression  direction  expression  DO stmt
-                { $$ = newStmtNode(ForK);
-                  $$->attr.name = savedName;
-                  $$->child[0] = $5;
-                  $$->child[1] = $6;
-                  $$->child[2] = $7;
-                  $$->child[3] = $9; 
-                  $$->lineno=savedLineNo;
-                }
-            ;
-direction : TO {$$->attr.direction=1}
-          | DOWNTO{$$->attr.direction=0};
-case_stmt : CASE expression OF case_expr_list  END
-                { $$ = newStmtNode(CaseK);
-                  $$->child[0] = $2;
-                  $$->child[1] = $4;
-                  $$->lineno=lineno;
-                }
-            ;
-case_expr_list : case_expr_list  case_expr  
-                  { TreeNode* t = $1;
-                   if (t != NULL)
-                   { while (t->sibling != NULL)
-                        t = t->sibling;
-                     t->sibling = $2;
-                     $$ = $1; }
-                     else $$ = $2;
-                  }
-                  |  case_expr{$$=$1;};
-case_expr : const_value  COLON  stmt  SEMI
-                { $$ = newExpNode(Case_expK);
-                  $$->child[0] = $1;
-                  $$->child[1] = $3;
-                  $$->lineno=lineno;
-                }
-          |  ID  { savedName = copyString(tokenString);
-                   savedLineNo = lineno; }
-             COLON  stmt  SEMI
-                { $$ = newExpNode(Case_expK);
-                  $$->attr.name = savedName;
-                  $$->child[2] = $4;
-                  $$->lineno = savedLineNo;
-                };
-goto_stmt : GOTO  INTEGER
-                { $$ = newStmtNode(GotoK);
-                  $$->attr.goto_label = $2->attr.int_val;
-                  $$->lineno = lineno;
-                };
-expression_list : expression_list  COMMA  expression 
-                   { TreeNode* t = $1;
-                     if (t != NULL)
-                     { while (t->sibling != NULL)
-                          t = t->sibling;
-                       t->sibling = $3;
-                       $$ = $1; }
-                       else $$ = $3;
-                   }
-                   |expression{$$=$1;};
-expression : expression  GE  expr  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = GE;
-                   $$->lineno = lineno;
-                 }
-           |  expression  GT  expr 
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = GT;
-                   $$->lineno = lineno;
-                 } 
-           |  expression  LE  expr
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = LE;
-                   $$->lineno = lineno;
-                 }
-           |  expression  LT  expr 
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = LT;
-                   $$->lineno = lineno;
-                 }
-           |  expression  EQUAL  expr  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = EQUAL;
-                   $$->lineno = lineno;
-                 }
-           |  expression  UNEQUAL  expr  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = UNEQUAL;
-                   $$->lineno = lineno;
-                 }
-           |  expr {$$ = $1;}
-           ;
-expr       : expr  PLUS  term  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = PLUS;
-                   $$->lineno = lineno;
-                 }
-           |  expr  MINUS  term 
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = MINUS;
-                   $$->lineno = lineno;
-                 }
-           |  expr  OR  term  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = OR;
-                   $$->lineno = lineno;
-                 }
-           |  term { $$ = $1;}
-           ;
-term       : term  MUL  factor  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = MUL;
-                   $$->lineno = lineno;
-                 }
-           |  term  DIV  factor  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = DIV;
-                   $$->lineno = lineno;
-                 }
-           |  term  MOD  factor  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = MOD;
-                   $$->lineno = lineno;
-                 }
-           |  term  AND factor  
-                 { $$ = newExpNode(OpK);
-                   $$->child[0] = $1;
-                   $$->child[1] = $3;
-                   $$->attr.op = AND;
-                   $$->lineno = lineno;
-                 }
-           |  factor { $$ = $1;}
-           ;
-factor     : ID { $$ = newExpNode(IdK);
-                  $$->attr.name =copyString(tokenString);
-                  $$->lineno = lineno;
-                }
-           |  const_value  
-                  {$$ = $1;}
-           |  LP  expression  RP
-                  {$$ = $1;}
-           |  NOT  factor 
-                  {$$ = $2;} 
-           |  MINUS  factor
-                  {$$ = $2;}  
-           |  ID  { savedName = copyString(tokenString);
-                   savedLineNo = lineno;}
-              LB  expression  RB
-                {$$= newExpNode(FactorK);
-                 $$->attr.name =savedName;
-                 $$->child[0]=$4;
-                 $$->lineno =savedLineNo;
-                }
-           |  ID  { savedName = copyString(tokenString);
-                   savedLineNo = lineno;}
-              DOT  ID
-                {$$=newExpNode(FactorK);
-                 $$->attr.name =savedName;
-                 $$->child[1]=newExpNode(IdK);
-                 $$->child[1]->attr.name=copyString(tokenString);
-                 $$->lineno =savedLineNo;
-                }
-           ;
-args_list  :  args_list  COMMA  expression 
-              {  TreeNode* t = $1;
-                    if (t != NULL)
-                    {  while (t->sibling != NULL)
-                         t = t->sibling;
-                       t->sibling = $3;
-                        $$ = $1; 
-                    }
-                    else $$ = $3;
-              }
-           |  expression{$$=$1;};
+%type<id_node>  id;
+%type<program_node> program;
+%type<program_head_node> program_head;
+%type<routine_node> routine; 
+%type<routine_head_node> routine_head;
+%type<const_part_node> const_part;
+%type<const_expr_list_node> const_expr_list;
+%type<const_value_node> const_value;
+%type<type_part_node> type_part;
+%type<type_decl_list_node> type_decl_list;
+%type<type_definition_node> type_definition;
+%type<type_decl_node> type_decl;
+%type<array_type_decl_node> array_type_decl;
+%type<record_type_decl_node> record_type_decl;
+%type<field_decl_list_node> field_decl_list;
+%type<field_decl_node> field_decl;
+%type<simple_type_decl_node> simple_type_decl;
+%type<name_list_node> name_list;
+%type<var_part_node> var_part;
+%type<var_decl_list_node> var_decl_list;
+%type<var_decl_node> var_decl;
 
 %%
 
-int yyerror(char * message){ 
-  fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
-  fprintf(listing,"Current token: ");
-  printToken(yychar,tokenString);
-  Error = TRUE;
-  return 0;
+id : IDENTIFIER{
+    $$ = new Id_Node(yytext);
 }
 
-// static int yylex(void)
-// { return getToken(); }
+program : program_head  routine  DOT{ 
+              $$ = new Program_Node($1, $2);
+              $$->setLineno(lineno);
+          };
 
-TreeNode * parse(void){
-  yyparse();
-  return savedTree;
+program_head  : PROGRAM  id SEMI{
+                    $$ = new Program_head_Node($2);
+                };
+
+routine : routine_head  routine_body{ 
+              $$ = new Routine_Node($1, $2);
+              $$->setLineno(lineno);
+          }       |{//empty
+              $$ = nullptr;
+          };
+
+routine_head : const_part  type_part  var_part  routine_part{
+                   $$ = new Routine_head_Node($1, $2, $3, $4);
+                   $$->setLineno(lineno);
+               };
+
+const_part : CONST  const_expr_list  {
+                 $$ = new Const_part_Node($2);
+             }
+|{$$ = nullptr;}
+;
+
+const_expr_list : const_expr_list  id EQUAL const_value SEMI{
+                      $$ = new Const_expr_list($1, $2, $4);
+                      $$->setLineno(lineno);
+                  }
+| id EQUAL  const_value  SEMI{ 
+    $$ = new Const_expr_list($1, $3);
+    $$->setLineno(lineno);
+};
+
+const_value : INTEGER {
+/* const_value can be ConstInt_Node or else
+   but all is Const_value_Node
+*/
+                  $$ = new ConstInt_Node(atoi(yytext));
+                  $$->setLineno(lineno);
+              }
+|  REAL{ 
+    $$ = new ConstDouble_Node(atof(yytext));
+    $$->setLineno(lineno);
+} 
+|  CHAR{
+    $$ = new ConstChar_Node(yytext[0]);
+    $$->setLineno(lineno);
+}
+|  STRING{
+    $$ = new ConstStr_Node(yytext);
+    $$->setLineno(lineno);
+};
+
+type_part: TYPE type_decl_list {
+               $$ = new Type_part_Node($2);
+               $$->setLineno(lineno);
+           }         
+| {$$ = nullptr;};
+
+type_decl_list  : type_decl_list  type_definition {
+                      $$ = new Type_decl_list_Node($1, $2);
+                      $$->setLineno(lineno);
+                  }
+|  type_definition {
+    $$ = new Type_decl_list_Node($1);
+    $$->setLineno(lineno);
+};
+
+type_definition : id EQUAL  type_decl  SEMI{ 
+                      $$ = new Type_definition_Node($1, $3);
+                      $$->setLineno(lineno);  
+                  };
+
+type_decl    : simple_type_decl {$$ = $1;}  
+|  array_type_decl  {$$ = $1;}
+|  record_type_decl {$$ = $1;};
+
+array_type_decl : ARRAY  LB  simple_type_decl  RB  OF  type_decl{ 
+                      $$ = new Array_type_decl($3, $6);
+                      $$->setLineno(lineno);
+                  };
+
+record_type_decl : RECORD  field_decl_list  END{
+                       $$ = new Record_type_decl($2);
+                       $$->setLineno(lineno);
+                   };
+
+field_decl_list : field_decl_list  field_decl{
+                      $$ = new Field_decl_list_Node($1, $2);
+                      $$->setLineno(lineno);
+                  }               
+|  field_decl{
+    $$ = new Field_decl_list_Node($1);
+    $$->setLineno(lineno);
+};
+
+field_decl : name_list  COLON  type_decl  SEMI{
+                 $$ = new Field_decl_Node($1, $3);
+                 $$->setLineno(lineno);
+             };
+
+simple_type_decl : TYPEINTEGER{
+                       $$ = new System_type_decl_Node(System_type_decl_Node::INT);
+                       $$->setLineno(lineno);
+                   }  
+|  TYPEREAL{
+    $$ = new System_type_decl_Node(System_type_decl_Node::REAL);
+    $$->setLineno(lineno);
+}
+|  TYPECHAR{
+    $$ = new System_type_decl_Node(System_type_decl_Node::CHAR);
+    $$->setLineno(lineno);
+}
+|  TYPESTRING{
+    $$ = new System_type_decl_Node(System_type_decl_Node::STRING);
+    $$->setLineno(lineno);
+}
+|  TYPEBOOL {
+    $$ = new System_type_decl_Node(System_type_decl_Node::BOOL);
+    $$->setLineno(lineno);
+}
+|  id  {
+    $$ = new Alias_type_decl_Node($1);
+    $$->setLineno(lineno);
+}
+|  LP  name_list  RP{
+    $$ = new Enum_type_decl_Node($2);
+    $$->setLineno(lineno);
+}
+|  const_value  DOTDOT  const_value{
+    $$ = new Subrange_Const_value_type_decl_Node(false, $1, false, $3);
+    $$->setLineno(lineno);
+}  
+|  MINUS  const_value  DOTDOT  const_value
+{
+    $$ = new Subrange_Const_value_type_decl_Node(true, $1, false, $3);
+    $$->setLineno(lineno);
+} 
+|  MINUS  const_value  DOTDOT  MINUS  const_value
+{
+    $$ = new Subrange_Const_value_type_decl_Node(true, $2, true, $5);
+    $$->setLineno(lineno);
+} |  id DOTDOT  id{
+    $$ = new Subrange_id_type_decl_Node($1, $3);
+    $$->setLineno(lineno);
+};
+
+name_list : name_list  COMMA  id {
+                $$ = new Name_list_Node($1, $3);
+                $$->setLineno(lineno);
+            }   |  id { 
+                $$ = new Name_list_Node($1);
+                $$->setLineno(lineno);
+            };
+
+var_part : VAR  var_decl_list {
+               $$ = new Var_part_Node($2);
+               $$->setLineno(lineno);
+           } | { $$ = nullptr;
+           };
+
+var_decl_list : var_decl_list  var_decl{
+                    $$ = new Var_decl_list_Node($1, $2);
+                }  
+|  var_decl{ $$ = Var_decl_list_Node($2);};
+
+var_decl : name_list  COLON  type_decl  SEMI{
+               $$ = new Var_decl_Node($1, $3);
+               $$->setLineno(lineno);
+           };
+
+routine_part : routine_part  function_decl {
+                   $$ = new Routine_part_Node($1, (Function_decl_Node*)$2);
+                   $$->setLineno(lineno);
+               }   
+|  routine_part  procedure_decl{
+    $$ = new Routine_part_Node($1, (Procedure_decl_Node*)$2);
+    $$->setLineno(lineno);
+}  
+|  function_decl {
+    $$ = new Routine_part_Node((Function_decl_Node*)$1);
+    $$->setLineno(lineno);
+} 
+|  procedure_decl{
+    $$ = new Routine_part_Node((Procedure_decl_Node*)$1);
+    $$->setLineno(lineno);
+};
+
+function_decl : FUNCTION  id parameters  COLON  simple_type_decl{
+                    $$ = new Function_decl_Node($2, $3, $5);
+                    $$->setLineno(lineno);
+                };
+
+procedure_decl :PROCEDURE id parameters  SEMI  routine  SEMI{ 
+                    $$ = new Procedure_decl_Node($2, $3, $5);
+                    $$->setLineno(lineno);
+                };
+
+parameters : LP  para_decl_list  RP {
+                 $$ = new Parameteres_Node($2);
+                 $$ -> setLineno(lineno);
+             }
+| {$$ = nullptr;};
+
+para_decl_list : para_decl_list  SEMI  para_type_list{
+                     $$ = new Para_decl_list_Node($1, $3);
+                     $$ -> setLineno(lineno);
+                 } | {$$ = nullptr;};
+
+para_type_list : var_para_list COLON  simple_type_decl{ 
+                     $$ = new Para_type_list_Node((Var_para_list_Node *)$1, $3);
+                     $$->setLineno(lineno);
+                 } 
+| val_para_list  COLON  simple_type_decl{ 
+    $$ = new Para_type_list_Node((Val_para_list_Node *)$1, $3);
+    $$->setLineno(lineno);
+}; 
+
+var_para_list : VAR  name_list{
+                    $$ = new Var_para_list($2);
+                    $$->setLineno(lineno);
+                };
+
+val_para_list : name_list {
+                    $$ = new Val_para_list($2);
+                    $$->setLineno(lineno);
+                };
+
+routine_body : compound_stmt {
+                   $$ = new Routine_body_Node($1);
+                   $$->setLineno(lineno);
+               };
+
+compound_stmt : P_BEGIN  stmt_list  END {
+                    $$ = new Compound_stmt_Node($2);
+                    $$->setLineno(lineno);
+                };
+
+stmt_list : stmt_list  stmt  SEMI { 
+                $$ = new Stmt_list_Node($1, $2);
+                $$->setLineno(lineno);  
+            } | {$$ = nullptr;};
+
+stmt : INTEGER  COLON  non_label_stmt{ 
+           $$ = new Stmt_Node($1, $3);
+           $$->setLineno(lineno); 
+       } |  non_label_stmt{
+           $$ = new Stmt_Node($1);
+           $$->setLineno(lineno);
+       };
+
+non_label_stmt : assign_stmt{$$ = $1;}
+| proc_stmt {$$ = $1;}
+| compound_stmt{$$ = $1;} 
+| if_stmt {$$ = $1;}
+| repeat_stmt  {$$ = $1;}
+| while_stmt  {$$ = $1;}
+| for_stmt {$$ = $1;}
+| case_stmt  {$$ = $1;}
+| goto_stmt  {$$ = $1;}
+;
+assign_stmt : id ASSIGN  expression{ 
+                  $$ = new Assign id_stmt_Node($1, $3);
+                  $$->setLineno(lineno);
+              }
+| id LB expression RB ASSIGN expression{
+    $$ = new Assign_Arr_stmt_Node($1, $3, $6);
+    $$->setLineno(lineno);
+}
+| id DOT id ASSIGN  expression{ 
+    $$ = new Assign_Record_stmt_Node($1, $3, $5);
+    $$->setLineno(lineno);
+};
+
+proc_stmt : id {
+                $$ = new Proc_stmt_Node($1);
+                $$->setLineno(lineno)
+            }
+|  id LP  args_list  RP {
+    $$ = new Proc_stmt_Node($1, $3);
+    $$->setLineno(lineno);
+}
+|  READ  LP  factor  RP {
+    $$ = new Read_stmt_Node($3);
+}
+
+if_stmt : IF  expression  THEN  stmt  else_clause{ 
+              $$ = new If_stmt_Node($2, $4, $5);
+              $$->setLineno(lineno);
+          };
+
+else_clause : ELSE stmt {
+                  $$ = new Else_clause_Node($2);
+                  $$->setLineno(lineno);
+              }
+| {
+    $$ = nullptr;
+};
+
+repeat_stmt : REPEAT  stmt_list  UNTIL  expression{ 
+                  $$ = new Repeat_stmt_Node($2, $4);
+                  $$->setLineno(lineno)
+              };
+while_stmt : WHILE  expression  DO stmt{
+                 $$ = new While_stmt_Node($2, $4);
+                 $$->setLineno(lineno)
+             };
+
+for_stmt : FOR  id ASSIGN  expression  direction  expression  DO stmt{ 
+               $$ = new For_stmt_Node($2, $4, $5, $6, $8);
+               $$->setLineno(lineno)
+           };
+
+direction : TO {
+                $$ = new Direction_Node(true);
+                $$->setLineno(lineno)
+            }
+| DOWNTO{
+    $$ = new Direction_Node(false);
+    $$->setLineno(lineno)
+};
+
+case_stmt : CASE expression OF case_expr_list  END{ 
+                $$ = new Case_stmt_Node($2, $4);
+                $$->setLineno(lineno)
+            };
+
+case_expr_list : case_expr_list  case_expr{ 
+                     $$ = new Case_expr_list_Node($1, $2);
+                 }
+| case_expr{
+    $$ = new Case_expr_list_Node($1);
+};
+
+case_expr : const_value  COLON  stmt  SEMI{ 
+                $$ = new Case_const_val_expr_Node($1, $3);
+                $$->setLineno(lineno);
+            }
+|  id COLON  stmt  SEMI{
+    $$ = new Case_id_expr_Node($1, $3);
+    $$->setLineno(lineno);
+};
+
+goto_stmt : GOTO  INTEGER{ 
+                $$ = new GoTo_stmt_Node($2);
+                $$->setLineno(lineno);
+            };
+
+expression_list : expression_list  COMMA  expression {
+                      $$ = new Expression_list_Node($1, $3);
+                      $$->setLineno(lineno);
+                  }
+| expression {
+    $$ = new Expression_list_Node($1);
+    $$->setLineno(lineno);
+};
+
+expression : expression  GE  expr{
+                 $$ = new Expression_Node($1, Expression_Node::GE, $3);
+                 $$->setLineno(lineno);
+             }
+|  expression  GT  expr { 
+    $$ = new Expression_Node($1, Expression_Node::GT, $3);
+    $$->setLineno(lineno);
+} 
+|  expression  LE  expr{ 
+    $$ = new Expression_Node($1, Expression_Node::LE, $3);
+    $$->setLineno(lineno);
+}
+|  expression  LT  expr { 
+    $$ = new Expression_Node($1, Expression_Node::LT, $3);
+    $$->setLineno(lineno);
+}
+|  expression  EQUAL  expr{
+    $$ = new Expression_Node($1, Expression_Node::EQ, $3);
+    $$->setLineno(lineno);
+}
+|  expression  UNEQUAL  expr  { 
+    $$ = new Expression_Node($1, Expression_Node::NEQ, $3);
+    $$->setLineno(lineno);
+}
+|  expr {
+    $$ = new Expression_Node($1);
+    $$->setLineno(lineno);
+};
+
+expr : expr  PLUS  term  {
+           $$ = new Expr_Node($1, Expr_Node::ADD, $3);
+           $$->setLineno(lineno);
+       }
+| expr  MINUS  term {
+    $$ = new Expr_Node($1, Expr_Node::SUB, $3);
+    $$->setLineno(lineno);
+}
+| expr  OR  term {
+    $$ = new Expr_Node($1, Expr_Node::OR, $3);
+    $$->setLineno(lineno);
+}
+| term {
+    $$ = $1;
+};
+
+term : term  MUL  factor{
+           $$ = new Expr_Node($1, Expr_Node::MUL, $3);
+           $$->setLineno(lineno);
+       }
+|  term  DIV  factor{ 
+    $$ = new Expr_Node($1, Expr_Node::DIV, $3);
+    $$->setLineno(lineno);
+}
+|  term  MOD  factor{ 
+    $$ = new Expr_Node($1, Expr_Node::MOD, $3);
+    $$->setLineno(lineno);
+}
+|  term  AND factor{
+    $$ = new Expr_Node($1, Expr_Node::AND, $3);
+    $$->setLineno(lineno);
+}
+|  factor {
+    $$ = new Expr_Node($1);
+    $$->setLineno(lineno);
+};
+
+factor  : id {
+              $$ = new Factor_const_val_Node($1);
+              $$->setLineno(lineno);
+          } 
+|  const_value{
+    $$ = $1;
+    //const_val is factor
+}
+|  LP  expression  RP{
+    $$ = $2;
+    //expression is factor
+}
+|  NOT  factor {
+    $$ = new Factor_unary_Node(Factor_unary_Node::NOT, $2);
+    $$->setLineno(lineno);
+} 
+|  MINUS  factor{
+    $$ = new Factor_unary_Node(Factor_unary_Node::MINUS, $2);
+    $$->setLineno(lineno);
+}  
+|  id LB  expression  RB{
+    $$ = new Factor_arr_Node($1, $3);
+    $$->setLineno(lineno);
+}
+|  id DOT  id{
+    $$ = new Factor_record_Node($1, $3);
+    $$->setLineno(lineno);
+};
+
+args_list  :  args_list  COMMA  expression {
+                  $$ = new Args_list_Node($1, $3);
+                  $$->setLineno(lineno);
+              }
+|  expression{
+    $$ = new Args_list_Node($1);
+    $$->setLineno(lineno);
+};
+
+%%
+
+int yyerror(char * message){
+    fprintf(listing, "yyerror in pascal.y called\n");
+    fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
+    fprintf(listing,"Current token: ");
+    printToken(yychar,yytext);
+    Error = TRUE;
+    return 0;
+}
+
+TreeNode * do_parse(void){
+    yyparse();
+    return savedTree;
 }

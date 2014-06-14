@@ -6,13 +6,11 @@
 	#include <string.h>
 	#include <stdarg.h>
 	#include <stdio.h>
-	char*	yytext0;
-	/* lexeme of identifier or reserved word */
-	char tokenString[MAXTOKENLEN+1];
-
-
 %}
 %option noyywrap
+%option yylineno
+%option never-interactive
+%option case-insensitive
 
 letter 		[a-zA-Z]
 digit  		[0-9]
@@ -22,7 +20,7 @@ newline		\n
 whitespace	[ ]
 char        [^\n\t \r]
 %%
-{newline}	{lineno++;}
+{newline}	{++lineno;}
 "program"	{return PROGRAM;}
 "procedure"     {return PROCEDURE;}
 "."			{return DOT;}
@@ -71,24 +69,32 @@ char        [^\n\t \r]
 "to"		{return TO;}
 "downto"	{return DOWNTO;}
 "read"		{return READ;}
-"integer"	{return TYPEINTEGER;}
+"Integer"	{return TYPEINTEGER;}
 "real"	    {return TYPEREAL;}
 "char"      {return TYPECHAR;}
 "string"    {return TYPESTRING;}
 "bool"		{return TYPEBOOL;}
-"false"		{return FALSE;}
-"true"		{return TRUE;}
+"false"		{return P_FALSE;}
+"true"		{return P_TRUE;}
 
 
-'{char}'					{return CHAR;}
-'({char})({char})+'			{return STRING;}
-'({digit})+'					{return INTEGER;}
-'({digit})+[.]({digit})+'	{return REAL;}
-'({letter}|{underline})({letter}|{digit}|{underline})*'	{return ID;}
+[[:digit:]]+        {
+  yylval = atoi(yytext);
+  return INTEGER;
+}
+[[:digit:]]+'.'[[:digit:]]+ {
+  yylval = atof(yytext);
+  return REAL;
+}
+[[:alpha:]][[:alnum:]]*  {
+  return IDENTIFIER;
+}
+
 %%
 
-TokenType getToken(void)
-{ static int firstTime = TRUE;
+/*
+TokenType getToken(void){
+  static int firstTime = TRUE;
   TokenType currentToken;
   if (firstTime)
   { firstTime = FALSE;
@@ -98,10 +104,11 @@ TokenType getToken(void)
   }
   currentToken = yylex();
   strncpy(tokenString,yytext,MAXTOKENLEN);
-  if (TraceScan) {
+  if (TraceScan) {//print debug info
     fprintf(listing,"\t%d: ",lineno);
     printToken(currentToken,tokenString);
   }
   return currentToken;
 }
 
+*/

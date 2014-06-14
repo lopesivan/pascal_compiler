@@ -59,76 +59,11 @@ extern FILE* code; /* code text file for TM simulator */
 
 extern int lineno; /* source line number for listing */
 
-/**************************************************/
-/***********   Syntax tree for parsing ************/
-/**************************************************/
 
-typedef enum {ModuleK,DeclK,StmtK,ExpK} NodeKind;
-typedef enum {
-    ProgramK, 
-    RoutineK,
-    Routine_headK,
-    ProcedureK, 
-    FunctionK
-} ModuleKind;
-typedef enum {
-    ArrayK, 
-    FieldK,
-    SimpleK,
-    VarK,
-    ParaK
-} DeclKind;
-typedef enum {
-    EqualK,
-	AssignK, 
-	ProcK, 
-	CompK, 
-	IfK,
-	RepeatK, WhileK,
-    LabelK,
-	ForK, CaseK, GotoK
-} StmtKind;
-typedef enum {
-	OpK, /*Operator Node   op
-	     *                /  \
-		 *              exp  exp   
-		 */
-	ConstIntK, /*Const Value Node*/
-    ConstDoubleK,
-    ConstCharK,
-    ConstStrK,
-
-	IdK ,/*Identifier Node*/
-    Case_expK,
-    FactorK
-} ExpKind;
-
-/* ExpType is used for type checking */
-typedef enum {Void,Int,Bool,Char,Double,String} ExpType;
-
-#define MAXCHILDREN 5
-
-typedef struct treeNode
-   { struct treeNode * child[MAXCHILDREN];
-     struct treeNode * sibling;
-     int lineno;
-     NodeKind nodekind;
-     union {
-        ModuleKind module; 
-        StmtKind stmt; 
-        ExpKind exp;
-        DeclKind decl;
-    } kind;
-     union { TokenType op;
-             int goto_label;
-             int direction;//1-to,0-downto
-             int int_val;
-             char char_val;
-             char * string_val;
-             double double_val;
-             char * name; } attr;
-     ExpType type; /* for type checking of exps */
-   } TreeNode;
+#include "node/ExpNode.hpp"
+#include "node/ModuleNode.hpp"
+#include "node/DeclNode.hpp"
+#include "node/StmtNode.hpp"
 
 /**************************************************/
 /***********   Flags for tracing       ************/

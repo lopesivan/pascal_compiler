@@ -7,7 +7,7 @@ procedure test();
 var a : integer;
 begin
     println()
-end;
+end
 
 procedure forme(a : integer, b : boolean, c : char);
 var i, j : integer;
@@ -35,4 +35,4 @@ begin
     forme(3, true, ch);
     forme(7, 8, z);
     test(2)
-end.
+end

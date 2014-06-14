@@ -34,7 +34,7 @@
 # define YY_YY_PASCAL_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -102,8 +102,8 @@ extern int yydebug;
     TYPECHAR = 312,
     TYPESTRING = 313,
     TYPEBOOL = 314,
-    FALSE = 315,
-    TRUE = 316,
+    P_FALSE = 315,
+    P_TRUE = 316,
     PROCEDURE = 317
   };
 #endif

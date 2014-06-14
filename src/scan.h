@@ -19,4 +19,6 @@ extern char tokenString[MAXTOKENLEN+1];
  */
 TokenType getToken(void);
 
+TreeNode * do_parse(void);
+
 #endif

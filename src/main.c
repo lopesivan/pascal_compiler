@@ -19,8 +19,9 @@
 
 #include "util.h"
 #include "scan.h"
-#include "parse.h"
+#include "pascal.tab.h"
 
+extern FILE* yyin;
 
 /* allocate global variables */
 int lineno = 0;
@@ -30,12 +31,15 @@ FILE * code;
 
 /* allocate and set tracing flags */
 int EchoSource = FALSE;
-int TraceScan = FALSE;
-int TraceParse = FALSE;
+int TraceScan = TRUE;
+int TraceParse = TRUE;
 int TraceAnalyze = FALSE;
 int TraceCode = FALSE;
 
 int Error = FALSE;
+
+extern TreeNode * do_parse(void);
+
 
 int main( int argc, char * argv[] )
 { TreeNode * syntaxTree;
@@ -52,15 +56,14 @@ int main( int argc, char * argv[] )
   { fprintf(stderr,"File %s not found\n",pgm);
     exit(1);
   }
+  yyin = source;
   listing = stdout; /* send listing to screen */
   fprintf(listing,"\nTINY COMPILATION: %s\n",pgm);
   //scan begin
+  yydebug = 1;
 
-  while (getToken()!=ENDFILE);
-  fprintf(listing, "after getToken\n");
-
-  syntaxTree = parse();
-  fprintf(listing, "after parse\n");
+  // while (getToken()!=ENDFILE) ; //scan
+  syntaxTree = do_parse();
   if (TraceParse) {
     fprintf(listing,"\nSyntax tree:\n");
     printTree(syntaxTree);

@@ -17,7 +17,8 @@ void printToken( TokenType token, const char* tokenString )
   { case IF:
     case THEN:
     case ELSE:
-    case END:
+    case P_BEGIN: fprintf(listing, "begin\n"); break;
+    case END: fprintf(listing, "end\n"); break;
     case REPEAT:
     case UNTIL:
     // case READ:
@@ -25,9 +26,17 @@ void printToken( TokenType token, const char* tokenString )
     //   fprintf(listing,
     //      "reserved word: %s\n",tokenString);
     //   break;
+    case TYPEINTEGER : fprintf(listing, "type integer\n"); break;
+    case TYPECHAR: fprintf(listing, "type char\n"); break;
+
+    case FOR: fprintf(listing, "for\n"); break;
+    case TO: fprintf(listing, "to\n"); break;
     case VAR: fprintf(listing, "var\n"); break;
     case PROGRAM: fprintf(listing, "program\n"); break;
+    case PROCEDURE : fprintf(listing, "procedure\n"); break;
     case CONST: fprintf(listing, "const\n"); break;
+    case P_TRUE: fprintf(listing, "true\n"); break;
+    case P_FALSE: fprintf(listing, "false\n"); break;
     case ASSIGN: fprintf(listing,":=\n"); break;
     case LT: fprintf(listing,"<\n"); break;
     case EQUAL: fprintf(listing,"=\n"); break;
@@ -39,6 +48,7 @@ void printToken( TokenType token, const char* tokenString )
     case PLUS: fprintf(listing,"+\n"); break;
     case MINUS: fprintf(listing,"-\n"); break;
     case MUL: fprintf(listing,"*\n"); break;
+    case DOT: fprintf(listing,".\n"); break;
     // case OVER: fprintf(listing,"/\n"); break;
     case ENDFILE: fprintf(listing,"EOF\n"); break;
     // case NUM:
@@ -49,6 +59,7 @@ void printToken( TokenType token, const char* tokenString )
       fprintf(listing,
           "ID, name= %s\n",tokenString);
       break;
+    case INTEGER: fprintf(listing, "integer, val= %s\n", tokenString); break;
     // case ERROR:
     //   fprintf(listing,
     //       "ERROR: %s\n",tokenString);
@@ -62,7 +73,9 @@ void printToken( TokenType token, const char* tokenString )
  * node for syntax tree construction
  */
 TreeNode * newStmtNode(StmtKind kind)
-{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+{ 
+  puts("[debug] stmt node created");
+  TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
   int i;
   if (t==NULL)
     fprintf(listing,"Out of memory error at line %d\n",lineno);
@@ -80,12 +93,14 @@ TreeNode * newStmtNode(StmtKind kind)
  * node for syntax tree construction
  */
 TreeNode * newExpNode(ExpKind kind)
-{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+{ 
+  puts("[deubg] newExpNode() called");
+  TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
   int i;
   if (t==NULL)
     fprintf(listing,"Out of memory error at line %d\n",lineno);
   else {
-    for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
+    for (i = 0;i < MAXCHILDREN; ++i) t->child[i] = NULL;
     t->sibling = NULL;
     t->nodekind = ExpK;
     t->kind.exp = kind;
@@ -127,15 +142,12 @@ TreeNode * newDeclNode(DeclKind kind){
 /* Function copyString allocates and makes a new
  * copy of an existing string
  */
-char * copyString(char * s)
-{ int n;
-  char * t;
-  if (s==NULL) return NULL;
-  n = strlen(s)+1;
-  t = malloc(n);
-  if (t==NULL)
+char * copyString(char * s){
+  if (s == NULL) return NULL;
+  char *t = malloc(strlen(s)+1);
+  if (t == NULL)
     fprintf(listing,"Out of memory error at line %d\n",lineno);
-  else strcpy(t,s);
+  else strcpy(t, s);
   return t;
 }
 
