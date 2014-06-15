@@ -1,10 +1,11 @@
 %{
+  #include "node/ModuleNode.hpp"
+  #include "node/DeclNode.hpp"
+  #include "node/ExpNode.hpp"
+  #include "node/StmtNode.hpp"
   #include "globals.h"
 	#include "pascal.tab.h"
-	#include "util.h"
-	#include "scan.h"
 	#include <string.h>
-	#include <stdarg.h>
 	#include <stdio.h>
 %}
 %option noyywrap
@@ -79,11 +80,11 @@ char        [^\n\t \r]
 
 
 [[:digit:]]+        {
-  yylval = atoi(yytext);
+  yylval.constInt = atoi(yytext);
   return INTEGER;
 }
 [[:digit:]]+'.'[[:digit:]]+ {
-  yylval = atof(yytext);
+  yylval.constDouble = atof(yytext);
   return REAL;
 }
 [[:alpha:]][[:alnum:]]*  {

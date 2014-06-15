@@ -16,6 +16,7 @@ protected:
 	Type_decl_Node(){}
 };
 
+class Simple_type_decl_Node;
 class Array_type_decl_Node : public Type_decl_Node{
 public:
 	Array_type_decl_Node(Simple_type_decl_Node *range, Type_decl_Node *type)
@@ -25,41 +26,39 @@ public:
 	Type_decl_Node * type;
 };
 
-class Field_decl_Node() : public TreeNode{ //for record type
+class Field_decl_Node : public TreeNode{ //for record type
 public:
 	Field_decl_Node(Name_list_Node *name_list, Type_decl_Node *type)
 		:name_list(name_list), type(type){}
 private:
 	Name_list_Node *name_list;
 	Type_decl_Node *type;
-}
+};
 
 class Field_decl_list_Node : public TreeNode{
 public:
-	Field_decl_list_Node(const Field_decl_list_Node *prev, const Field_decl_Node *decl)
+	Field_decl_list_Node(Field_decl_list_Node *prev, Field_decl_Node *decl)
 		:prev(prev), decl(decl){}
 
-	explicit Field_decl_list_Node(const Field_decl_Node *decl)
+	explicit Field_decl_list_Node(Field_decl_Node *decl)
 		:decl(decl){}
 private:
 	Field_decl_list_Node *prev = nullptr;
 	Field_decl_Node *decl;
 };
 
-class Record_type_decl_Node : public Type_decl_Node
-{
+class Record_type_decl_Node : public Type_decl_Node{
 public:
-	explicit Record_type_decl_Node(Field_decl_list_Node* list){}
-	~Record_type_decl_Node();
+	explicit Record_type_decl_Node(Field_decl_list_Node* list)
+        :list(list){}
 private:
 	Field_decl_list_Node *list;
-	/* data */
 };
 
 /*********  simple type decl *****************/
-class Simple_type_decl_Node{
-public:
-	Simple_type_decl_Node() = delete;
+class Simple_type_decl_Node : public Type_decl_Node{
+protected:
+	Simple_type_decl_Node(){}
 };
 
 class System_type_decl_Node : public Simple_type_decl_Node{
@@ -67,28 +66,26 @@ public:
 	enum Type{INT, REAL, ENUM, CHAR, STRING, BOOL};
 public:
 	explicit System_type_decl_Node(Type type):type(type){}
-	Type getType(){
-		return type;
-	}
+	Type getType() const{ 
+        return type;
+    }
 private:
 	Type type;
 };
 
 class Alias_type_decl_Node : public Simple_type_decl_Node{
 public:
-	explicit Alias_type_decl_Node(const Id_Node* id):id(id){}
-	~Alias_type_decl_Node();
+	explicit Alias_type_decl_Node(Id_Node* id):id(id){}
 private:
-	/* data */
-	Id_Node*id;
+	Id_Node *id;
 };
 
 class Enum_type_decl_Node : public Simple_type_decl_Node{
 public:
-	explicit Enum_type_decl_Node(const Name_list_Node* name_list)
+	explicit Enum_type_decl_Node(Name_list_Node *name_list)
 		:name_list(name_list){}
 private:
-	Name_list_Node* name_list;
+	Name_list_Node *name_list;
 };
 
 class Subrange_type_decl_Node : public Simple_type_decl_Node{
@@ -96,11 +93,11 @@ protected:
 	Subrange_type_decl_Node(){}
 };
 
-class Subrange_const_value_type_decl_Node : Subrange_type_decl_Node
+class Subrange_const_value_type_decl_Node : public Subrange_type_decl_Node
 {
 public:
-	Subrange_const_value_type_decl_Node(bool lowerNeg, const Const_value_Node *low, 
-		bool upperNeg, const Const_value_Node *high)
+	Subrange_const_value_type_decl_Node(bool lowerNeg, Const_value_Node *low, 
+		bool upperNeg, Const_value_Node *high)
 		:lowerBound(low), upperBound(high), isLowerNeg(lowerNeg), isUpperNeg(upperNeg){}
 private:
 	Const_value_Node *lowerBound;
@@ -112,11 +109,11 @@ private:
 class Subrange_id_type_decl_Node : public Subrange_type_decl_Node
 {
 public:
-	Subrange_id_type_decl_Node(const std::string& lower, const std::string& upper)
+	Subrange_id_type_decl_Node(Id_Node* lower, Id_Node* upper)
 		:lower(lower), upper(upper){}
 private:
-	std::string lower;
-	std::string upper;
+	Id_Node* lower;
+	Id_Node* upper;
 };
 
 #endif

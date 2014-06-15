@@ -45,7 +45,7 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ID = 258,
+    IDENTIFIER = 258,
     INTEGER = 259,
     REAL = 260,
     CHAR = 261,
@@ -110,7 +110,72 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE YYSTYPE;
+union YYSTYPE
+{
+#line 22 "bison/pascal.y" /* yacc.c:1909  */
+
+    TreeNode* tree_node;
+    Id_Node*  id_node;
+    Program_Node* program_node; 
+    Program_head_Node* program_head_node;
+    Routine_Node* routine_node;
+    Routine_head_Node* routine_head_node;
+
+    Const_part_Node* const_part_node;
+    Const_expr_list_Node* const_expr_list_node;
+    Const_value_Node* const_value_node;
+    int     constInt;
+    double  constDouble;
+    char    constChar;
+
+    Type_part_Node*         type_part_node;
+    Type_decl_list_Node*    type_decl_list_node;
+    Type_definition_Node*   type_definition_node;
+    Type_decl_Node*         type_decl_node;
+    Array_type_decl_Node*   array_type_decl_node;
+    Record_type_decl_Node*  record_type_decl_node;
+    Field_decl_list_Node*   field_decl_list_node;
+    Field_decl_Node*        field_decl_node;
+    Simple_type_decl_Node*  simple_type_decl_node;
+    Name_list_Node*         name_list_node;
+    Var_part_Node*          var_part_node;
+    Var_decl_list_Node*     var_decl_list_node;
+    Var_decl_Node*          var_decl_node;
+    Routine_part_Node*      routine_part_node;
+    Function_decl_Node*     function_decl_node;
+    Procedure_decl_Node*    procedure_decl_node;
+    Parameters_Node*        parameters_node;
+    Para_decl_list_Node*    para_decl_list_node;
+    Para_type_list_Node*    para_type_list_node;
+    Var_para_list_Node*     var_para_list_node;
+    Val_para_list_Node*     val_para_list_node;
+    Routine_body_Node*      routine_body_node;
+    Compound_stmt_Node*     compound_stmt_node;
+    Stmt_list_Node*         stmt_list_node;
+    Stmt_Node*              stmt_node;
+    Non_label_stmt_Node*    non_label_stmt_node;
+    Assign_stmt_Node*       assign_stmt_node;
+    Proc_stmt_Node*         proc_stmt_node;
+    If_stmt_Node*           if_stmt_node;
+    Else_clause_Node*       else_clause_node;
+    Repeat_stmt_Node*       repeat_stmt_node;
+    While_stmt_Node*        while_stmt_node;
+    For_stmt_Node*          for_stmt_node;
+    Direction_Node*         direction_node;
+    Case_stmt_Node*         case_stmt_node;
+    Case_expr_list_Node*    case_expr_list_node;
+    Case_expr_Node*         case_expr_node;
+    Goto_stmt_Node*         goto_stmt_node;
+    Expression_list_Node*   expression_list_node;
+    Expression_Node*        expression_node;
+    Expr_Node*              expr_node;
+    Factor_Node*            factor_node;
+    Args_list_Node*         args_list_node;
+
+
+#line 178 "pascal.tab.h" /* yacc.c:1909  */
+};
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

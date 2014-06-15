@@ -1,6 +1,7 @@
 CFLAGS = -std=c++0x
 CC = g++
 objects = main.o scan.o parse.o util.o
+AST_header = node/*.hpp
 
 all:	pascal
 
@@ -10,7 +11,7 @@ pascal:	$(objects)
 main.o: main.c globals.h util.h scan.h pascal.tab.h
 	$(CC) $(CFLAGS) -c main.c -o main.o
 
-scan.o:	scan.c
+scan.o:	scan.c $(AST_header)
 	$(CC) $(CFLAGS) -c scan.c -o scan.o
 
 scan.c: flex/pascal.l pascal.tab.h

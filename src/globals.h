@@ -59,7 +59,6 @@ extern FILE* code; /* code text file for TM simulator */
 
 extern int lineno; /* source line number for listing */
 
-
 #include "node/ExpNode.hpp"
 #include "node/ModuleNode.hpp"
 #include "node/DeclNode.hpp"

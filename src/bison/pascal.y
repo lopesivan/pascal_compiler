@@ -2,21 +2,20 @@
 #define YYPARSER /* distinguishes Yacc output from other code files */
 
 #include <stdio.h>
+#include "node/ModuleNode.hpp"
+#include "node/DeclNode.hpp"
+#include "node/ExpNode.hpp"
+#include "node/StmtNode.hpp"
+
 #include "globals.h"
 #include "util.h"
-#include "scan.h"
+//static std::string savedName; /* for use in assignments */
 
-#define YYSTYPE TreeNode *
-    static std::string savedName; /* for use in assignments */
-    static int lineno;  /* ditto */
-    static TreeNode * savedTree = nullptr; /* stores syntax tree for later return */
+static TreeNode * savedTree = nullptr; /* stores syntax tree for later return */
 
-    extern "C"{
-        int yylex(void);
-    int yyerror(char *message);
-    char* yytext;
-}
-
+extern int yylex(void);
+extern int yyerror(char *message);
+extern char* yytext;
 %}
 %debug
 
@@ -27,31 +26,58 @@
     Program_head_Node* program_head_node;
     Routine_Node* routine_node;
     Routine_head_Node* routine_head_node;
-    
+
     Const_part_Node* const_part_node;
     Const_expr_list_Node* const_expr_list_node;
     Const_value_Node* const_value_node;
     int     constInt;
     double  constDouble;
     char    constChar;
-    
-    Type_part_Node* type_part_node;
-    Type_decl_list_Node* type_decl_list_node;
-    Type_definition_Node* type_definition_node;
-    Type_decl_Node* type_decl_node;
-    Array_type_decl_Node* array_type_decl_node;
-    Record_type_decl_Node* record_type_decl_node;
-    Field_decl_list_Node* field_decl_list_node;
-    Field_decl_Node* field_decl_node;
-    Simple_type_decl_Node* simple_type_decl_node;
-    Name_list_Node* name_list_node;
-    Var_part_Node* var_part_node;
-    Var_decl_list_Node* var_decl_list_node;
-    Var_decl_Node* var_decl_node;
 
-    Routine_part_Node* routine_part_node;      
+    Type_part_Node*         type_part_node;
+    Type_decl_list_Node*    type_decl_list_node;
+    Type_definition_Node*   type_definition_node;
+    Type_decl_Node*         type_decl_node;
+    Array_type_decl_Node*   array_type_decl_node;
+    Record_type_decl_Node*  record_type_decl_node;
+    Field_decl_list_Node*   field_decl_list_node;
+    Field_decl_Node*        field_decl_node;
+    Simple_type_decl_Node*  simple_type_decl_node;
+    Name_list_Node*         name_list_node;
+    Var_part_Node*          var_part_node;
+    Var_decl_list_Node*     var_decl_list_node;
+    Var_decl_Node*          var_decl_node;
+    Routine_part_Node*      routine_part_node;
+    Function_decl_Node*     function_decl_node;
+    Procedure_decl_Node*    procedure_decl_node;
+    Parameters_Node*        parameters_node;
+    Para_decl_list_Node*    para_decl_list_node;
+    Para_type_list_Node*    para_type_list_node;
+    Var_para_list_Node*     var_para_list_node;
+    Val_para_list_Node*     val_para_list_node;
+    Routine_body_Node*      routine_body_node;
+    Compound_stmt_Node*     compound_stmt_node;
+    Stmt_list_Node*         stmt_list_node;
+    Stmt_Node*              stmt_node;
+    Non_label_stmt_Node*    non_label_stmt_node;
+    Assign_stmt_Node*       assign_stmt_node;
+    Proc_stmt_Node*         proc_stmt_node;
+    If_stmt_Node*           if_stmt_node;
+    Else_clause_Node*       else_clause_node;
+    Repeat_stmt_Node*       repeat_stmt_node;
+    While_stmt_Node*        while_stmt_node;
+    For_stmt_Node*          for_stmt_node;
+    Direction_Node*         direction_node;
+    Case_stmt_Node*         case_stmt_node;
+    Case_expr_list_Node*    case_expr_list_node;
+    Case_expr_Node*         case_expr_node;
+    Goto_stmt_Node*         goto_stmt_node;
+    Expression_list_Node*   expression_list_node;
+    Expression_Node*        expression_node;
+    Expr_Node*              expr_node;
+    Factor_Node*            factor_node;
+    Args_list_Node*         args_list_node;
 
-    Routine_body_Node* routine_body_node;
 }
 
 %token  IDENTIFIER
@@ -65,27 +91,58 @@
 
 %start program
 
-%type<id_node>  id;
-%type<program_node> program;
-%type<program_head_node> program_head;
-%type<routine_node> routine; 
-%type<routine_head_node> routine_head;
-%type<const_part_node> const_part;
+%type<id_node>              id;
+%type<program_node>         program;
+%type<program_head_node>    program_head;
+%type<routine_node>         routine; 
+%type<routine_head_node>    routine_head;
+%type<const_part_node>      const_part;
 %type<const_expr_list_node> const_expr_list;
-%type<const_value_node> const_value;
-%type<type_part_node> type_part;
-%type<type_decl_list_node> type_decl_list;
+%type<const_value_node>     const_value;
+%type<type_part_node>       type_part;
+%type<type_decl_list_node>  type_decl_list;
 %type<type_definition_node> type_definition;
-%type<type_decl_node> type_decl;
+%type<type_decl_node>       type_decl;
 %type<array_type_decl_node> array_type_decl;
 %type<record_type_decl_node> record_type_decl;
 %type<field_decl_list_node> field_decl_list;
-%type<field_decl_node> field_decl;
+%type<field_decl_node>      field_decl;
 %type<simple_type_decl_node> simple_type_decl;
-%type<name_list_node> name_list;
-%type<var_part_node> var_part;
-%type<var_decl_list_node> var_decl_list;
-%type<var_decl_node> var_decl;
+%type<name_list_node>       name_list;
+%type<var_part_node>        var_part;
+%type<var_decl_list_node>   var_decl_list;
+%type<var_decl_node>        var_decl;
+%type<routine_part_node>    routine_part;
+%type<function_decl_node>   function_decl;
+%type<procedure_decl_node>  procedure_decl;
+%type<parameters_node>      parameters;
+%type<para_decl_list_node>  para_decl_list;
+%type<para_type_list_node>  para_type_list;
+%type<var_para_list_node>   var_para_list;
+%type<val_para_list_node>   val_para_list;
+%type<routine_body_node>    routine_body;
+%type<compound_stmt_node>   compound_stmt;
+%type<stmt_list_node>       stmt_list;
+%type<stmt_node>            stmt;
+%type<non_label_stmt_node>  non_label_stmt;
+%type<assign_stmt_node>     assign_stmt;
+%type<proc_stmt_node>       proc_stmt;
+%type<if_stmt_node>         if_stmt;
+%type<else_clause_node>     else_clause;
+%type<repeat_stmt_node>     repeat_stmt;
+%type<while_stmt_node>      while_stmt;
+%type<for_stmt_node>        for_stmt;
+%type<direction_node>       direction;
+%type<case_stmt_node>       case_stmt;
+%type<case_expr_list_node>  case_expr_list;
+%type<case_expr_node>       case_expr;
+%type<goto_stmt_node>       goto_stmt;
+%type<expression_list_node> expression_list;
+%type<expression_node>      expression;
+%type<expr_node>            expr;
+%type<expr_node>            term;
+%type<factor_node>          factor;
+%type<args_list_node>       args_list;
 
 %%
 
@@ -121,18 +178,18 @@ const_part : CONST  const_expr_list  {
 ;
 
 const_expr_list : const_expr_list  id EQUAL const_value SEMI{
-                      $$ = new Const_expr_list($1, $2, $4);
+                      $$ = new Const_expr_list_Node($1, $2, $4);
                       $$->setLineno(lineno);
                   }
 | id EQUAL  const_value  SEMI{ 
-    $$ = new Const_expr_list($1, $3);
+    $$ = new Const_expr_list_Node($1, $3);
     $$->setLineno(lineno);
 };
 
 const_value : INTEGER {
-/* const_value can be ConstInt_Node or else
-   but all is Const_value_Node
-*/
+                  /* const_value can be ConstInt_Node or else
+                     but all is Const_value_Node
+                   */
                   $$ = new ConstInt_Node(atoi(yytext));
                   $$->setLineno(lineno);
               }
@@ -174,12 +231,12 @@ type_decl    : simple_type_decl {$$ = $1;}
 |  record_type_decl {$$ = $1;};
 
 array_type_decl : ARRAY  LB  simple_type_decl  RB  OF  type_decl{ 
-                      $$ = new Array_type_decl($3, $6);
+                      $$ = new Array_type_decl_Node($3, $6);
                       $$->setLineno(lineno);
                   };
 
 record_type_decl : RECORD  field_decl_list  END{
-                       $$ = new Record_type_decl($2);
+                       $$ = new Record_type_decl_Node($2);
                        $$->setLineno(lineno);
                    };
 
@@ -226,17 +283,17 @@ simple_type_decl : TYPEINTEGER{
     $$->setLineno(lineno);
 }
 |  const_value  DOTDOT  const_value{
-    $$ = new Subrange_Const_value_type_decl_Node(false, $1, false, $3);
+    $$ = new Subrange_const_value_type_decl_Node(false, $1, false, $3);
     $$->setLineno(lineno);
 }  
 |  MINUS  const_value  DOTDOT  const_value
 {
-    $$ = new Subrange_Const_value_type_decl_Node(true, $1, false, $3);
+    $$ = new Subrange_const_value_type_decl_Node(true, $2, false, $4);
     $$->setLineno(lineno);
 } 
 |  MINUS  const_value  DOTDOT  MINUS  const_value
 {
-    $$ = new Subrange_Const_value_type_decl_Node(true, $2, true, $5);
+    $$ = new Subrange_const_value_type_decl_Node(true, $2, true, $5);
     $$->setLineno(lineno);
 } |  id DOTDOT  id{
     $$ = new Subrange_id_type_decl_Node($1, $3);
@@ -260,7 +317,7 @@ var_part : VAR  var_decl_list {
 var_decl_list : var_decl_list  var_decl{
                     $$ = new Var_decl_list_Node($1, $2);
                 }  
-|  var_decl{ $$ = Var_decl_list_Node($2);};
+|  var_decl{ $$ = new Var_decl_list_Node($1);};
 
 var_decl : name_list  COLON  type_decl  SEMI{
                $$ = new Var_decl_Node($1, $3);
@@ -295,7 +352,7 @@ procedure_decl :PROCEDURE id parameters  SEMI  routine  SEMI{
                 };
 
 parameters : LP  para_decl_list  RP {
-                 $$ = new Parameteres_Node($2);
+                 $$ = new Parameters_Node($2);
                  $$ -> setLineno(lineno);
              }
 | {$$ = nullptr;};
@@ -315,12 +372,12 @@ para_type_list : var_para_list COLON  simple_type_decl{
 }; 
 
 var_para_list : VAR  name_list{
-                    $$ = new Var_para_list($2);
+                    $$ = new Var_para_list_Node($2);
                     $$->setLineno(lineno);
                 };
 
 val_para_list : name_list {
-                    $$ = new Val_para_list($2);
+                    $$ = new Val_para_list_Node($1);
                     $$->setLineno(lineno);
                 };
 
@@ -358,21 +415,21 @@ non_label_stmt : assign_stmt{$$ = $1;}
 | goto_stmt  {$$ = $1;}
 ;
 assign_stmt : id ASSIGN  expression{ 
-                  $$ = new Assign id_stmt_Node($1, $3);
+                  $$ = new Assign_id_stmt_Node($1, $3);
                   $$->setLineno(lineno);
               }
 | id LB expression RB ASSIGN expression{
-    $$ = new Assign_Arr_stmt_Node($1, $3, $6);
+    $$ = new Assign_arr_stmt_Node($1, $3, $6);
     $$->setLineno(lineno);
 }
 | id DOT id ASSIGN  expression{ 
-    $$ = new Assign_Record_stmt_Node($1, $3, $5);
+    $$ = new Assign_record_stmt_Node($1, $3, $5);
     $$->setLineno(lineno);
 };
 
 proc_stmt : id {
                 $$ = new Proc_stmt_Node($1);
-                $$->setLineno(lineno)
+                $$->setLineno(lineno);
             }
 |  id LP  args_list  RP {
     $$ = new Proc_stmt_Node($1, $3);
@@ -397,30 +454,31 @@ else_clause : ELSE stmt {
 
 repeat_stmt : REPEAT  stmt_list  UNTIL  expression{ 
                   $$ = new Repeat_stmt_Node($2, $4);
-                  $$->setLineno(lineno)
+                  $$->setLineno(lineno);
               };
+
 while_stmt : WHILE  expression  DO stmt{
                  $$ = new While_stmt_Node($2, $4);
-                 $$->setLineno(lineno)
+                 $$->setLineno(lineno);
              };
 
 for_stmt : FOR  id ASSIGN  expression  direction  expression  DO stmt{ 
                $$ = new For_stmt_Node($2, $4, $5, $6, $8);
-               $$->setLineno(lineno)
+               $$->setLineno(lineno);
            };
 
 direction : TO {
                 $$ = new Direction_Node(true);
-                $$->setLineno(lineno)
+                $$->setLineno(lineno);
             }
 | DOWNTO{
     $$ = new Direction_Node(false);
-    $$->setLineno(lineno)
+    $$->setLineno(lineno);
 };
 
 case_stmt : CASE expression OF case_expr_list  END{ 
                 $$ = new Case_stmt_Node($2, $4);
-                $$->setLineno(lineno)
+                $$->setLineno(lineno);
             };
 
 case_expr_list : case_expr_list  case_expr{ 
@@ -440,7 +498,7 @@ case_expr : const_value  COLON  stmt  SEMI{
 };
 
 goto_stmt : GOTO  INTEGER{ 
-                $$ = new GoTo_stmt_Node($2);
+                $$ = new Goto_stmt_Node($2);
                 $$->setLineno(lineno);
             };
 
@@ -499,19 +557,19 @@ expr : expr  PLUS  term  {
 };
 
 term : term  MUL  factor{
-           $$ = new Expr_Node($1, Expr_Node::MUL, $3);
+           $$ = new Expr_Node($1, Expr_Node::MUL, new Expr_Node($3));
            $$->setLineno(lineno);
        }
 |  term  DIV  factor{ 
-    $$ = new Expr_Node($1, Expr_Node::DIV, $3);
+    $$ = new Expr_Node($1, Expr_Node::DIV, new Expr_Node($3));
     $$->setLineno(lineno);
 }
 |  term  MOD  factor{ 
-    $$ = new Expr_Node($1, Expr_Node::MOD, $3);
+    $$ = new Expr_Node($1, Expr_Node::MOD, new Expr_Node($3));
     $$->setLineno(lineno);
 }
 |  term  AND factor{
-    $$ = new Expr_Node($1, Expr_Node::AND, $3);
+    $$ = new Expr_Node($1, Expr_Node::AND, new Expr_Node($3));
     $$->setLineno(lineno);
 }
 |  factor {
@@ -520,7 +578,7 @@ term : term  MUL  factor{
 };
 
 factor  : id {
-              $$ = new Factor_const_val_Node($1);
+              $$ = new Factor_id_Node($1);
               $$->setLineno(lineno);
           } 
 |  const_value{
