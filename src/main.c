@@ -17,8 +17,6 @@
  */
 #define NO_CODE FALSE
 
-#include "util.h"
-#include "scan.h"
 #include "pascal.tab.h"
 
 extern FILE* yyin;
@@ -40,6 +38,7 @@ int Error = FALSE;
 
 extern TreeNode * do_parse(void);
 
+extern int yy_flex_debug;
 
 int main( int argc, char * argv[] )
 { TreeNode * syntaxTree;
@@ -60,14 +59,11 @@ int main( int argc, char * argv[] )
   listing = stdout; /* send listing to screen */
   fprintf(listing,"\nTINY COMPILATION: %s\n",pgm);
   //scan begin
+  yy_flex_debug = 1;
   yydebug = 1;
 
   // while (getToken()!=ENDFILE) ; //scan
   syntaxTree = do_parse();
-  if (TraceParse) {
-    fprintf(listing,"\nSyntax tree:\n");
-    // printTree(syntaxTree);
-  }
 
   fclose(source);
   return 0;

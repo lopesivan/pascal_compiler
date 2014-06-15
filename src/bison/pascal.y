@@ -339,7 +339,8 @@ routine_part : routine_part  function_decl {
 |  procedure_decl{
     $$ = new Routine_part_Node((Procedure_decl_Node*)$1);
     $$->setLineno(lineno);
-};
+}
+| {$$ = nullptr;};
 
 function_decl : FUNCTION  id parameters  COLON  simple_type_decl{
                     $$ = new Function_decl_Node($2, $3, $5);

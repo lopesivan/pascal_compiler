@@ -510,7 +510,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  52
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  120
+#define YYNRULES  121
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  242
 
@@ -569,14 +569,14 @@ static const yytype_uint16 yyrline[] =
      224,   229,   230,   231,   233,   238,   243,   247,   252,   257,
      261,   265,   269,   273,   277,   281,   285,   289,   294,   298,
      303,   306,   311,   314,   317,   320,   322,   327,   331,   335,
-     339,   344,   349,   354,   358,   360,   363,   365,   369,   374,
-     379,   384,   389,   394,   397,   399,   402,   407,   408,   409,
-     410,   411,   412,   413,   414,   415,   417,   421,   425,   430,
-     434,   438,   442,   447,   451,   455,   460,   465,   470,   474,
-     479,   484,   487,   491,   495,   500,   514,   518,   522,   526,
-     530,   534,   538,   543,   547,   551,   555,   559,   563,   567,
-     571,   575,   580,   584,   588,   592,   596,   600,   604,   609,
-     613
+     339,   343,   345,   350,   355,   359,   361,   364,   366,   370,
+     375,   380,   385,   390,   395,   398,   400,   403,   408,   409,
+     410,   411,   412,   413,   414,   415,   416,   418,   422,   426,
+     431,   435,   439,   443,   448,   452,   456,   461,   466,   471,
+     475,   480,   485,   488,   492,   496,   501,   515,   519,   523,
+     527,   531,   535,   539,   544,   548,   552,   556,   560,   564,
+     568,   572,   576,   581,   585,   589,   593,   597,   601,   605,
+     610,   614
 };
 #endif
 
@@ -669,30 +669,30 @@ static const yytype_int16 yypact[] =
 static const yytype_uint8 yydefact[] =
 {
        0,     0,     0,     9,     2,     0,     1,     0,     0,     0,
-      17,     4,     0,     8,     3,    64,     5,    61,     0,    43,
-       0,     0,     0,     0,    16,    19,     0,     0,    12,    13,
-      14,    15,     0,     0,     0,    62,     0,    64,     0,     0,
-       0,     0,     0,    79,    69,     0,    66,    67,    68,    70,
-      71,    72,    73,    74,    75,     0,    18,    41,     0,    42,
+      17,     4,     0,     8,     3,    65,     5,    62,     0,    43,
+       0,     0,     0,     0,    16,    19,     0,    51,    12,    13,
+      14,    15,     0,     0,     0,    63,     0,    65,     0,     0,
+       0,     0,     0,    80,    70,     0,    67,    68,    69,    71,
+      72,    73,    74,    75,    76,     0,    18,    41,     0,    42,
       45,     0,     0,     7,    49,    50,    11,     0,     0,     0,
-       0,     0,   112,   113,     0,   102,   106,   111,     0,     0,
-       0,    95,     0,     0,     0,     0,     0,     0,    63,     0,
+       0,     0,   113,   114,     0,   103,   107,   112,     0,     0,
+       0,    96,     0,     0,     0,     0,     0,     0,    64,     0,
        0,     0,     0,    29,    30,    31,    32,    33,    34,     0,
-       0,    22,    23,    21,     0,     0,    44,    54,    54,    47,
-      48,    10,    65,     0,   116,   115,     0,     0,     0,     0,
+       0,    22,    23,    21,     0,     0,    44,    55,    55,    47,
+      48,    10,    66,     0,   117,   116,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,   120,
-       0,    76,     0,     0,    27,     0,     0,     0,     0,     0,
-      20,    40,     0,    56,     0,     0,   114,   118,     0,   100,
-      96,    97,    98,    99,   101,    84,   104,   103,   105,   107,
-     108,   110,   109,    85,    86,     0,     0,     0,     0,    92,
-      81,     0,     0,     0,    80,     0,    25,    26,     0,    35,
-       0,    39,    36,    46,     0,     0,     9,   117,     0,    82,
-      88,    89,     0,     0,     0,    90,    91,    78,     0,   119,
-       0,     0,     0,    37,     0,    53,    51,     0,    83,     0,
-       0,     0,    77,     0,    28,    38,     0,    60,    55,     0,
-       0,    52,     0,    94,    93,    24,    59,     0,     0,    87,
-      57,    58
+       0,     0,     0,     0,     0,     0,     0,     0,     0,   121,
+       0,    77,     0,     0,    27,     0,     0,     0,     0,     0,
+      20,    40,     0,    57,     0,     0,   115,   119,     0,   101,
+      97,    98,    99,   100,   102,    85,   105,   104,   106,   108,
+     109,   111,   110,    86,    87,     0,     0,     0,     0,    93,
+      82,     0,     0,     0,    81,     0,    25,    26,     0,    35,
+       0,    39,    36,    46,     0,     0,     9,   118,     0,    83,
+      89,    90,     0,     0,     0,    91,    92,    79,     0,   120,
+       0,     0,     0,    37,     0,    54,    52,     0,    84,     0,
+       0,     0,    78,     0,    28,    38,     0,    61,    56,     0,
+       0,    53,     0,    95,    94,    24,    60,     0,     0,    88,
+      58,    59
 };
 
   /* YYPGOTO[NTERM-NUM].  */
@@ -845,14 +845,14 @@ static const yytype_uint8 yyr1[] =
       74,    75,    75,    75,    76,    77,    78,    78,    79,    80,
       80,    80,    80,    80,    80,    80,    80,    80,    80,    80,
       81,    81,    82,    82,    83,    83,    84,    85,    85,    85,
-      85,    86,    87,    88,    88,    89,    89,    90,    90,    91,
-      92,    93,    94,    95,    95,    96,    96,    97,    97,    97,
-      97,    97,    97,    97,    97,    97,    98,    98,    98,    99,
-      99,    99,   100,   101,   101,   102,   103,   104,   105,   105,
-     106,   107,   107,   108,   108,   109,   110,   110,   110,   110,
-     110,   110,   110,   111,   111,   111,   111,   112,   112,   112,
-     112,   112,   113,   113,   113,   113,   113,   113,   113,   114,
-     114
+      85,    85,    86,    87,    88,    88,    89,    89,    90,    90,
+      91,    92,    93,    94,    95,    95,    96,    96,    97,    97,
+      97,    97,    97,    97,    97,    97,    97,    98,    98,    98,
+      99,    99,    99,   100,   101,   101,   102,   103,   104,   105,
+     105,   106,   107,   107,   108,   108,   109,   110,   110,   110,
+     110,   110,   110,   110,   111,   111,   111,   111,   112,   112,
+     112,   112,   112,   113,   113,   113,   113,   113,   113,   113,
+     114,   114
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -863,14 +863,14 @@ static const yytype_uint8 yyr2[] =
        4,     1,     1,     1,     6,     3,     2,     1,     4,     1,
        1,     1,     1,     1,     1,     3,     3,     4,     5,     3,
        3,     1,     2,     0,     2,     1,     4,     2,     2,     1,
-       1,     5,     6,     3,     0,     3,     0,     3,     3,     2,
-       1,     1,     3,     3,     0,     3,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     3,     6,     5,     1,
-       4,     4,     5,     2,     0,     4,     4,     8,     1,     1,
-       5,     2,     1,     4,     4,     2,     3,     3,     3,     3,
-       3,     3,     1,     3,     3,     3,     1,     3,     3,     3,
-       3,     1,     1,     1,     3,     2,     2,     4,     3,     3,
-       1
+       1,     0,     5,     6,     3,     0,     3,     0,     3,     3,
+       2,     1,     1,     3,     3,     0,     3,     1,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     3,     6,     5,
+       1,     4,     4,     5,     2,     0,     4,     4,     8,     1,
+       1,     5,     2,     1,     4,     4,     2,     3,     3,     3,
+       3,     3,     3,     1,     3,     3,     3,     1,     3,     3,
+       3,     3,     1,     1,     1,     3,     2,     2,     4,     3,
+       3,     1
 };
 
 
@@ -1966,596 +1966,602 @@ yyreduce:
     break;
 
   case 51:
-#line 344 "bison/pascal.y" /* yacc.c:1646  */
+#line 343 "bison/pascal.y" /* yacc.c:1646  */
+    {(yyval.routine_part_node) = nullptr;}
+#line 1972 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 52:
+#line 345 "bison/pascal.y" /* yacc.c:1646  */
     {
                     (yyval.function_decl_node) = new Function_decl_Node((yyvsp[-3].id_node), (yyvsp[-2].parameters_node), (yyvsp[0].simple_type_decl_node));
                     (yyval.function_decl_node)->setLineno(lineno);
                 }
-#line 1975 "pascal.tab.c" /* yacc.c:1646  */
+#line 1981 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 52:
-#line 349 "bison/pascal.y" /* yacc.c:1646  */
+  case 53:
+#line 350 "bison/pascal.y" /* yacc.c:1646  */
     { 
                     (yyval.procedure_decl_node) = new Procedure_decl_Node((yyvsp[-4].id_node), (yyvsp[-3].parameters_node), (yyvsp[-1].routine_node));
                     (yyval.procedure_decl_node)->setLineno(lineno);
                 }
-#line 1984 "pascal.tab.c" /* yacc.c:1646  */
+#line 1990 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 53:
-#line 354 "bison/pascal.y" /* yacc.c:1646  */
+  case 54:
+#line 355 "bison/pascal.y" /* yacc.c:1646  */
     {
                  (yyval.parameters_node) = new Parameters_Node((yyvsp[-1].para_decl_list_node));
                  (yyval.parameters_node) -> setLineno(lineno);
              }
-#line 1993 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 54:
-#line 358 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.parameters_node) = nullptr;}
 #line 1999 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 360 "bison/pascal.y" /* yacc.c:1646  */
+#line 359 "bison/pascal.y" /* yacc.c:1646  */
+    {(yyval.parameters_node) = nullptr;}
+#line 2005 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 56:
+#line 361 "bison/pascal.y" /* yacc.c:1646  */
     {
                      (yyval.para_decl_list_node) = new Para_decl_list_Node((yyvsp[-2].para_decl_list_node), (yyvsp[0].para_type_list_node));
                      (yyval.para_decl_list_node) -> setLineno(lineno);
                  }
-#line 2008 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 56:
-#line 363 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.para_decl_list_node) = nullptr;}
 #line 2014 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 365 "bison/pascal.y" /* yacc.c:1646  */
+#line 364 "bison/pascal.y" /* yacc.c:1646  */
+    {(yyval.para_decl_list_node) = nullptr;}
+#line 2020 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 58:
+#line 366 "bison/pascal.y" /* yacc.c:1646  */
     { 
                      (yyval.para_type_list_node) = new Para_type_list_Node((Var_para_list_Node *)(yyvsp[-2].var_para_list_node), (yyvsp[0].simple_type_decl_node));
                      (yyval.para_type_list_node)->setLineno(lineno);
                  }
-#line 2023 "pascal.tab.c" /* yacc.c:1646  */
+#line 2029 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 58:
-#line 369 "bison/pascal.y" /* yacc.c:1646  */
+  case 59:
+#line 370 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.para_type_list_node) = new Para_type_list_Node((Val_para_list_Node *)(yyvsp[-2].val_para_list_node), (yyvsp[0].simple_type_decl_node));
     (yyval.para_type_list_node)->setLineno(lineno);
 }
-#line 2032 "pascal.tab.c" /* yacc.c:1646  */
+#line 2038 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 59:
-#line 374 "bison/pascal.y" /* yacc.c:1646  */
+  case 60:
+#line 375 "bison/pascal.y" /* yacc.c:1646  */
     {
                     (yyval.var_para_list_node) = new Var_para_list_Node((yyvsp[0].name_list_node));
                     (yyval.var_para_list_node)->setLineno(lineno);
                 }
-#line 2041 "pascal.tab.c" /* yacc.c:1646  */
+#line 2047 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 60:
-#line 379 "bison/pascal.y" /* yacc.c:1646  */
+  case 61:
+#line 380 "bison/pascal.y" /* yacc.c:1646  */
     {
                     (yyval.val_para_list_node) = new Val_para_list_Node((yyvsp[0].name_list_node));
                     (yyval.val_para_list_node)->setLineno(lineno);
                 }
-#line 2050 "pascal.tab.c" /* yacc.c:1646  */
+#line 2056 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 61:
-#line 384 "bison/pascal.y" /* yacc.c:1646  */
+  case 62:
+#line 385 "bison/pascal.y" /* yacc.c:1646  */
     {
                    (yyval.routine_body_node) = new Routine_body_Node((yyvsp[0].compound_stmt_node));
                    (yyval.routine_body_node)->setLineno(lineno);
                }
-#line 2059 "pascal.tab.c" /* yacc.c:1646  */
+#line 2065 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 62:
-#line 389 "bison/pascal.y" /* yacc.c:1646  */
+  case 63:
+#line 390 "bison/pascal.y" /* yacc.c:1646  */
     {
                     (yyval.compound_stmt_node) = new Compound_stmt_Node((yyvsp[-1].stmt_list_node));
                     (yyval.compound_stmt_node)->setLineno(lineno);
                 }
-#line 2068 "pascal.tab.c" /* yacc.c:1646  */
+#line 2074 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 63:
-#line 394 "bison/pascal.y" /* yacc.c:1646  */
+  case 64:
+#line 395 "bison/pascal.y" /* yacc.c:1646  */
     { 
                 (yyval.stmt_list_node) = new Stmt_list_Node((yyvsp[-2].stmt_list_node), (yyvsp[-1].stmt_node));
                 (yyval.stmt_list_node)->setLineno(lineno);  
             }
-#line 2077 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 64:
-#line 397 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.stmt_list_node) = nullptr;}
 #line 2083 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 399 "bison/pascal.y" /* yacc.c:1646  */
+#line 398 "bison/pascal.y" /* yacc.c:1646  */
+    {(yyval.stmt_list_node) = nullptr;}
+#line 2089 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 66:
+#line 400 "bison/pascal.y" /* yacc.c:1646  */
     { 
            (yyval.stmt_node) = new Stmt_Node((yyvsp[-2].constInt), (yyvsp[0].non_label_stmt_node));
            (yyval.stmt_node)->setLineno(lineno); 
        }
-#line 2092 "pascal.tab.c" /* yacc.c:1646  */
+#line 2098 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 66:
-#line 402 "bison/pascal.y" /* yacc.c:1646  */
+  case 67:
+#line 403 "bison/pascal.y" /* yacc.c:1646  */
     {
            (yyval.stmt_node) = new Stmt_Node((yyvsp[0].non_label_stmt_node));
            (yyval.stmt_node)->setLineno(lineno);
        }
-#line 2101 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 67:
-#line 407 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].assign_stmt_node);}
 #line 2107 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
 #line 408 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].proc_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].assign_stmt_node);}
 #line 2113 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
 #line 409 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].compound_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].proc_stmt_node);}
 #line 2119 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
 #line 410 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].if_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].compound_stmt_node);}
 #line 2125 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
 #line 411 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].repeat_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].if_stmt_node);}
 #line 2131 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
 #line 412 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].while_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].repeat_stmt_node);}
 #line 2137 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
 #line 413 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].for_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].while_stmt_node);}
 #line 2143 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
 #line 414 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].case_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].for_stmt_node);}
 #line 2149 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
 #line 415 "bison/pascal.y" /* yacc.c:1646  */
-    {(yyval.non_label_stmt_node) = (yyvsp[0].goto_stmt_node);}
+    {(yyval.non_label_stmt_node) = (yyvsp[0].case_stmt_node);}
 #line 2155 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 417 "bison/pascal.y" /* yacc.c:1646  */
+#line 416 "bison/pascal.y" /* yacc.c:1646  */
+    {(yyval.non_label_stmt_node) = (yyvsp[0].goto_stmt_node);}
+#line 2161 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 77:
+#line 418 "bison/pascal.y" /* yacc.c:1646  */
     { 
                   (yyval.assign_stmt_node) = new Assign_id_stmt_Node((yyvsp[-2].id_node), (yyvsp[0].expression_node));
                   (yyval.assign_stmt_node)->setLineno(lineno);
               }
-#line 2164 "pascal.tab.c" /* yacc.c:1646  */
+#line 2170 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 77:
-#line 421 "bison/pascal.y" /* yacc.c:1646  */
+  case 78:
+#line 422 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.assign_stmt_node) = new Assign_arr_stmt_Node((yyvsp[-5].id_node), (yyvsp[-3].expression_node), (yyvsp[0].expression_node));
     (yyval.assign_stmt_node)->setLineno(lineno);
 }
-#line 2173 "pascal.tab.c" /* yacc.c:1646  */
+#line 2179 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 78:
-#line 425 "bison/pascal.y" /* yacc.c:1646  */
+  case 79:
+#line 426 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.assign_stmt_node) = new Assign_record_stmt_Node((yyvsp[-4].id_node), (yyvsp[-2].id_node), (yyvsp[0].expression_node));
     (yyval.assign_stmt_node)->setLineno(lineno);
 }
-#line 2182 "pascal.tab.c" /* yacc.c:1646  */
+#line 2188 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 79:
-#line 430 "bison/pascal.y" /* yacc.c:1646  */
+  case 80:
+#line 431 "bison/pascal.y" /* yacc.c:1646  */
     {
                 (yyval.proc_stmt_node) = new Proc_stmt_Node((yyvsp[0].id_node));
                 (yyval.proc_stmt_node)->setLineno(lineno);
             }
-#line 2191 "pascal.tab.c" /* yacc.c:1646  */
+#line 2197 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 80:
-#line 434 "bison/pascal.y" /* yacc.c:1646  */
+  case 81:
+#line 435 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.proc_stmt_node) = new Proc_stmt_Node((yyvsp[-3].id_node), (yyvsp[-1].args_list_node));
     (yyval.proc_stmt_node)->setLineno(lineno);
 }
-#line 2200 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 81:
-#line 438 "bison/pascal.y" /* yacc.c:1646  */
-    {
-    (yyval.proc_stmt_node) = new Read_stmt_Node((yyvsp[-1].factor_node));
-}
-#line 2208 "pascal.tab.c" /* yacc.c:1646  */
+#line 2206 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 442 "bison/pascal.y" /* yacc.c:1646  */
+#line 439 "bison/pascal.y" /* yacc.c:1646  */
+    {
+    (yyval.proc_stmt_node) = new Read_stmt_Node((yyvsp[-1].factor_node));
+}
+#line 2214 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 83:
+#line 443 "bison/pascal.y" /* yacc.c:1646  */
     { 
               (yyval.if_stmt_node) = new If_stmt_Node((yyvsp[-3].expression_node), (yyvsp[-1].stmt_node), (yyvsp[0].else_clause_node));
               (yyval.if_stmt_node)->setLineno(lineno);
           }
-#line 2217 "pascal.tab.c" /* yacc.c:1646  */
+#line 2223 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 83:
-#line 447 "bison/pascal.y" /* yacc.c:1646  */
+  case 84:
+#line 448 "bison/pascal.y" /* yacc.c:1646  */
     {
                   (yyval.else_clause_node) = new Else_clause_Node((yyvsp[0].stmt_node));
                   (yyval.else_clause_node)->setLineno(lineno);
               }
-#line 2226 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 84:
-#line 451 "bison/pascal.y" /* yacc.c:1646  */
-    {
-    (yyval.else_clause_node) = nullptr;
-}
-#line 2234 "pascal.tab.c" /* yacc.c:1646  */
+#line 2232 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 455 "bison/pascal.y" /* yacc.c:1646  */
+#line 452 "bison/pascal.y" /* yacc.c:1646  */
+    {
+    (yyval.else_clause_node) = nullptr;
+}
+#line 2240 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 86:
+#line 456 "bison/pascal.y" /* yacc.c:1646  */
     { 
                   (yyval.repeat_stmt_node) = new Repeat_stmt_Node((yyvsp[-2].stmt_list_node), (yyvsp[0].expression_node));
                   (yyval.repeat_stmt_node)->setLineno(lineno);
               }
-#line 2243 "pascal.tab.c" /* yacc.c:1646  */
+#line 2249 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 86:
-#line 460 "bison/pascal.y" /* yacc.c:1646  */
+  case 87:
+#line 461 "bison/pascal.y" /* yacc.c:1646  */
     {
                  (yyval.while_stmt_node) = new While_stmt_Node((yyvsp[-2].expression_node), (yyvsp[0].stmt_node));
                  (yyval.while_stmt_node)->setLineno(lineno);
              }
-#line 2252 "pascal.tab.c" /* yacc.c:1646  */
+#line 2258 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 87:
-#line 465 "bison/pascal.y" /* yacc.c:1646  */
+  case 88:
+#line 466 "bison/pascal.y" /* yacc.c:1646  */
     { 
                (yyval.for_stmt_node) = new For_stmt_Node((yyvsp[-6].id_node), (yyvsp[-4].expression_node), (yyvsp[-3].direction_node), (yyvsp[-2].expression_node), (yyvsp[0].stmt_node));
                (yyval.for_stmt_node)->setLineno(lineno);
            }
-#line 2261 "pascal.tab.c" /* yacc.c:1646  */
+#line 2267 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 88:
-#line 470 "bison/pascal.y" /* yacc.c:1646  */
+  case 89:
+#line 471 "bison/pascal.y" /* yacc.c:1646  */
     {
                 (yyval.direction_node) = new Direction_Node(true);
                 (yyval.direction_node)->setLineno(lineno);
             }
-#line 2270 "pascal.tab.c" /* yacc.c:1646  */
+#line 2276 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 89:
-#line 474 "bison/pascal.y" /* yacc.c:1646  */
+  case 90:
+#line 475 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.direction_node) = new Direction_Node(false);
     (yyval.direction_node)->setLineno(lineno);
 }
-#line 2279 "pascal.tab.c" /* yacc.c:1646  */
+#line 2285 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 90:
-#line 479 "bison/pascal.y" /* yacc.c:1646  */
+  case 91:
+#line 480 "bison/pascal.y" /* yacc.c:1646  */
     { 
                 (yyval.case_stmt_node) = new Case_stmt_Node((yyvsp[-3].expression_node), (yyvsp[-1].case_expr_list_node));
                 (yyval.case_stmt_node)->setLineno(lineno);
             }
-#line 2288 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 91:
-#line 484 "bison/pascal.y" /* yacc.c:1646  */
-    { 
-                     (yyval.case_expr_list_node) = new Case_expr_list_Node((yyvsp[-1].case_expr_list_node), (yyvsp[0].case_expr_node));
-                 }
-#line 2296 "pascal.tab.c" /* yacc.c:1646  */
+#line 2294 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 487 "bison/pascal.y" /* yacc.c:1646  */
-    {
-    (yyval.case_expr_list_node) = new Case_expr_list_Node((yyvsp[0].case_expr_node));
-}
-#line 2304 "pascal.tab.c" /* yacc.c:1646  */
+#line 485 "bison/pascal.y" /* yacc.c:1646  */
+    { 
+                     (yyval.case_expr_list_node) = new Case_expr_list_Node((yyvsp[-1].case_expr_list_node), (yyvsp[0].case_expr_node));
+                 }
+#line 2302 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 491 "bison/pascal.y" /* yacc.c:1646  */
+#line 488 "bison/pascal.y" /* yacc.c:1646  */
+    {
+    (yyval.case_expr_list_node) = new Case_expr_list_Node((yyvsp[0].case_expr_node));
+}
+#line 2310 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 94:
+#line 492 "bison/pascal.y" /* yacc.c:1646  */
     { 
                 (yyval.case_expr_node) = new Case_const_val_expr_Node((yyvsp[-3].const_value_node), (yyvsp[-1].stmt_node));
                 (yyval.case_expr_node)->setLineno(lineno);
             }
-#line 2313 "pascal.tab.c" /* yacc.c:1646  */
+#line 2319 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 94:
-#line 495 "bison/pascal.y" /* yacc.c:1646  */
+  case 95:
+#line 496 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.case_expr_node) = new Case_id_expr_Node((yyvsp[-3].id_node), (yyvsp[-1].stmt_node));
     (yyval.case_expr_node)->setLineno(lineno);
 }
-#line 2322 "pascal.tab.c" /* yacc.c:1646  */
+#line 2328 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 95:
-#line 500 "bison/pascal.y" /* yacc.c:1646  */
+  case 96:
+#line 501 "bison/pascal.y" /* yacc.c:1646  */
     { 
                 (yyval.goto_stmt_node) = new Goto_stmt_Node((yyvsp[0].constInt));
                 (yyval.goto_stmt_node)->setLineno(lineno);
             }
-#line 2331 "pascal.tab.c" /* yacc.c:1646  */
+#line 2337 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 96:
-#line 514 "bison/pascal.y" /* yacc.c:1646  */
+  case 97:
+#line 515 "bison/pascal.y" /* yacc.c:1646  */
     {
                  (yyval.expression_node) = new Expression_Node((yyvsp[-2].expression_node), Expression_Node::GE, (yyvsp[0].expr_node));
                  (yyval.expression_node)->setLineno(lineno);
              }
-#line 2340 "pascal.tab.c" /* yacc.c:1646  */
+#line 2346 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 97:
-#line 518 "bison/pascal.y" /* yacc.c:1646  */
+  case 98:
+#line 519 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.expression_node) = new Expression_Node((yyvsp[-2].expression_node), Expression_Node::GT, (yyvsp[0].expr_node));
     (yyval.expression_node)->setLineno(lineno);
 }
-#line 2349 "pascal.tab.c" /* yacc.c:1646  */
+#line 2355 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 98:
-#line 522 "bison/pascal.y" /* yacc.c:1646  */
+  case 99:
+#line 523 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.expression_node) = new Expression_Node((yyvsp[-2].expression_node), Expression_Node::LE, (yyvsp[0].expr_node));
     (yyval.expression_node)->setLineno(lineno);
 }
-#line 2358 "pascal.tab.c" /* yacc.c:1646  */
+#line 2364 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 99:
-#line 526 "bison/pascal.y" /* yacc.c:1646  */
+  case 100:
+#line 527 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.expression_node) = new Expression_Node((yyvsp[-2].expression_node), Expression_Node::LT, (yyvsp[0].expr_node));
     (yyval.expression_node)->setLineno(lineno);
 }
-#line 2367 "pascal.tab.c" /* yacc.c:1646  */
+#line 2373 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 100:
-#line 530 "bison/pascal.y" /* yacc.c:1646  */
+  case 101:
+#line 531 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.expression_node) = new Expression_Node((yyvsp[-2].expression_node), Expression_Node::EQ, (yyvsp[0].expr_node));
     (yyval.expression_node)->setLineno(lineno);
 }
-#line 2376 "pascal.tab.c" /* yacc.c:1646  */
+#line 2382 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 101:
-#line 534 "bison/pascal.y" /* yacc.c:1646  */
+  case 102:
+#line 535 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.expression_node) = new Expression_Node((yyvsp[-2].expression_node), Expression_Node::NEQ, (yyvsp[0].expr_node));
     (yyval.expression_node)->setLineno(lineno);
 }
-#line 2385 "pascal.tab.c" /* yacc.c:1646  */
+#line 2391 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 102:
-#line 538 "bison/pascal.y" /* yacc.c:1646  */
+  case 103:
+#line 539 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.expression_node) = new Expression_Node((yyvsp[0].expr_node));
     (yyval.expression_node)->setLineno(lineno);
 }
-#line 2394 "pascal.tab.c" /* yacc.c:1646  */
+#line 2400 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 103:
-#line 543 "bison/pascal.y" /* yacc.c:1646  */
+  case 104:
+#line 544 "bison/pascal.y" /* yacc.c:1646  */
     {
            (yyval.expr_node) = new Expr_Node((yyvsp[-2].expr_node), Expr_Node::ADD, (yyvsp[0].expr_node));
            (yyval.expr_node)->setLineno(lineno);
        }
-#line 2403 "pascal.tab.c" /* yacc.c:1646  */
+#line 2409 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 104:
-#line 547 "bison/pascal.y" /* yacc.c:1646  */
+  case 105:
+#line 548 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.expr_node) = new Expr_Node((yyvsp[-2].expr_node), Expr_Node::SUB, (yyvsp[0].expr_node));
     (yyval.expr_node)->setLineno(lineno);
 }
-#line 2412 "pascal.tab.c" /* yacc.c:1646  */
+#line 2418 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 105:
-#line 551 "bison/pascal.y" /* yacc.c:1646  */
+  case 106:
+#line 552 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.expr_node) = new Expr_Node((yyvsp[-2].expr_node), Expr_Node::OR, (yyvsp[0].expr_node));
     (yyval.expr_node)->setLineno(lineno);
 }
-#line 2421 "pascal.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 106:
-#line 555 "bison/pascal.y" /* yacc.c:1646  */
-    {
-    (yyval.expr_node) = (yyvsp[0].expr_node);
-}
-#line 2429 "pascal.tab.c" /* yacc.c:1646  */
+#line 2427 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 559 "bison/pascal.y" /* yacc.c:1646  */
+#line 556 "bison/pascal.y" /* yacc.c:1646  */
+    {
+    (yyval.expr_node) = (yyvsp[0].expr_node);
+}
+#line 2435 "pascal.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 108:
+#line 560 "bison/pascal.y" /* yacc.c:1646  */
     {
            (yyval.expr_node) = new Expr_Node((yyvsp[-2].expr_node), Expr_Node::MUL, new Expr_Node((yyvsp[0].factor_node)));
            (yyval.expr_node)->setLineno(lineno);
        }
-#line 2438 "pascal.tab.c" /* yacc.c:1646  */
+#line 2444 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 108:
-#line 563 "bison/pascal.y" /* yacc.c:1646  */
+  case 109:
+#line 564 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.expr_node) = new Expr_Node((yyvsp[-2].expr_node), Expr_Node::DIV, new Expr_Node((yyvsp[0].factor_node)));
     (yyval.expr_node)->setLineno(lineno);
 }
-#line 2447 "pascal.tab.c" /* yacc.c:1646  */
+#line 2453 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 109:
-#line 567 "bison/pascal.y" /* yacc.c:1646  */
+  case 110:
+#line 568 "bison/pascal.y" /* yacc.c:1646  */
     { 
     (yyval.expr_node) = new Expr_Node((yyvsp[-2].expr_node), Expr_Node::MOD, new Expr_Node((yyvsp[0].factor_node)));
     (yyval.expr_node)->setLineno(lineno);
 }
-#line 2456 "pascal.tab.c" /* yacc.c:1646  */
+#line 2462 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 110:
-#line 571 "bison/pascal.y" /* yacc.c:1646  */
+  case 111:
+#line 572 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.expr_node) = new Expr_Node((yyvsp[-2].expr_node), Expr_Node::AND, new Expr_Node((yyvsp[0].factor_node)));
     (yyval.expr_node)->setLineno(lineno);
 }
-#line 2465 "pascal.tab.c" /* yacc.c:1646  */
+#line 2471 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 111:
-#line 575 "bison/pascal.y" /* yacc.c:1646  */
+  case 112:
+#line 576 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.expr_node) = new Expr_Node((yyvsp[0].factor_node));
     (yyval.expr_node)->setLineno(lineno);
 }
-#line 2474 "pascal.tab.c" /* yacc.c:1646  */
+#line 2480 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 112:
-#line 580 "bison/pascal.y" /* yacc.c:1646  */
+  case 113:
+#line 581 "bison/pascal.y" /* yacc.c:1646  */
     {
               (yyval.factor_node) = new Factor_id_Node((yyvsp[0].id_node));
               (yyval.factor_node)->setLineno(lineno);
           }
-#line 2483 "pascal.tab.c" /* yacc.c:1646  */
+#line 2489 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 113:
-#line 584 "bison/pascal.y" /* yacc.c:1646  */
+  case 114:
+#line 585 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.factor_node) = (yyvsp[0].const_value_node);
     //const_val is factor
 }
-#line 2492 "pascal.tab.c" /* yacc.c:1646  */
+#line 2498 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 114:
-#line 588 "bison/pascal.y" /* yacc.c:1646  */
+  case 115:
+#line 589 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.factor_node) = (yyvsp[-1].expression_node);
     //expression is factor
 }
-#line 2501 "pascal.tab.c" /* yacc.c:1646  */
+#line 2507 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 115:
-#line 592 "bison/pascal.y" /* yacc.c:1646  */
+  case 116:
+#line 593 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.factor_node) = new Factor_unary_Node(Factor_unary_Node::NOT, (yyvsp[0].factor_node));
     (yyval.factor_node)->setLineno(lineno);
 }
-#line 2510 "pascal.tab.c" /* yacc.c:1646  */
+#line 2516 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 116:
-#line 596 "bison/pascal.y" /* yacc.c:1646  */
+  case 117:
+#line 597 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.factor_node) = new Factor_unary_Node(Factor_unary_Node::MINUS, (yyvsp[0].factor_node));
     (yyval.factor_node)->setLineno(lineno);
 }
-#line 2519 "pascal.tab.c" /* yacc.c:1646  */
+#line 2525 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 117:
-#line 600 "bison/pascal.y" /* yacc.c:1646  */
+  case 118:
+#line 601 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.factor_node) = new Factor_arr_Node((yyvsp[-3].id_node), (yyvsp[-1].expression_node));
     (yyval.factor_node)->setLineno(lineno);
 }
-#line 2528 "pascal.tab.c" /* yacc.c:1646  */
+#line 2534 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 118:
-#line 604 "bison/pascal.y" /* yacc.c:1646  */
+  case 119:
+#line 605 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.factor_node) = new Factor_record_Node((yyvsp[-2].id_node), (yyvsp[0].id_node));
     (yyval.factor_node)->setLineno(lineno);
 }
-#line 2537 "pascal.tab.c" /* yacc.c:1646  */
+#line 2543 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 119:
-#line 609 "bison/pascal.y" /* yacc.c:1646  */
+  case 120:
+#line 610 "bison/pascal.y" /* yacc.c:1646  */
     {
                   (yyval.args_list_node) = new Args_list_Node((yyvsp[-2].args_list_node), (yyvsp[0].expression_node));
                   (yyval.args_list_node)->setLineno(lineno);
               }
-#line 2546 "pascal.tab.c" /* yacc.c:1646  */
+#line 2552 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
-  case 120:
-#line 613 "bison/pascal.y" /* yacc.c:1646  */
+  case 121:
+#line 614 "bison/pascal.y" /* yacc.c:1646  */
     {
     (yyval.args_list_node) = new Args_list_Node((yyvsp[0].expression_node));
     (yyval.args_list_node)->setLineno(lineno);
 }
-#line 2555 "pascal.tab.c" /* yacc.c:1646  */
+#line 2561 "pascal.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2559 "pascal.tab.c" /* yacc.c:1646  */
+#line 2565 "pascal.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2783,7 +2789,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 618 "bison/pascal.y" /* yacc.c:1906  */
+#line 619 "bison/pascal.y" /* yacc.c:1906  */
 
 
 int yyerror(char * message){
