@@ -1,7 +1,8 @@
 program whileprog;
 
-var b: boolean;
-var i: Integer;
+var 
+    b: boolean; 
+    i: Integer;
 
 begin
     i := 0;
@@ -14,8 +15,8 @@ begin
     while b do
     begin
         printboolean(b);
-        b := false
+        b := false;
     end;
 
-    printboolean(b)
+    printboolean(b);
 end.

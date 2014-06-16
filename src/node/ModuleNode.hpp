@@ -65,12 +65,13 @@ private:
 class Function_decl_Node : public TreeNode{
 public:
 	Function_decl_Node(Id_Node* id, 
-		Parameters_Node* paras, Simple_type_decl_Node* ret_type)
-		:id(id), paras(paras), ret_type(ret_type){}
+		Parameters_Node* paras, Simple_type_decl_Node* ret_type, Routine_Node* routine)
+		:id(id), paras(paras), ret_type(ret_type), routine(routine){}
 private:
 	Id_Node* id;
 	Parameters_Node * paras;
 	Simple_type_decl_Node *ret_type;
+	Routine_Node* routine;
 };
 
 /********************* part *********************/

@@ -7,6 +7,7 @@
 #include "pascal.tab.h"
 #include <string.h>
 #include <stdio.h>
+int lineno = 0;
 %}
 %option noyywrap
 %option yylineno
@@ -75,9 +76,35 @@ char        [^\n\t \r]
 "char"      {return TYPECHAR;}
 "string"    {return TYPESTRING;}
 "bool"		{return TYPEBOOL;}
-"false"		{return P_FALSE;}
-"true"		{return P_TRUE;}
-
+"false"		{
+    yylval.constBool = false; 
+    return P_FALSE;
+}
+"true"		{
+    yylval.constBool = true;
+    return P_TRUE;
+}
+\"(\\.|[^\\"])*\" {
+//allow escape but not allow " and single "\"
+    return STRING;
+}
+'(\\.|[^\\'])+' {
+    char ch = yytext[1];
+    if(ch == '\\' && strlen(yytext) > 3){ 
+      switch(yytext[2]){
+        case 'n':
+            ch = '\n'; break;
+        case 'r':
+            ch = '\r'; break;
+        case '\'':
+            ch = '\''; break;
+        case '\"':
+            ch = '\"'; break;
+      }
+    }
+    yylval.constChar = ch; 
+	return CHAR;
+}
 
 [[:digit:]]+        {
   yylval.constInt = atoi(yytext);
@@ -93,23 +120,4 @@ char        [^\n\t \r]
 
 %%
 
-/*
-TokenType getToken(void){
-  static int firstTime = TRUE;
-  TokenType currentToken;
-  if (firstTime)
-  { firstTime = FALSE;
-    lineno++;
-    yyin = source;
-    yyout = listing;
-  }
-  currentToken = yylex();
-  strncpy(tokenString,yytext,MAXTOKENLEN);
-  if (TraceScan) {//print debug info
-    fprintf(listing,"\t%d: ",lineno);
-    printToken(currentToken,tokenString);
-  }
-  return currentToken;
-}
 
-*/

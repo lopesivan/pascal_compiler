@@ -1,15 +1,17 @@
 program forprog;
 
 var ch : char;
-var ch : integer;
 
 procedure test();
 var a : integer;
 begin
-    println()
-end
+    println();
+end;
 
-procedure forme(a : integer, b : boolean, c : char);
+procedure forme(
+    a : integer;
+    b : boolean; 
+    c : char);
 var i, j : integer;
 begin
     j := 0;
@@ -35,4 +37,4 @@ begin
     forme(3, true, ch);
     forme(7, 8, z);
     test(2)
-end
+end.

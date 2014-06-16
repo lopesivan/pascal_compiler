@@ -41,6 +41,13 @@ private:
     char val;
 };
 
+class ConstBool_Node : public Const_value_Node{
+public:
+    ConstBool_Node(bool val): val(val){}
+private:
+    bool val;
+};
+
 class ConstStr_Node : public Const_value_Node{
 public:
     ConstStr_Node(const std::string& val): val(val){}

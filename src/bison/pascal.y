@@ -2,17 +2,18 @@
 #define YYPARSER /* distinguishes Yacc output from other code files */
 
 #include <stdio.h>
+#include <string>
 #include "node/ModuleNode.hpp"
 #include "node/DeclNode.hpp"
 #include "node/ExpNode.hpp"
 #include "node/StmtNode.hpp"
 
 #include "globals.h"
-#include "util.h"
-//static std::string savedName; /* for use in assignments */
 
-static TreeNode * savedTree = nullptr; /* stores syntax tree for later return */
+/* stores syntax tree for later return */
+static TreeNode * savedTree = nullptr;
 
+extern int lineno;
 extern int yylex(void);
 extern int yyerror(char *message);
 extern char* yytext;
@@ -33,7 +34,7 @@ extern char* yytext;
     int     constInt;
     double  constDouble;
     char    constChar;
-
+    bool    constBool;
     Type_part_Node*         type_part_node;
     Type_decl_list_Node*    type_decl_list_node;
     Type_definition_Node*   type_definition_node;
@@ -84,6 +85,8 @@ extern char* yytext;
 %token<constInt>  INTEGER
 %token<constDouble>  REAL
 %token<constChar>  CHAR
+%token<constBool>   P_TRUE;
+%token<constBool>   P_FALSE;
 %token  STRING
 %token PROGRAM DOT SEMI COMMA EQUAL CONST ARRAY TYPE LB RB OF RECORD END COLON LP RP DOTDOT MINUS VAR FUNCTION NOT GE GT LE LT
 %token PLUS MUL DIV AND MOD UNEQUAL OR ASSIGN P_BEGIN IF ELSE THEN REPEAT UNTIL WHILE DO FOR GOTO CASE TO DOWNTO READ
@@ -150,9 +153,10 @@ id : IDENTIFIER{
     $$ = new Id_Node(yytext);
 }
 
-program : program_head  routine  DOT{ 
+program : program_head  routine  DOT{
               $$ = new Program_Node($1, $2);
               $$->setLineno(lineno);
+              savedTree = $$;
           };
 
 program_head  : PROGRAM  id SEMI{
@@ -190,19 +194,27 @@ const_value : INTEGER {
                   /* const_value can be ConstInt_Node or else
                      but all is Const_value_Node
                    */
-                  $$ = new ConstInt_Node(atoi(yytext));
+                  $$ = new ConstInt_Node($1);
                   $$->setLineno(lineno);
               }
 |  REAL{ 
-    $$ = new ConstDouble_Node(atof(yytext));
+    $$ = new ConstDouble_Node($1);
     $$->setLineno(lineno);
 } 
 |  CHAR{
-    $$ = new ConstChar_Node(yytext[0]);
+    $$ = new ConstChar_Node($1);
     $$->setLineno(lineno);
 }
 |  STRING{
-    $$ = new ConstStr_Node(yytext);
+    $$ = new ConstStr_Node(std::string(yytext[1], strlen(yytext) - 2));
+    //strip ""
+    $$->setLineno(lineno);
+}
+|   P_TRUE{
+    $$ = new ConstBool_Node($1);
+    $$->setLineno(lineno);
+} | P_FALSE{
+    $$ = new ConstBool_Node($1);
     $$->setLineno(lineno);
 };
 
@@ -342,8 +354,8 @@ routine_part : routine_part  function_decl {
 }
 | {$$ = nullptr;};
 
-function_decl : FUNCTION  id parameters  COLON  simple_type_decl{
-                    $$ = new Function_decl_Node($2, $3, $5);
+function_decl : FUNCTION  id parameters  COLON  simple_type_decl SEMI routine SEMI{
+                    $$ = new Function_decl_Node($2, $3, $5, $7);
                     $$->setLineno(lineno);
                 };
 
@@ -428,7 +440,7 @@ assign_stmt : id ASSIGN  expression{
     $$->setLineno(lineno);
 };
 
-proc_stmt : id {
+proc_stmt : id LP RP{
                 $$ = new Proc_stmt_Node($1);
                 $$->setLineno(lineno);
             }
@@ -619,11 +631,8 @@ args_list  :  args_list  COMMA  expression {
 %%
 
 int yyerror(char * message){
-    fprintf(listing, "yyerror in pascal.y called\n");
-    fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
-    fprintf(listing,"Current token: ");
-    printToken(yychar,yytext);
-    Error = TRUE;
+    puts("yyerror in pascal.y called");
+    printf("Syntax error at line %d: %s\n",lineno,message);
     return 0;
 }
 
