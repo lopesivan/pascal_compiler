@@ -6,10 +6,10 @@ Procedure myproc ();
 var b : boolean;
 Begin
   b := false;
-  x := 3
+  x := 3;
 End;
 
 Begin
     x := 70 * 5;
-    println()
+    println();
 End.

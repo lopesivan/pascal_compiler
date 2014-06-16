@@ -10,7 +10,7 @@ begin
     t := i;
     printint(t);
     test := 7;
-    println()
+    println();
 end;
 
 Begin
@@ -19,7 +19,7 @@ Begin
     printint(a);
     println();
 
-    a := test(13);
+    {a := test(13);}
 
-    println()
+    println();
 End.

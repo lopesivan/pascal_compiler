@@ -1,28 +1,27 @@
 program sample2;
 
 var b: boolean;
-var c: char;
-var i, j: Integer;
+    c: char;
+    i, j: Integer;
 
 Procedure myproc ();
 var mp : boolean;
 Begin
   b := false;
-  mp := not b;
-  {
+  mp := not b;{
   printint(i);
   printchar(c);
-  }
+}
   printbool(mp);
-  println()
+  println();
 End;
 
-function myfunc (a : integer, b : integer) : integer;
+function myfunc (a : integer; b : integer) : integer;
 var mf1, mf2 : boolean;
-var mf3 : boolean;
+    mf3 : boolean;
 Begin
     mf1 := true;
-    myfunc := a + b
+    myfunc := a + b;
 End;
 
 Begin
@@ -50,9 +49,9 @@ Begin
     }
 
     myproc();
-    j := myfunc(false, i);
+   { j := myfunc(false, i);}
     printint(j);
 
     i := 70 + 80 * 5 + 3;
-    i := 1 * 2 + 3 * 4
+    i := 1 * 2 + 3 * 4;
 End.

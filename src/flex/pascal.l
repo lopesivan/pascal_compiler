@@ -135,7 +135,7 @@ char        [^\n\t \r]
   yylval.constDouble = atof(yytext);
   return REAL;
 }
-[[:alpha:]][[:alnum:]]*  {
+[[:alpha:]_][[:alnum:]_]*  {
   return IDENTIFIER;
 }
 

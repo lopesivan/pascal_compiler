@@ -1,7 +1,7 @@
 program simple1;
 
 var a, b, c : integer;
-var n : boolean;
+    n : boolean;
 
 FunCtion func2 () : Boolean;
 Begin

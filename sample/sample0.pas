@@ -7,7 +7,7 @@ Var x : Integer;
 FunCtion myfunc (i : integer; b : boolean) : integer;
 Begin
     {x := i + myfunc;}
-    myfunc := i * 539
+    myfunc := i * 539;
     {x := 300 + (3 + 2) * 7;
     i := 3;
     x := i * 5;
@@ -27,20 +27,20 @@ End;
 
 function getchar() : char;
 begin
-    getchar := 'Z'
+    getchar := 'Z';
 end;
 
 function getbool() : boolean;
 begin
-    getbool := true
+    getbool := true;
 end;
 
 Procedure myproc (i : integer);
 {var ck, n : integer;
 var m : boolean;}
 var itsatrap : integer;
-var myhumps : integer;
-var myfunc : integer;
+    myhumps : integer;
+    myfunc : integer;
 Begin
     i := 4;
     myfunc := 3;
@@ -51,13 +51,13 @@ Begin
     itsatrap := myfunc;
     myfunc := myfunc + 111;
     itsatrap := itsatrap + 1;
-    itsatrap := myfunc(5, true);
+    {itsatrap := myfunc(5, true);}
     printbool(false);
     printchar('W');
     printchar('\n');
     printint(itsatrap);
     println();
-    itsatrap := myfunc(3, true);
+    {itsatrap := myfunc(3, true);}
 
     {ck := 5;
     ck := i * 2 + 3;
@@ -75,7 +75,7 @@ Begin
     x := 5 + 5;
     println();
     printint(i)}
-    println()
+    println();
 End;
 
 {FunCtion otherfunc (fint : Integer, fchar: Char) : Integer;
@@ -94,9 +94,9 @@ Begin
     printint(x + 3 * 5 + 2);
     println();
     myproc(7);
-    x := 3 + myfunc(5, true);
+    {x := 3 + myfunc(5, true);}
     printint(x);
-    x := 5 + myfunc(2, false);
+    {x := 5 + myfunc(2, false);}
     printint(x);
     {k := 30;
     {x := myfunc(65);
@@ -108,17 +108,17 @@ Begin
     println();
     printint(x);}
 
-    printint(myfunc(10, true));
+    {printint(myfunc(10, true));}
 
-    c := getchar();
+    {c := getchar();}
     printchar(c);
-    printchar(getchar());
+    {printchar(getchar());}
 
-    b := getbool();
+    {b := getbool();}
     printbool(b);
-    printbool(getbool());
+    {printbool(getbool());}
     printbool(true);
 
-    println()
+    println();
 End.
 
