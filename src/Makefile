@@ -8,13 +8,13 @@ all:	pascal
 pascal:	$(objects)
 	$(CC) $(CFLAGS) $(objects) -o pascal
 
-main.o: main.c pascal.tab.h
+main.o: main.c pascal.tab.h globals.h $(AST_header)
 	$(CC) $(CFLAGS) -c main.c -o main.o
 
 scan.c: flex/pascal.l pascal.tab.h
 	flex -o scan.c --case-insensitive flex/pascal.l
 
-parse.o: pascal.tab.c
+parse.o: pascal.tab.c globals.h $(AST_header)
 	$(CC) $(CFLAGS) -c pascal.tab.c -o parse.o 
 
 pascal.tab.c pascal.tab.h: bison/pascal.y

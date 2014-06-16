@@ -1,11 +1,13 @@
 program ifprog;
 
-Var i, k: integer;
-var bar : Boolean;
+Var 
+    i, k: integer;
+    bar : Boolean;
 
 procedure test ();
-var j : integer;
-var foo : boolean;
+var 
+    j : integer;
+    foo : boolean;
 begin
     i := 10;
     j := 3;
@@ -43,7 +45,7 @@ begin
     foo := 5 >= 6;
     foo := 7 <= 8;
     foo := j = i;
-    foo := j <> i
+    foo := j <> i;
 end;
 
 begin
@@ -54,14 +56,14 @@ begin
     begin
         printchar('t');
         if bar then
-            printchar ('B')
+            printchar ('B');
     end;
 
     if i > 3 * 6 then
     begin
         printchar('1');
         if false then
-            printchar('1')
+            printchar('1');
     end
     else
         printchar('2');
@@ -76,5 +78,5 @@ begin
     if bar then
         printchar('b');
 
-    println()
+    println();
 end.

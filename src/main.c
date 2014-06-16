@@ -1,3 +1,5 @@
+#define SCAN_DEBUG
+#define PARSE_DEBUG
 
 #include "globals.h"
 #include "pascal.tab.h"
@@ -30,9 +32,13 @@ int main( int argc, char * argv[] ){
   fprintf(listing,"\nPASCAL COMPILATION: %s\n",pgm);
   
   //scan begin
+#ifdef SCAN_DEBUG
   yy_flex_debug = 1;
-  yydebug = 1;
+#endif
 
+#ifdef PARSE_DEBUG
+  yydebug = 1;
+#endif
   
   syntaxTree = do_parse();
 

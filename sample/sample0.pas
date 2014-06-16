@@ -1,10 +1,10 @@
 program sample0;
 
 Var x : Integer;
-var b: Boolean;
-var c: char;
+    b: Boolean;
+    c: char;
 
-FunCtion myfunc (i : integer, b : boolean) : integer;
+FunCtion myfunc (i : integer; b : boolean) : integer;
 Begin
     {x := i + myfunc;}
     myfunc := i * 539

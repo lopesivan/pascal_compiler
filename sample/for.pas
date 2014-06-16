@@ -20,11 +20,7 @@ begin
     z := 3;
 
     for i := 0 to a do
-    begin
         j := j * 5 + 1;
-        printint(j);
-        println()
-    end
 end;
 
 begin
@@ -36,5 +32,5 @@ begin
     forme(111, 222);
     forme(3, true, ch);
     forme(7, 8, z);
-    test(2)
+    test(2);
 end.

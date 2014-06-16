@@ -7,6 +7,8 @@
 #include <string.h>
 #include <stdio.h>
 int lineno = 0;
+extern YYSTYPE yylval;
+extern void yyerror(char const *s);
 %}
 %option noyywrap
 %option yylineno
@@ -83,10 +85,30 @@ char        [^\n\t \r]
     yylval.constBool = true;
     return P_TRUE;
 }
+
+"(*"|"{" {
+    int c;
+    while ((c = yyinput()) != '\0'){
+        if (c == '}')
+            break;
+        else if (c == '*'){
+            if ((c = yyinput()) == ')')
+                break;
+            else
+                unput (c);
+        }
+        else if (c == '\n')
+            ++lineno;
+        else if (c == '\0')
+            yyerror("unexpected EOF inside comment");
+     }
+}
+
 \"(\\.|[^\\"])*\" {
 //allow escape but not allow " and single "\"
     return STRING;
 }
+
 '(\\.|[^\\'])+' {
     char ch = yytext[1];
     if(ch == '\\' && strlen(yytext) > 3){ 

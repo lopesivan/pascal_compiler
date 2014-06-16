@@ -39,6 +39,8 @@ class Para_decl_list_Node : public TreeNode{
 public:
 	Para_decl_list_Node(Para_decl_list_Node *prev, Para_type_list_Node *type)
 		:prev(prev), type(type){}
+	explicit Para_decl_list_Node(Para_type_list_Node *type)
+		:prev(nullptr), type(type){}
 private:
 	Para_decl_list_Node * prev;
 	Para_type_list_Node * type;

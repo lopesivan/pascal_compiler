@@ -13,11 +13,13 @@
 static TreeNode * savedTree = nullptr;
 
 extern int lineno;
+extern int yylineno;
 extern int yylex(void);
-extern int yyerror(char *message);
+extern void yyerror(const char *message);
 extern char* yytext;
 %}
 %debug
+%define parse.error verbose
 
 %union {
     TreeNode* tree_node;
@@ -367,19 +369,24 @@ parameters : LP  para_decl_list  RP {
                  $$ = new Parameters_Node($2);
                  $$ -> setLineno(lineno);
              }
-| {$$ = nullptr;};
+| {$$ = nullptr;}
+| LP RP{$$ = nullptr;};
 
 para_decl_list : para_decl_list  SEMI  para_type_list{
                      $$ = new Para_decl_list_Node($1, $3);
-                     $$ -> setLineno(lineno);
-                 } | {$$ = nullptr;};
+                     $$->setLineno(lineno);
+                 }
+| para_type_list{
+    $$ = new Para_decl_list_Node($1);
+    $$->setLineno(lineno);
+}; 
 
 para_type_list : var_para_list COLON  simple_type_decl{ 
-                     $$ = new Para_type_list_Node((Var_para_list_Node *)$1, $3);
+                     $$ = new Para_type_list_Node($1, $3);
                      $$->setLineno(lineno);
-                 } 
+                } 
 | val_para_list  COLON  simple_type_decl{ 
-    $$ = new Para_type_list_Node((Val_para_list_Node *)$1, $3);
+    $$ = new Para_type_list_Node($1, $3);
     $$->setLineno(lineno);
 }; 
 
@@ -629,10 +636,8 @@ args_list  :  args_list  COMMA  expression {
 
 %%
 
-int yyerror(char * message){
-    puts("yyerror in pascal.y called");
-    printf("Syntax error at line %d: %s\n",lineno,message);
-    return 0;
+void yyerror(char const *s){
+       fprintf (stderr, "%s at %d\n", s, yylineno);
 }
 
 TreeNode * do_parse(void){
