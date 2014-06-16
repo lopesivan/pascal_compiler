@@ -1,14 +1,13 @@
 %{
 #define YYPARSER /* distinguishes Yacc output from other code files */
 
-#include <stdio.h>
+#include <cstdio>
 #include <string>
+#include <cstring>
 #include "node/ModuleNode.hpp"
 #include "node/DeclNode.hpp"
 #include "node/ExpNode.hpp"
 #include "node/StmtNode.hpp"
-
-#include "globals.h"
 
 /* stores syntax tree for later return */
 static TreeNode * savedTree = nullptr;

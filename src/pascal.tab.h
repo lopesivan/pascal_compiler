@@ -113,7 +113,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 23 "bison/pascal.y" /* yacc.c:1909  */
+#line 22 "bison/pascal.y" /* yacc.c:1909  */
 
     TreeNode* tree_node;
     Id_Node*  id_node;

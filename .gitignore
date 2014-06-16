@@ -1,5 +1,5 @@
 *.o
 *.un~
 pascal
-*.tab.*
+pascal.tab.*
 scan.c
