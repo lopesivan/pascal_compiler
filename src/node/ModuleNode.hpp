@@ -159,6 +159,8 @@ public:
 	Program_Node(Program_head_Node *head, Routine_Node* routine)
 		:head(head), routine(routine){
 	}
+
+	
 private:
 	Program_head_Node *head;
 	Routine_Node *routine;

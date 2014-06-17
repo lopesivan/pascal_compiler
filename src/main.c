@@ -1,5 +1,5 @@
-#define SCAN_DEBUG
-#define PARSE_DEBUG
+//#define SCAN_DEBUG
+//#define PARSE_DEBUG
 
 #include "globals.h"
 #include "pascal.tab.h"
@@ -13,7 +13,6 @@ extern TreeNode * do_parse(void);
 extern int yy_flex_debug;
 
 int main( int argc, char * argv[] ){
-  TreeNode * syntaxTree;
   char pgm[120]; /* source code file name */
   if (argc != 2){ 
     fprintf(stderr,"usage: %s <filename>\n",argv[0]);
@@ -40,7 +39,7 @@ int main( int argc, char * argv[] ){
   yydebug = 1;
 #endif
   
-  syntaxTree = do_parse();
+  auto syntaxTree = dynamic_cast<Program_Node*>(do_parse());
 
   fclose(source);
   return 0;

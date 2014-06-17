@@ -6,6 +6,7 @@ Var c, d: Integer;
 
 
 Begin
-   d := 5;
+   i := getint();
+   i := foo(1);
    c := pi * d;
 End.

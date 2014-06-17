@@ -432,7 +432,8 @@ non_label_stmt : assign_stmt{$$ = $1;}
 | for_stmt {$$ = $1;}
 | case_stmt  {$$ = $1;}
 | goto_stmt  {$$ = $1;}
-;
+| error {$$ = nullptr;};
+
 assign_stmt : id ASSIGN  expression{ 
                   $$ = new Assign_id_stmt_Node($1, $3);
                   $$->setLineno(lineno);
@@ -557,6 +558,9 @@ expression : expression  GE  expr{
 |  expr {
     $$ = new Expression_Node($1);
     $$->setLineno(lineno);
+}
+| error {
+    $$ = nullptr;
 };
 
 expr : expr  PLUS  term  {
@@ -572,7 +576,10 @@ expr : expr  PLUS  term  {
     $$->setLineno(lineno);
 }
 | term {
-    $$ = $1;
+  $$ = $1;
+}
+| error{
+  $$ = nullptr;
 };
 
 term : term  MUL  factor{
@@ -594,6 +601,9 @@ term : term  MUL  factor{
 |  factor {
     $$ = new Expr_Node($1);
     $$->setLineno(lineno);
+}
+| error{
+    $$ = nullptr;
 };
 
 factor  : id {
@@ -623,8 +633,18 @@ factor  : id {
 |  id DOT  id{
     $$ = new Factor_record_Node($1, $3);
     $$->setLineno(lineno);
-};
+}
+|   id LP args_list RP{
+    $$ = new Func_call_Node($1, $3);
+    $$->setLineno(lineno);
+}
+|   id LP RP{
+    $$ = new Func_call_Node($1);
+    $$->setLineno(lineno);
+}
+| error{$$ = nullptr;};
 
+/*args_list is not null*/
 args_list  :  args_list  COMMA  expression {
                   $$ = new Args_list_Node($1, $3);
                   $$->setLineno(lineno);

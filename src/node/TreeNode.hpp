@@ -9,6 +9,8 @@
 
 class TreeNode{
 public:
+    virtual ~TreeNode(){}
+public:
     int getLineno() const{
         return lineno;
     }

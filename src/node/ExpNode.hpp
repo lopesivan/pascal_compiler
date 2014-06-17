@@ -73,6 +73,17 @@ private:
     Factor_Node *factor;
 };
 
+class Args_list_Node;
+class Func_call_Node : public Factor_Node{
+    //function call (not procedure)
+public:
+    Func_call_Node(Id_Node* id, Args_list_Node* args): id(id), args(args){}
+    explicit Func_call_Node(Id_Node* id): id(id), args(nullptr){}
+private:
+    Id_Node* id;
+    Args_list_Node* args;
+};
+
 class Expression_Node;
 class Factor_arr_Node : public Factor_Node{
 public:
