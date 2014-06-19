@@ -3,10 +3,27 @@
 
 #include "TreeNode.hpp"
 
+class Type_part_Node; // Type_decl_list_Node;
+class Type_decl_Node;
+class Array_type_decl_Node; // Simple_type_decl_Node, Type_decl_Node
+
+class Field_decl_Node; // Name_list_Node, Type_decl_Node
+class Field_decl_list_Node; // Field_decl_list_Node, Field_decl_Node
+class Record_type_decl_Node; // Field_decl_list_Node
+
+class Simple_type_decl_Node;
+class System_type_decl_Node;
+class Alias_type_decl_Node; // Id_Node
+class Enum_type_decl_Node; // Name_list_Node
+class Subrange_type_decl_Node;
+class Subrange_const_value_type_decl_Node;
+class Subrange_id_type_decl_Node;
+
 class Type_part_Node : public TreeNode{
 public:
 	explicit Type_part_Node(Type_decl_list_Node *list)
 		:list(list){}
+    void genCode();
 private:
 	Type_decl_list_Node * list;
 };
@@ -16,11 +33,11 @@ protected:
 	Type_decl_Node(){}
 };
 
-class Simple_type_decl_Node;
 class Array_type_decl_Node : public Type_decl_Node{
 public:
 	Array_type_decl_Node(Simple_type_decl_Node *range, Type_decl_Node *type)
 		:range(range), type(type){}
+    void genCode();
 public:
 	Simple_type_decl_Node * range;
 	Type_decl_Node * type;
@@ -30,6 +47,7 @@ class Field_decl_Node : public TreeNode{ //for record type
 public:
 	Field_decl_Node(Name_list_Node *name_list, Type_decl_Node *type)
 		:name_list(name_list), type(type){}
+    void genCode();
 private:
 	Name_list_Node *name_list;
 	Type_decl_Node *type;
@@ -42,6 +60,7 @@ public:
 
 	explicit Field_decl_list_Node(Field_decl_Node *decl)
 		:decl(decl){}
+    void genCode();
 private:
 	Field_decl_list_Node *prev = nullptr;
 	Field_decl_Node *decl;
@@ -51,6 +70,7 @@ class Record_type_decl_Node : public Type_decl_Node{
 public:
 	explicit Record_type_decl_Node(Field_decl_list_Node* list)
         :list(list){}
+    void genCode();
 private:
 	Field_decl_list_Node *list;
 };
@@ -69,6 +89,7 @@ public:
 	Type getType() const{ 
         return type;
     }
+    void genCode();
 private:
 	Type type;
 };
@@ -76,6 +97,7 @@ private:
 class Alias_type_decl_Node : public Simple_type_decl_Node{
 public:
 	explicit Alias_type_decl_Node(Id_Node* id):id(id){}
+    void genCode();
 private:
 	Id_Node *id;
 };
@@ -84,6 +106,7 @@ class Enum_type_decl_Node : public Simple_type_decl_Node{
 public:
 	explicit Enum_type_decl_Node(Name_list_Node *name_list)
 		:name_list(name_list){}
+    void genCode();
 private:
 	Name_list_Node *name_list;
 };
@@ -99,6 +122,7 @@ public:
 	Subrange_const_value_type_decl_Node(bool lowerNeg, Const_value_Node *low, 
 		bool upperNeg, Const_value_Node *high)
 		:lowerBound(low), upperBound(high), isLowerNeg(lowerNeg), isUpperNeg(upperNeg){}
+    void genCode();
 private:
 	Const_value_Node *lowerBound;
 	Const_value_Node *upperBound;
@@ -111,6 +135,7 @@ class Subrange_id_type_decl_Node : public Subrange_type_decl_Node
 public:
 	Subrange_id_type_decl_Node(Id_Node* lower, Id_Node* upper)
 		:lower(lower), upper(upper){}
+    void genCode();
 private:
 	Id_Node* lower;
 	Id_Node* upper;
