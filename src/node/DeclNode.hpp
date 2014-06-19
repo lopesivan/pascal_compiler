@@ -2,11 +2,14 @@
 #define _DECLNODE_
 
 #include "TreeNode.hpp"
+#include "../symtab/symboltable.h"
 
 class Type_part_Node : public TreeNode{
 public:
 	explicit Type_part_Node(Type_decl_list_Node *list)
 		:list(list){}
+	std::string build_symbol_table(std::string type = "");
+	
 private:
 	Type_decl_list_Node * list;
 };

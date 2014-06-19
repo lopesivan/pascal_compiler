@@ -1,7 +1,9 @@
 CFLAGS = -std=c++0x
 CC = g++
-objects = main.o scan.o parse.o
+objects = main.o scan.o parse.o symtab_build.o
 AST_header = node/*.hpp
+AST_source = symtab/symtab_build.cpp
+
 
 all:	pascal
 
@@ -10,6 +12,9 @@ pascal:	$(objects)
 
 main.o: main.c pascal.tab.h globals.h $(AST_header)
 	$(CC) $(CFLAGS) -c main.c -o main.o
+
+symtab_build.o: symtab/symtab_build.cpp symtab/symboltable.h $(AST_header)
+	$(CC) $(CFLAGS) -c symtab/symtab_build.cpp -o symtab_build.o
 
 scan.c: flex/pascal.l pascal.tab.h
 	flex -o scan.c --case-insensitive flex/pascal.l

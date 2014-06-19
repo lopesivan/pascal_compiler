@@ -1,19 +1,19 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 2.7.  */
 
 /* Bison interface for Yacc-like parsers in C
-
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
-
+   
+      Copyright (C) 1984, 1989-1990, 2000-2012 Free Software Foundation, Inc.
+   
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
+   
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
+   
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
@@ -26,13 +26,13 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-
+   
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
 #ifndef YY_YY_PASCAL_TAB_H_INCLUDED
 # define YY_YY_PASCAL_TAB_H_INCLUDED
-/* Debug traces.  */
+/* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
 #endif
@@ -40,80 +40,81 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Tokens.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
-  {
-    IDENTIFIER = 258,
-    INTEGER = 259,
-    REAL = 260,
-    CHAR = 261,
-    P_TRUE = 262,
-    P_FALSE = 263,
-    STRING = 264,
-    PROGRAM = 265,
-    DOT = 266,
-    SEMI = 267,
-    COMMA = 268,
-    EQUAL = 269,
-    CONST = 270,
-    ARRAY = 271,
-    TYPE = 272,
-    LB = 273,
-    RB = 274,
-    OF = 275,
-    RECORD = 276,
-    END = 277,
-    COLON = 278,
-    LP = 279,
-    RP = 280,
-    DOTDOT = 281,
-    MINUS = 282,
-    VAR = 283,
-    FUNCTION = 284,
-    NOT = 285,
-    GE = 286,
-    GT = 287,
-    LE = 288,
-    LT = 289,
-    PLUS = 290,
-    MUL = 291,
-    DIV = 292,
-    AND = 293,
-    MOD = 294,
-    UNEQUAL = 295,
-    OR = 296,
-    ASSIGN = 297,
-    P_BEGIN = 298,
-    IF = 299,
-    ELSE = 300,
-    THEN = 301,
-    REPEAT = 302,
-    UNTIL = 303,
-    WHILE = 304,
-    DO = 305,
-    FOR = 306,
-    GOTO = 307,
-    CASE = 308,
-    TO = 309,
-    DOWNTO = 310,
-    READ = 311,
-    TYPEINTEGER = 312,
-    TYPEREAL = 313,
-    TYPECHAR = 314,
-    TYPESTRING = 315,
-    TYPEBOOL = 316,
-    PROCEDURE = 317
-  };
+   /* Put the tokens into the symbol table, so that GDB and other debuggers
+      know about them.  */
+   enum yytokentype {
+     IDENTIFIER = 258,
+     INTEGER = 259,
+     REAL = 260,
+     CHAR = 261,
+     P_TRUE = 262,
+     P_FALSE = 263,
+     STRING = 264,
+     PROGRAM = 265,
+     DOT = 266,
+     SEMI = 267,
+     COMMA = 268,
+     EQUAL = 269,
+     CONST = 270,
+     ARRAY = 271,
+     TYPE = 272,
+     LB = 273,
+     RB = 274,
+     OF = 275,
+     RECORD = 276,
+     END = 277,
+     COLON = 278,
+     LP = 279,
+     RP = 280,
+     DOTDOT = 281,
+     MINUS = 282,
+     VAR = 283,
+     FUNCTION = 284,
+     NOT = 285,
+     GE = 286,
+     GT = 287,
+     LE = 288,
+     LT = 289,
+     PLUS = 290,
+     MUL = 291,
+     DIV = 292,
+     AND = 293,
+     MOD = 294,
+     UNEQUAL = 295,
+     OR = 296,
+     ASSIGN = 297,
+     P_BEGIN = 298,
+     IF = 299,
+     ELSE = 300,
+     THEN = 301,
+     REPEAT = 302,
+     UNTIL = 303,
+     WHILE = 304,
+     DO = 305,
+     FOR = 306,
+     GOTO = 307,
+     CASE = 308,
+     TO = 309,
+     DOWNTO = 310,
+     READ = 311,
+     TYPEINTEGER = 312,
+     TYPEREAL = 313,
+     TYPECHAR = 314,
+     TYPESTRING = 315,
+     TYPEBOOL = 316,
+     PROCEDURE = 317
+   };
 #endif
 
-/* Value type.  */
+
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
-union YYSTYPE
+typedef union YYSTYPE
 {
-#line 24 "bison/pascal.y" /* yacc.c:1909  */
+/* Line 2058 of yacc.c  */
+#line 24 "bison/pascal.y"
 
     TreeNode* tree_node;
     Id_Node*  id_node;
@@ -174,15 +175,29 @@ union YYSTYPE
     Args_list_Node*         args_list_node;
 
 
-#line 178 "pascal.tab.h" /* yacc.c:1909  */
-};
+
+/* Line 2058 of yacc.c  */
+#line 181 "pascal.tab.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
+# define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-
 extern YYSTYPE yylval;
 
+#ifdef YYPARSE_PARAM
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void *YYPARSE_PARAM);
+#else
+int yyparse ();
+#endif
+#else /* ! YYPARSE_PARAM */
+#if defined __STDC__ || defined __cplusplus
 int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
 
 #endif /* !YY_YY_PASCAL_TAB_H_INCLUDED  */

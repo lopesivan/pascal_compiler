@@ -2,10 +2,12 @@
 #define _EXPNODE_H_
 
 #include "TreeNode.hpp"
+#include "../symtab/symboltable.h"
 
 class Id_Node : public TreeNode{
 public:
 	Id_Node(const std::string& name) : name(name){}
+    std::string get_name() { return this->name; }
 private:
 	std::string name;
 };

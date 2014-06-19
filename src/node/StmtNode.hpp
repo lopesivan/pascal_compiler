@@ -3,6 +3,8 @@
 
 #include "TreeNode.hpp"
 #include "ExpNode.hpp"
+#include "../symtab/symboltable.h"
+
 class Non_label_stmt_Node : public TreeNode{
 protected:
     Non_label_stmt_Node(){}
@@ -14,6 +16,10 @@ public:
         :label(label), hasLabel(true), stmt(stmt){}
     Stmt_Node(Non_label_stmt_Node * stmt)
         :label(0), hasLabel(false), stmt(stmt){}
+
+    bool get_hasLable() {return this->hasLabel;}
+    std::string build_symbol_table(std::string type = "");
+    
 private:
     unsigned label;
     bool hasLabel;
@@ -92,6 +98,8 @@ class Stmt_list_Node;
 class Compound_stmt_Node : public Non_label_stmt_Node{
 public:
     Compound_stmt_Node(Stmt_list_Node* stmts):stmts(stmts){}
+    std::string build_symbol_table(std::string type = "");
+
 private:
     Stmt_list_Node* stmts;
 };
@@ -206,6 +214,8 @@ public:
     Stmt_list_Node(Stmt_list_Node * prev, Stmt_Node * stmt)
         :prev(prev), stmt(stmt){}
     Stmt_list_Node(Stmt_Node * stmt):prev(nullptr), stmt(stmt){}
+    std::string build_symbol_table(std::string type = "");
+
 private:
     Stmt_list_Node * prev;
     Stmt_Node * stmt;

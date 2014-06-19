@@ -9,6 +9,8 @@ extern FILE* yyin;
 FILE * source;  //input source code
 FILE * listing = stdout; //used to output debug info
 
+symboltable* st = new symboltable();//external symboltable operator
+
 extern TreeNode * do_parse(void);
 extern int yy_flex_debug;
 
@@ -40,6 +42,7 @@ int main( int argc, char * argv[] ){
 #endif
   
   auto syntaxTree = dynamic_cast<Program_Node*>(do_parse());
+  syntaxTree->build_symbol_table("");
 
   fclose(source);
   return 0;
