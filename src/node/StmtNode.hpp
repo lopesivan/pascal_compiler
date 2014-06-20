@@ -6,6 +6,8 @@
 #include "../symtab/symboltable.h"
 
 class Non_label_stmt_Node : public TreeNode{
+public:
+    virtual std::string build_symbol_table(std::string type){ return "";}
 protected:
     Non_label_stmt_Node(){}
 };
@@ -19,7 +21,7 @@ public:
 
     bool get_hasLable() {return this->hasLabel;}
     std::string build_symbol_table(std::string type = "");
-    
+
 private:
     unsigned label;
     bool hasLabel;
@@ -30,6 +32,7 @@ class Expression_Node;
 class Assign_stmt_Node : public Non_label_stmt_Node{
 protected:
     Assign_stmt_Node(Expression_Node *expr):expr(expr){}
+    std::string build_symbol_table(std::string type);
 protected:
     Expression_Node* expr;
 };
@@ -39,6 +42,7 @@ public:
     Assign_id_stmt_Node(Id_Node* id, 
         Expression_Node *expr)
         :Assign_stmt_Node(expr), id(id){}
+    std::string build_symbol_table(std::string type);
 private:
     Id_Node* id;
 };
@@ -48,6 +52,8 @@ public:
     Assign_arr_stmt_Node(Id_Node* arr_name, 
         Expression_Node *index, Expression_Node *expr)
         :Assign_stmt_Node(expr), arr_name(arr_name), index(index){}
+        
+    std::string build_symbol_table(std::string type);
 private:
     Id_Node* arr_name;
     Expression_Node* index;
@@ -58,6 +64,8 @@ public:
     Assign_record_stmt_Node(Id_Node* record_name, 
         Id_Node *member, Expression_Node *expr)
         :Assign_stmt_Node(expr), record_name(record_name), member(member){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node* record_name;
     Id_Node* member;
@@ -68,6 +76,8 @@ public:
     Args_list_Node(Args_list_Node* prev, Expression_Node* expr)
         :prev(prev), expr(expr){}
     explicit Args_list_Node(Expression_Node* expr):prev(nullptr), expr(expr){}
+    std::string build_symbol_table(std::string type);
+    
 private:
     Args_list_Node *prev;
     Expression_Node *expr;
@@ -80,6 +90,8 @@ public:
         :id(id), args(args){}
     Proc_stmt_Node(Id_Node* id)
         :id(id), args(nullptr){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node* id;
     Args_list_Node *args;
@@ -90,6 +102,8 @@ class Read_stmt_Node : public Proc_stmt_Node{
 public:
     Read_stmt_Node(Factor_Node* factor)
         :Proc_stmt_Node(new Id_Node("read"), nullptr), factor(factor){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Factor_Node* factor;
 };
@@ -107,6 +121,8 @@ private:
 class Else_clause_Node : public Non_label_stmt_Node{
 public:
     Else_clause_Node(Stmt_Node* stmt):stmt(stmt){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Stmt_Node* stmt;
 };
@@ -115,6 +131,8 @@ class If_stmt_Node : public Non_label_stmt_Node{
 public:
     If_stmt_Node(Expression_Node *exp, Stmt_Node* stmt, 
         Else_clause_Node* else_clause):exp(exp), stmt(stmt), else_clause(else_clause){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Expression_Node* exp;
     Stmt_Node* stmt;
@@ -125,6 +143,8 @@ class Repeat_stmt_Node : public Non_label_stmt_Node{
 public:
     Repeat_stmt_Node(Stmt_list_Node* stmts, Expression_Node* expr)
         :stmts(stmts), expr(expr){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Stmt_list_Node* stmts;
     Expression_Node* expr;
@@ -134,6 +154,8 @@ class While_stmt_Node : public Non_label_stmt_Node{
 public:
     While_stmt_Node(Expression_Node* expr, Stmt_Node* stmt)
         :expr(expr), stmt(stmt){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Expression_Node* expr;
     Stmt_Node* stmt;
@@ -151,6 +173,8 @@ public:
     For_stmt_Node(Id_Node* id, Expression_Node* id_exp,
         Direction_Node* direct, Expression_Node* exp, Stmt_Node *stmt)
         :id(id), id_exp(id_exp), direct(direct), exp(exp), stmt(stmt){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node *id;
     Expression_Node *id_exp;
@@ -160,6 +184,9 @@ private:
 };
 
 class Case_expr_Node : public TreeNode{
+public:
+    std::string build_symbol_table(std::string type);
+
 protected:
     Case_expr_Node(Stmt_Node* stmt):stmt(stmt){}
 protected:
@@ -170,6 +197,8 @@ class Case_const_val_expr_Node : public Case_expr_Node{
 public:
     Case_const_val_expr_Node(Const_value_Node* const_val, Stmt_Node* stmt)
         :Case_expr_Node(stmt), const_val(const_val){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Const_value_Node * const_val;
 };
@@ -178,6 +207,8 @@ class Case_id_expr_Node : public Case_expr_Node{
 public:
     Case_id_expr_Node(Id_Node* id, Stmt_Node* stmt)
         :Case_expr_Node(stmt), id(id){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node * id;
 };
@@ -188,6 +219,8 @@ public:
     Case_expr_list_Node(Case_expr_list_Node *prev, Case_expr_Node *node)
         :prev(prev), node(node){}
     explicit Case_expr_list_Node(Case_expr_Node *node):prev(nullptr), node(node){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Case_expr_list_Node * prev;
     Case_expr_Node * node;
@@ -197,6 +230,8 @@ class Case_stmt_Node : public Non_label_stmt_Node{
 public:
     Case_stmt_Node(Expression_Node *expr, Case_expr_list_Node *list)
         :expr(expr), list(list){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Expression_Node *expr;
     Case_expr_list_Node *list;
@@ -205,6 +240,8 @@ private:
 class Goto_stmt_Node : public Non_label_stmt_Node{
 public:
     Goto_stmt_Node(int label): label(label){}
+    std::string build_symbol_table(std::string type);
+    
 private:
     int label;
 };

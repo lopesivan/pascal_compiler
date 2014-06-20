@@ -13,6 +13,8 @@ private:
 };
 
 class Factor_Node : public TreeNode{
+public:
+    virtual std::string build_symbol_table(std::string type){};
 protected:
     Factor_Node(){}
 };
@@ -61,6 +63,8 @@ private:
 class Factor_id_Node : public Factor_Node{
 public:
     Factor_id_Node(Id_Node* id):id(id){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node *id;
 };
@@ -70,6 +74,8 @@ public:
     enum Type {NOT, MINUS};
 public:
     Factor_unary_Node(Type type, Factor_Node *factor): type(type), factor(factor){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Type type;
     Factor_Node *factor;
@@ -81,6 +87,8 @@ class Func_call_Node : public Factor_Node{
 public:
     Func_call_Node(Id_Node* id, Args_list_Node* args): id(id), args(args){}
     explicit Func_call_Node(Id_Node* id): id(id), args(nullptr){}
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node* id;
     Args_list_Node* args;
@@ -91,6 +99,8 @@ class Factor_arr_Node : public Factor_Node{
 public:
     Factor_arr_Node(Id_Node *id, Expression_Node *index)
         :id(id), index(index){}
+
+    std::string build_symbol_table(std::string);
 private:
     Id_Node *id;
     Expression_Node *index;
@@ -100,6 +110,8 @@ class Factor_record_Node : public Factor_Node{
 public:
     Factor_record_Node(Id_Node *record, Id_Node *member)
         :record(record), member(member){}
+
+    std::string build_symbol_table(std::string type);
 private:
     Id_Node *record;
     Id_Node *member;
@@ -117,6 +129,8 @@ public:
     //factor
     explicit Expr_Node(Factor_Node *factor)
         :type(NONE), factor(factor){}
+
+    std::string build_symbol_table(std::string type);
 private:
     Op_type type;
     union{
@@ -136,6 +150,8 @@ public:
         Expr_Node* expr):type(type), expression(expression), expr(expr){}
     Expression_Node(Expr_Node* expr)
         :type(NONE), expression(nullptr), expr(expr){}
+
+    std::string build_symbol_table(std::string type);
 private:
     Cmp_type type;
     Expression_Node* expression;//may be null, first evaluate

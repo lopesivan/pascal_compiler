@@ -15,15 +15,21 @@ private:
 };
 
 class Type_decl_Node : public TreeNode{
+public:
+	virtual std::string build_symbol_table(std::string){};
+
 protected:
 	Type_decl_Node(){}
 };
+
 
 class Simple_type_decl_Node;
 class Array_type_decl_Node : public Type_decl_Node{
 public:
 	Array_type_decl_Node(Simple_type_decl_Node *range, Type_decl_Node *type)
 		:range(range), type(type){}
+	std::string build_symbol_table(std::string);
+
 public:
 	Simple_type_decl_Node * range;
 	Type_decl_Node * type;
@@ -33,6 +39,8 @@ class Field_decl_Node : public TreeNode{ //for record type
 public:
 	Field_decl_Node(Name_list_Node *name_list, Type_decl_Node *type)
 		:name_list(name_list), type(type){}
+	std::string build_symbol_table(std::string);
+
 private:
 	Name_list_Node *name_list;
 	Type_decl_Node *type;
@@ -45,6 +53,8 @@ public:
 
 	explicit Field_decl_list_Node(Field_decl_Node *decl)
 		:decl(decl){}
+	std::string build_symbol_table(std::string);
+
 private:
 	Field_decl_list_Node *prev = nullptr;
 	Field_decl_Node *decl;
