@@ -8,6 +8,10 @@
 #define SIZE 211
 #define SHIFT 4
 
+class links_recorder;
+class table_unit;
+class symboltable;
+
 
 class lines_recorder
 {
@@ -32,13 +36,13 @@ public:
 	/* data */
 public:
 	table_unit * next;
-
 	std::string name;		//name of variable or const;
 	lines_recorder *lines;	
 	int use;				//record usage
 	std::string type;		//"const",  variable : "integer",  "float",  "function"
 	int volumn;				//[100]
 	int memloc;				//record memory_location
+	symboltable * func_proc_link;	//function or procedure link
 };
 
 
@@ -51,13 +55,38 @@ public:
 	~symboltable(){};
 	
 
-	// int st_lookup(std::string name, ) {
-		
-	// }
+	table_unit * st_lookup(std::string name) {
+		int h = this->hash_find_unit(name);
+		symboltable *p = this;
+		while (p->forward != p) {
+			table_unit l = p->units[h];
+			while ((l.use == 1) && (name.compare(l.name) != 0)) {
+				l = *l.next;
+			}
+			if ((l.use == 1) && (name.compare(l.name) == 0)) {
+				return &l;
+			}
+			p = p->forward;
+		}
+		return nullptr;
+	}
+
+
+	void st_func_proc(std::string name, symboltable *st) {
+		int h = this->hash_find_unit(name);
+		table_unit l = this->units[h];
+		while ((l.use != 0) && (name.compare(l.name) != 0)) {
+			l = *l.next;
+		}
+
+		if ((l.use == 1) && (name.compare(l.name) == 0)) {
+			l.func_proc_link = st;
+		}
+	}
 
 	void st_insert(std::string name, int lineno, int loc, std::string type) {
 		int h = this->hash_find_unit(name);
-		table_unit l = units[h];
+		table_unit l = this->units[h];
 		while ((l.use != 0) && (name.compare(l.name) != 0)) {
 			l = *l.next;
 		}
@@ -78,6 +107,7 @@ public:
 			t->next->lineno = lineno;
 			t->next->next = NULL;
 		}
+		puts("---------------");
 		puts("finish insert:");
 		puts("name:");
 		puts(name.c_str());
@@ -94,9 +124,10 @@ public:
 		return res;
 	};
 
+	symboltable * forward;
 private:
 	table_unit units[SIZE];
-	symboltable * forward;
+	
 };
 
 

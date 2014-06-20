@@ -136,13 +136,13 @@ std::string Var_decl_list_Node::build_symbol_table(std::string type) {
 
 //var_decl_node -> name_list_node, type_decl_node
 std::string Var_decl_Node::build_symbol_table(std::string type) {
-	std::string var_type;
-	if (this->type != nullptr) {
-		var_type = this->type->build_symbol_table();
-	}
+	std::string var_type = " ";
+	// if (this->type != nullptr) {
+	// 	var_type = this->type->build_symbol_table();
+	// }						//??????????TODO
 
 	if (this->name_list != nullptr) {
-		this->type->build_symbol_table(var_type);
+		this->name_list->build_symbol_table(var_type);
 	}
 	return "";
 }
@@ -181,7 +181,11 @@ std::string Routine_part_Node::build_symbol_table(std::string type) {
 std::string Function_decl_Node::build_symbol_table(std::string type) {
 	if (this->id != nullptr) {
 		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "function");
-		//create new table; and link;
+		//create new table
+		symboltable *new_st = new symboltable();
+		new_st->forward = st;
+		st->st_func_proc(this->id->get_name(), new_st);
+		st = new_st;
 	}
 
 	if (this->paras != nullptr) {
@@ -196,6 +200,7 @@ std::string Function_decl_Node::build_symbol_table(std::string type) {
 	}
 
 	//point back to old table
+	st = st->forward;
 	return "";
 }
 
@@ -222,10 +227,10 @@ std::string Para_type_list_Node::build_symbol_table(std::string type) {
 	std::string type_name = " ";
 	if (this->isVal) {
 		// type_name = this->type->build_symbol_table();	//??????TODO
-		this->val_para_list->build_symbol_table(type_name);
+		// this->val_para_list->build_symbol_table(type_name);
 	} else {
 		// type_name = this->type->build_symbol_table();		//??????TODO
-		this->val_para_list->build_symbol_table(type_name);		
+		// this->val_para_list->build_symbol_table(type_name);		
 	}
 	return "";
 	//??????????????????????/TODO
@@ -242,7 +247,11 @@ std::string Var_para_list_Node::build_symbol_table(std::string type) {
 std::string Procedure_decl_Node::build_symbol_table(std::string type) {
 	if (this->id != nullptr) {
 		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "procedure");
-		//create a new table;
+		//create new table
+		symboltable *new_st = new symboltable();
+		new_st->forward = st;
+		st->st_func_proc(this->id->get_name(), new_st);
+		st = new_st;
 	}
 
 	if (this->paras != nullptr) {
@@ -252,6 +261,8 @@ std::string Procedure_decl_Node::build_symbol_table(std::string type) {
 	if (this->routine != nullptr) {
 		this->routine->build_symbol_table();
 	}
+	//back
+	st = st->forward;
 	return "";
 }
 
@@ -284,9 +295,9 @@ std::string Stmt_list_Node::build_symbol_table(std::string type) {
 
 std::string Stmt_Node::build_symbol_table(std::string type) {
 	if (this->get_hasLable()) {
-		this->stmt->build_symbol_table();
+		// this->stmt->build_symbol_table();
 	} else {
-		this->stmt->build_symbol_table();
+		// this->stmt->build_symbol_table();
 	}						//?????????????????????????TODO
 }
 
