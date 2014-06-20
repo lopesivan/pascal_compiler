@@ -64,6 +64,8 @@ class Record_type_decl_Node : public Type_decl_Node{
 public:
 	explicit Record_type_decl_Node(Field_decl_list_Node* list)
         :list(list){}
+    std::string build_symbol_table(std::string);
+    
 private:
 	Field_decl_list_Node *list;
 };

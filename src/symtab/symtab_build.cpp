@@ -632,12 +632,11 @@ std::string Field_decl_list_Node::build_symbol_table(std::string type) {
 }
 
 
-std::string Record_type_decl_Node(std::string type) {
+std::string Record_type_decl_Node::build_symbol_table(std::string type) {
 	if (this->list != nullptr) {
 		this->list->build_symbol_table(type);
 	}
 	return "";
 }
 
-std::string 
 //================end of declaim ================
