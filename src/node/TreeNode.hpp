@@ -11,7 +11,7 @@
 class TreeNode{
 public:
     virtual ~TreeNode(){}
-    virtual std::string build_symbol_table(std::string type = "");
+    // virtual std::string build_symbol_table(std::string type = "");
     
 public:
     int getLineno() const{

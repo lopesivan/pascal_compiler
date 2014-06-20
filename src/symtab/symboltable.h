@@ -35,13 +35,10 @@ public:
 
 	std::string name;		//name of variable or const;
 	lines_recorder *lines;	
-	int use;
+	int use;				//record usage
 	std::string type;		//"const",  variable : "integer",  "float",  "function"
 	int volumn;				//[100]
 	int memloc;				//record memory_location
-	int state;
-	int next_hop;
-	int former_hop;
 };
 
 
@@ -55,7 +52,7 @@ public:
 	
 
 	// int st_lookup(std::string name, ) {
-
+		
 	// }
 
 	void st_insert(std::string name, int lineno, int loc, std::string type) {
@@ -84,7 +81,8 @@ public:
 		puts("finish insert:");
 		puts("name:");
 		puts(name.c_str());
-		puts("type");
+		puts("type:");
+		puts(type.c_str());
 	}
 
 public:
