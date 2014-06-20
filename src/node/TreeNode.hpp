@@ -96,7 +96,8 @@ public:
         :prev(nullptr), id(id){}
 
     std::string build_symbol_table(std::string type = "");
-private:
+
+public:
     Name_list_Node *prev;
     Id_Node* id;
 };

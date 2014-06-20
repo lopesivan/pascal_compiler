@@ -72,9 +72,18 @@ public:
 	table_unit * st_lookup(std::string name) {
 		int h = this->hash_find_unit(name);
 		symboltable *p = this;
+		table_unit *l = &(p->units[h]);
+
+		while ((l->use == 1) && (name.compare(l->name) != 0)) {
+			l = l->next;
+		}
+		if ((l->use == 1) && (name.compare(l->name) == 0)) {
+			return l;
+		}
+		//------------
 		while (p->forward != p) {
-			table_unit *l =  new table_unit;
-			l = &p->units[h];
+			table_unit *l = &(p->units[h]);
+
 			while ((l->use == 1) && (name.compare(l->name) != 0)) {
 				l = l->next;
 			}
@@ -100,9 +109,9 @@ public:
 		}
 	}
 
-	void st_insert(std::string name, int lineno, int loc, std::string type) {
+	table_unit * st_insert(std::string name, int lineno, int loc, std::string type) {
 		int h = this->hash_find_unit(name);
-	
+
 		table_unit *l = &(this->units[h]);
 		l->name = name;
 
@@ -128,12 +137,11 @@ public:
 			t->next->next = NULL;
 		}
 
-		puts("---------------");
-		puts("finish insert:");
-		puts("name:");
-		puts(name.c_str());
-		puts("type:");
-		puts(type.c_str());
+		printf("finish insert: --------- %s", name.c_str());
+		puts("");
+		printf("type: %s", type.c_str());
+		puts("");
+		return l;
 	}
 
 public:

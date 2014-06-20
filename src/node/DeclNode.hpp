@@ -65,7 +65,7 @@ public:
 	explicit Record_type_decl_Node(Field_decl_list_Node* list)
         :list(list){}
     std::string build_symbol_table(std::string);
-    
+
 private:
 	Field_decl_list_Node *list;
 };
@@ -84,6 +84,8 @@ public:
 	Type getType() const{ 
         return type;
     }
+    std::string build_symbol_table(std::string);
+
 private:
 	Type type;
 };
@@ -91,6 +93,7 @@ private:
 class Alias_type_decl_Node : public Simple_type_decl_Node{
 public:
 	explicit Alias_type_decl_Node(Id_Node* id):id(id){}
+	std::string build_symbol_table(std::string);
 private:
 	Id_Node *id;
 };
@@ -99,6 +102,8 @@ class Enum_type_decl_Node : public Simple_type_decl_Node{
 public:
 	explicit Enum_type_decl_Node(Name_list_Node *name_list)
 		:name_list(name_list){}
+	std::string build_symbol_table(std::string);
+
 private:
 	Name_list_Node *name_list;
 };
@@ -114,6 +119,8 @@ public:
 	Subrange_const_value_type_decl_Node(bool lowerNeg, Const_value_Node *low, 
 		bool upperNeg, Const_value_Node *high)
 		:lowerBound(low), upperBound(high), isLowerNeg(lowerNeg), isUpperNeg(upperNeg){}
+	std::string build_symbol_table(std::string);
+
 private:
 	Const_value_Node *lowerBound;
 	Const_value_Node *upperBound;
@@ -126,6 +133,8 @@ class Subrange_id_type_decl_Node : public Subrange_type_decl_Node
 public:
 	Subrange_id_type_decl_Node(Id_Node* lower, Id_Node* upper)
 		:lower(lower), upper(upper){}
+	std::string build_symbol_table(std::string);
+	
 private:
 	Id_Node* lower;
 	Id_Node* upper;

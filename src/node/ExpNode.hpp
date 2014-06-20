@@ -8,6 +8,9 @@ class Id_Node : public TreeNode{
 public:
 	Id_Node(const std::string& name) : name(name){}
     std::string get_name() { return this->name; }
+
+public:
+    table_unit * sym_unit;
 private:
 	std::string name;
 };
@@ -20,6 +23,9 @@ protected:
 };
 
 class Const_value_Node : public Factor_Node{
+public:
+    virtual int get_value(){};
+    
 protected:
     Const_value_Node(){}
 };
@@ -27,6 +33,7 @@ protected:
 class ConstInt_Node : public Const_value_Node{
 public:
     ConstInt_Node(int val): val(val){}
+    int get_value(){return this->val;}
 private:
     int val;
 };

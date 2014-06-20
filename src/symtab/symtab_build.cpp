@@ -14,7 +14,7 @@ std::string Program_Node::build_symbol_table(std::string type) {
 	if (this->head != nullptr) {
 		this->head->build_symbol_table("");
 	}
-	puts("test: program_head_out");
+
 	if (this->routine != nullptr) {
 		this->routine->build_symbol_table("");
 	}
@@ -24,14 +24,10 @@ std::string Program_Node::build_symbol_table(std::string type) {
 std::string Program_head_Node::build_symbol_table(std::string type) {
 	if (this->id != nullptr) {
 		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "program_id");
-		//insert
+		//insert program head for fun
 	}
 	return "";
 }
-
-
-
-
 
 
 //1. program routine
@@ -45,8 +41,6 @@ std::string Routine_Node::build_symbol_table(std::string type) {
 	return "";
 }
 
-
-
 // 2. program routine_head
 std::string Routine_head_Node::build_symbol_table(std::string type) {
 	if (this->const_part != nullptr) {
@@ -59,11 +53,10 @@ std::string Routine_head_Node::build_symbol_table(std::string type) {
 		this->var_part->build_symbol_table("");
 	}
 	if (this->routine_part != nullptr) {
-		this->routine_part->build_symbol_table("");	//todo
+		this->routine_part->build_symbol_table("");
 	}
 	return "";
 }
-
 
 
 // 3. routine_head_node
@@ -106,7 +99,8 @@ std::string Type_decl_list_Node::build_symbol_table(std::string type) {	//Treeno
 std::string Type_definition_Node::build_symbol_table(std::string type) { 	//Treenode
 	std::string type_name;
 	if (this->id != nullptr) {
-		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, type_name); 
+		table_unit *p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, type_name); 
+		this->id->sym_unit = p;
 		type_name = this->id->get_name();
 	}
 
@@ -137,15 +131,21 @@ std::string Var_decl_list_Node::build_symbol_table(std::string type) {
 	return "";
 }
 
-//var_decl_node -> name_list_node, type_decl_node
-std::string Var_decl_Node::build_symbol_table(std::string type) {
-	std::string var_type = " ";
-	// if (this->type != nullptr) {
-	// 	var_type = this->type->build_symbol_table();
-	// }						//??????????TODO
 
+std::string Var_decl_Node::build_symbol_table(std::string type) {	//OK
+	std::string v_name;
 	if (this->name_list != nullptr) {
-		this->name_list->build_symbol_table(var_type);
+		this->name_list->build_symbol_table("");
+	}
+	Name_list_Node *p= this->name_list;
+	while (p->prev != nullptr) {
+		if (this->type != nullptr) {
+			this->type->build_symbol_table(p->id->get_name());
+		}
+		p = p->prev;
+	}
+	if (this->type != nullptr) {
+		this->type->build_symbol_table(p->id->get_name());
 	}
 	return "";
 }
@@ -153,14 +153,14 @@ std::string Var_decl_Node::build_symbol_table(std::string type) {
 
 
 
-std::string Name_list_Node::build_symbol_table(std::string type) {	//Treenode
+std::string Name_list_Node::build_symbol_table(std::string type) {	//OK
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table(type);
 	}
 
 	if (this->id != nullptr) {
-		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, type);
-		//ID add r-link
+		table_unit *p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "");
+		this->id->sym_unit = p; //reverse-link
 	}
 	return "";
 }
@@ -170,14 +170,9 @@ std::string Name_list_Node::build_symbol_table(std::string type) {	//Treenode
 
 
 std::string Routine_part_Node::build_symbol_table(std::string type) {
-	this->prev = nullptr;
-	printf("%p", &this->prev);
-	puts("");
-	// puts("test: body-----------------------------in");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
-	puts("test: body-----------------------------after_prev");
 	if (this->get_isfunction()) {
 		this->func->build_symbol_table("");
 	} else {
@@ -201,9 +196,9 @@ std::string Function_decl_Node::build_symbol_table(std::string type) {
 		this->paras->build_symbol_table("");
 	}
 
-	// if (this->ret_type != nullptr) {
-	// 	this->ret_type->build_symbol_table();		//???TODO
-	// }
+	if (this->ret_type != nullptr) {
+		this->ret_type->build_symbol_table("");		
+	}
 	if (this->routine != nullptr) {
 		this->routine->build_symbol_table("");
 	}
@@ -602,9 +597,9 @@ std::string Array_type_decl_Node::build_symbol_table(std::string type) {
 		type_name = this->type->build_symbol_table(type);
 	}
 	if (this->range != nullptr) {
-		type_range = this->range->build_symbol_table(type);	//TODO
+		type_range = this->range->build_symbol_table(type);
 	}
-	//...
+	//update
 	return type_name;
 }
 
@@ -639,4 +634,49 @@ std::string Record_type_decl_Node::build_symbol_table(std::string type) {
 	return "";
 }
 
+std::string System_type_decl_Node::build_symbol_table(std::string type) {
+	Type sys_type = this->getType();
+	table_unit * t_unit = st->st_lookup(type);
+	if (t_unit != nullptr) {
+		if (sys_type == INT) 	t_unit->type = "INT";
+		if (sys_type == REAL) 	t_unit->type = "REAL";
+		if (sys_type == ENUM) 	t_unit->type = "ENUM";
+		if (sys_type == CHAR) 	t_unit->type = "CHAR";
+		if (sys_type == STRING) t_unit->type = "STRING";
+		if (sys_type == BOOL) 	t_unit->type = "BOOL";
+		puts("system_type_ok!!!");
+		puts(type.c_str());
+	}
+	return "";
+}
+
+std::string Alias_type_decl_Node::build_symbol_table(std::string type) {
+	std::string type_name;
+	if (this->id != nullptr) {
+		//update
+		type_name = this->id->get_name();
+	}
+	return "";
+}
+
+std::string Enum_type_decl_Node::build_symbol_table(std::string type) {
+	if (this->name_list != nullptr) {
+		this->name_list->build_symbol_table(type);//???
+	}
+	return "";
+}
+
+std::string Subrange_const_value_type_decl_Node::build_symbol_table(std::string type) {
+	int low = this->lowerBound->get_value();
+	if (this->isLowerNeg) low = -low;
+	int up = this->upperBound->get_value();
+	if (this->isUpperNeg) up = - up;
+	//update
+	return "";
+}
+
+std::string Subrange_id_type_decl_Node::build_symbol_table(std::string type) {
+	// I've work over 7 hours, but did not finish... T_T//
+	return "";
+}
 //================end of declaim ================
