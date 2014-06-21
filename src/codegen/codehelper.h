@@ -1,7 +1,5 @@
-#ifndef _CODE_H_
-#define _CODE_H_
-
-#include "../globals.h"
+#ifndef CODE_HELPER_H
+#define CODE_HELPER_H
 
 // Return value
 #define ret 2

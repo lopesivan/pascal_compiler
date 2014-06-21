@@ -2,6 +2,7 @@
 #define _EXPNODE_H_
 
 #include "TreeNode.hpp"
+#include <sstream>
 
 class Id_Node;
 class Factor_Node;
@@ -29,7 +30,8 @@ class Expression_list_Node; // Expression_list_Node, Expression_Node
 class Id_Node : public TreeNode{
 public:
 	Id_Node(const std::string& name) : name(name){}
-  void genCode();
+	string get_name() {return name;}
+  void gen_code(CodeGenerator* cg, int block_id);
 private:
 	std::string name;
 };
@@ -40,55 +42,72 @@ protected:
 };
 
 class Const_value_Node : public Factor_Node{
+public:
+  virtual void gen_data(CodeGenerator* cg);
 protected:
     Const_value_Node(){}
 };
 
 class ConstInt_Node : public Const_value_Node{
 public:
-    ConstInt_Node(int val): val(val){}
-    void genCode();
+    ConstInt_Node(int val): val(val){type = ".word";}
+    string get_val() { return to_string(val); }
+    string get_type() {return type;}
+    void gen_data(CodeGenerator* cg);
 private:
     int val;
+    string type;
 };
 
 class ConstDouble_Node : public Const_value_Node{
 public:
-    ConstDouble_Node(double val): val(val){}
-    void genCode();
+    ConstDouble_Node(double val): val(val){type = ".double";}
+    string get_val() { return to_string(val); }
+    string get_type() {return type;}
+    void gen_data(CodeGenerator* cg);
 private:
     double val;
+    string type;
 };
 
 class ConstChar_Node : public Const_value_Node{
 public:
-    ConstChar_Node(char val): val(val){}
-    void genCode();
+    ConstChar_Node(char val): val(val){type = ".byte";}
+    string get_val() { return "'" + to_string(val) + "'" }
+    string get_type() {return type;}
+    void gen_data(CodeGenerator* cg);
 private:
     char val;
+    string type;
 };
 
 class ConstBool_Node : public Const_value_Node{
 public:
-    ConstBool_Node(bool val): val(val){}
-    void genCode();
+    ConstBool_Node(bool val): val(val){type = ".byte";}
+    string get_val() { if (bool) return "1" else return "0"; }
+    string get_type() {return type;}
+    void gen_data(CodeGenerator* cg);
 private:
     bool val;
+    string type;
 };
 
 class ConstStr_Node : public Const_value_Node{
 public:
-    ConstStr_Node(const std::string& val): val(val){}
-    void genCode();
+    ConstStr_Node(const std::string& val): val(val){type = ".asciiz"}
+    string get_val() { return "\"" + val + "\""; }
+    string get_type() {return type;}
+    void gen_data(CodeGenerator* cg);
 private:
     std::string val;
+    string type;
 };
 
 
 class Factor_id_Node : public Factor_Node{
 public:
     Factor_id_Node(Id_Node* id):id(id){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Id_Node *id;
 };
@@ -98,7 +117,7 @@ public:
     enum Type {NOT, MINUS};
 public:
     Factor_unary_Node(Type type, Factor_Node *factor): type(type), factor(factor){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Type type;
     Factor_Node *factor;
@@ -109,7 +128,7 @@ class Func_call_Node : public Factor_Node{
 public:
     Func_call_Node(Id_Node* id, Args_list_Node* args): id(id), args(args){}
     explicit Func_call_Node(Id_Node* id): id(id), args(nullptr){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Id_Node* id;
     Args_list_Node* args;
@@ -119,7 +138,7 @@ class Factor_arr_Node : public Factor_Node{
 public:
     Factor_arr_Node(Id_Node *id, Expression_Node *index)
         :id(id), index(index){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Id_Node *id;
     Expression_Node *index;
@@ -129,7 +148,7 @@ class Factor_record_Node : public Factor_Node{
 public:
     Factor_record_Node(Id_Node *record, Id_Node *member)
         :record(record), member(member){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Id_Node *record;
     Id_Node *member;
@@ -147,7 +166,7 @@ public:
     //factor
     explicit Expr_Node(Factor_Node *factor)
         :type(NONE), factor(factor){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Op_type type;
     union{
@@ -167,7 +186,7 @@ public:
         Expr_Node* expr):type(type), expression(expression), expr(expr){}
     Expression_Node(Expr_Node* expr)
         :type(NONE), expression(nullptr), expr(expr){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Cmp_type type;
     Expression_Node* expression;//may be null, first evaluate
@@ -179,7 +198,7 @@ public:
     Expression_list_Node(Expression_list_Node* prev, Expression_Node* node)
         :prev(prev), node(node){}
     explicit Expression_list_Node(Expression_Node* node):prev(nullptr), node(node){}
-    void genCode();
+    void gen_code(CodeGenerator* cg, int block_id);
 private:
     Expression_list_Node* prev;
     Expression_Node* node;

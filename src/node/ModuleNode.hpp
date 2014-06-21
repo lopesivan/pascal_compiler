@@ -29,7 +29,7 @@ class Program_Node; // Program_head_Node, Routine_Node
 class Val_para_list_Node : public TreeNode{
 public:
 	explicit Val_para_list_Node(Name_list_Node *list):list(list){}
-  void genCode();
+  void parse_para(CodeGenerator* cg, int block_id);
 private:
 	Name_list_Node * list;
 };
@@ -37,7 +37,7 @@ private:
 class Var_para_list_Node : public TreeNode {
 public:
   explicit Var_para_list_Node(Name_list_Node *list):list(list){}
-  void genCode();
+  void parse_para(CodeGenerator* cg, int block_id);
 private:
   Name_list_Node * list;
 };
@@ -50,7 +50,7 @@ public:
 	Para_type_list_Node(Val_para_list_Node* val_para_list, 
 		Simple_type_decl_Node *type)
 		:isVal(true), val_para_list(val_para_list), type(type){}
-  void genCode();
+  void parse_para(CodeGenerator* cg, int block_id);
 private:
     bool isVal;
     union{
@@ -66,7 +66,7 @@ public:
 		:prev(prev), type(type){}
 	explicit Para_decl_list_Node(Para_type_list_Node *type)
 		:prev(nullptr), type(type){}
-  void genCode();
+  void parse_para(CodeGenerator* cg, int block_id);
 private:
 	Para_decl_list_Node * prev;
 	Para_type_list_Node * type;
@@ -75,7 +75,7 @@ private:
 class Parameters_Node : public TreeNode{
 public:
 	Parameters_Node(Para_decl_list_Node * list):list(list){}
-  void genCode();
+  void parse_para(CodeGenerator* cg, int block_id);
 private:
 	Para_decl_list_Node * list;
 };
@@ -84,7 +84,7 @@ class Procedure_decl_Node : public TreeNode{
 public:
 	Procedure_decl_Node(Id_Node* id, Parameters_Node* paras, 
             Routine_Node* routine):id(id), paras(paras), routine(routine){}
-  void genCode();
+  void gen_code(CodeGenerator* cg);
 private:
 	Id_Node* id;
 	Parameters_Node * paras;
@@ -96,7 +96,7 @@ public:
 	Function_decl_Node(Id_Node* id, 
 		Parameters_Node* paras, Simple_type_decl_Node* ret_type, Routine_Node* routine)
 		:id(id), paras(paras), ret_type(ret_type), routine(routine){}
-  void genCode();
+  int gen_code(CodeGenerator* cg);
 private:
 	Id_Node* id;
 	Parameters_Node * paras;
@@ -109,7 +109,7 @@ class Const_part_Node : public TreeNode{
 public:
     explicit Const_part_Node(Const_expr_list_Node *const_expr_list)
         :const_expr_list(const_expr_list){}
-  void genCode();
+  void gen_data(CodeGenerator* cg);
 private:
     Const_expr_list_Node *const_expr_list;
 };
@@ -118,7 +118,7 @@ class Var_part_Node : public TreeNode{
 public:
     explicit Var_part_Node(Var_decl_list_Node *list)
         :list(list){}
-  void genCode();
+  int parse_var(CodeGenerator* cg, int block_id);
 private:
     Var_decl_list_Node * list;
 };
@@ -134,7 +134,7 @@ public:
     	:prev(nullptr), func(func), isFunction(true){}
     Routine_part_Node(Procedure_decl_Node* proc)
     	:prev(nullptr), proc(proc), isFunction(false){}
-  void genCode();
+  void gen_code(CodeGenerator* cg);
 private:
     Routine_part_Node * prev;
     union{
@@ -148,7 +148,7 @@ class Program_head_Node : public TreeNode{
 public:
 	Program_head_Node(Id_Node* id)
 		:id(id){}
-  void genCode();
+  int gen_code(CodeGenerator* cg);
 private:
 	Id_Node* id;
 };
@@ -159,7 +159,7 @@ public:
 		Var_part_Node* var_part, Routine_part_Node* routine_part)
 		:const_part(const_part), type_part(type_part), 
 		var_part(var_part), routine_part(routine_part){}
-  void genCode();
+  void gen_code(CodeGenerator* cg, int block_id);
 private:
 	Const_part_Node *const_part;
 	Type_part_Node *type_part;
@@ -171,7 +171,7 @@ class Routine_body_Node : public TreeNode{
 public:
 	explicit Routine_body_Node(Compound_stmt_Node * stmts)
 		:stmts(stmts){}
-  void genCode();
+  void gen_code(CodeGenerator* cg, int block_id);
 private:
 	Compound_stmt_Node * stmts;
 };
@@ -180,7 +180,7 @@ class Routine_Node : public TreeNode{
 public:
 	Routine_Node(Routine_head_Node *head, Routine_body_Node *body)
 		:head(head), body(body){}
-  void genCode();
+  void gen_code(CodeGenerator* cg, int block_id);
 private:
 	Routine_head_Node *head;
 	Routine_body_Node *body;
@@ -191,7 +191,7 @@ public:
 	Program_Node(Program_head_Node *head, Routine_Node* routine)
 		:head(head), routine(routine){
 	}
-  void genCode();
+  void gen_code(CodeGenerator* cg);
 	
 private:
 	Program_head_Node *head;
