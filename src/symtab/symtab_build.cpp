@@ -187,6 +187,8 @@ std::string Function_decl_Node::build_symbol_table(std::string type) {
 		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "function");
 		//create new table
 		symboltable *new_st = new symboltable();
+		printf("%p", new_st);
+		puts("");
 		new_st->forward = st;
 		st->st_func_proc(this->id->get_name(), new_st);
 		st = new_st;
@@ -256,6 +258,7 @@ std::string Procedure_decl_Node::build_symbol_table(std::string type) {
 		new_st->forward = st;
 		st->st_func_proc(this->id->get_name(), new_st);
 		st = new_st;
+
 	}
 
 	if (this->paras != nullptr) {
@@ -273,7 +276,7 @@ std::string Procedure_decl_Node::build_symbol_table(std::string type) {
 
 std::string Routine_body_Node::build_symbol_table(std::string type) {
 	if (this->stmts != nullptr) {
-		// this->stmts->build_symbol_table();
+		this->stmts->build_symbol_table();
 	}
 	return "";
 }
@@ -281,11 +284,12 @@ std::string Routine_body_Node::build_symbol_table(std::string type) {
 
 
 std::string Stmt_Node::build_symbol_table(std::string type) {
-// 	// puts("stmt_in");
+	puts("---stmt_in---");
 	if (this->get_hasLable()) {
 		puts("how deal with label");
 		// this->stmt->build_symbol_table("");
 	} else {
+		puts("error");
 		this->stmt->build_symbol_table(type);
 	}						
 	return "";
@@ -294,6 +298,7 @@ std::string Stmt_Node::build_symbol_table(std::string type) {
 
 //================stmt node=======================
 std::string Assign_stmt_Node::build_symbol_table(std::string type) {
+	puts("===assign===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -302,9 +307,10 @@ std::string Assign_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Assign_id_stmt_Node::build_symbol_table(std::string type) {
+	puts("===assign_id===");
 	std::string type_name;
 	if (this->expr != nullptr) {
-		type_name = this->expr->build_symbol_table("");
+		this->expr->build_symbol_table("");
 	}
 	if (this->id != nullptr) {
 		//check this->id type;
@@ -314,6 +320,7 @@ std::string Assign_id_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Assign_arr_stmt_Node::build_symbol_table(std::string type) {
+	puts("===assign_arr===");
 	std::string type_name;	//arr_name, index, expr,
 	if (this->arr_name != nullptr) {
 		//check this->id type;
@@ -329,6 +336,7 @@ std::string Assign_arr_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Assign_record_stmt_Node::build_symbol_table(std::string type) {
+	puts("===assign_rec===");
 	if (this->record_name != nullptr) {
 		//check
 		//make
@@ -345,6 +353,7 @@ std::string Assign_record_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Proc_stmt_Node::build_symbol_table(std::string type) {
+	puts("===proc_stmt_node===");
 	if (this->id != nullptr) {
 		//check
 		//make
@@ -358,6 +367,7 @@ std::string Proc_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Read_stmt_Node::build_symbol_table(std::string type) {
+	puts("===read===");
 	if (this->factor != nullptr) {
 		this->factor->build_symbol_table("");
 	}
@@ -365,13 +375,16 @@ std::string Read_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Compound_stmt_Node::build_symbol_table(std::string type) {
+	puts("===Compound===");
 	if (this->stmts != nullptr) {
+		puts("---Compound_stmt_Node---");
 		this->stmts->build_symbol_table("");
 	}
 	return "";
 }
 
 std::string Else_clause_Node::build_symbol_table(std::string type) {
+	puts("===else===");
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table("");
 	}
@@ -379,6 +392,7 @@ std::string Else_clause_Node::build_symbol_table(std::string type) {
 }
 
 std::string If_stmt_Node::build_symbol_table(std::string type) {
+	puts("===if_stmt===");
 	if (this->exp != nullptr) {
 		this->exp->build_symbol_table("");
 	}
@@ -392,6 +406,7 @@ std::string If_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Repeat_stmt_Node::build_symbol_table(std::string type) {
+	puts("===repeat===");
 	if (this->stmts != nullptr) {
 		this->stmts->build_symbol_table("");
 	}
@@ -402,6 +417,7 @@ std::string Repeat_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string While_stmt_Node::build_symbol_table(std::string type) {
+	puts("===while===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -412,6 +428,7 @@ std::string While_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string For_stmt_Node::build_symbol_table(std::string type) {
+	puts("===for===");
 	if (this->id != nullptr) {
 		//check
 		//make
@@ -430,6 +447,7 @@ std::string For_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Case_expr_Node::build_symbol_table(std::string type) {
+	puts("===case_expr===");
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table();
 	}
@@ -437,6 +455,7 @@ std::string Case_expr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Case_const_val_expr_Node::build_symbol_table(std::string type) {
+	puts("===case const===");
 	//ignore const_val, for no id
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table("");
@@ -445,6 +464,7 @@ std::string Case_const_val_expr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Case_id_expr_Node::build_symbol_table(std::string type) {
+	puts("===case id===");
 	if (this->id != nullptr) {
 		//check
 		//make
@@ -457,6 +477,7 @@ std::string Case_id_expr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Case_expr_list_Node::build_symbol_table(std::string type) {
+	puts("===case expr===");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -468,6 +489,7 @@ std::string Case_expr_list_Node::build_symbol_table(std::string type) {
 
 
 std::string Case_stmt_Node::build_symbol_table(std::string type) {
+	puts("===case stmt===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -482,6 +504,7 @@ std::string Goto_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Stmt_list_Node::build_symbol_table(std::string type) {
+	puts("===stmt list===");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -498,6 +521,7 @@ std::string Stmt_list_Node::build_symbol_table(std::string type) {
 // //==================Exp Node======================
 std::string Expression_Node::build_symbol_table(std::string type) {
 	//Cmp_type is compare_operator, ignore;
+	puts("***expression_node***");
 	if (this->expression != nullptr) {
 		this->expression->build_symbol_table("");
 	}
@@ -509,19 +533,29 @@ std::string Expression_Node::build_symbol_table(std::string type) {
 
 std::string Expr_Node::build_symbol_table(std::string type) {
 	// ignore op_type
-	if (this->expr_lhs != nullptr) {
-		this->expr_lhs->build_symbol_table("");
-	} else if (this->expr_rhs != nullptr){	//union
-		this->expr_rhs->build_symbol_table("");
-	}
-
-	if (this->factor != nullptr) {
-		this->factor->build_symbol_table("");
+	puts("***expr_node***");
+	printf("%p, %p, %p", this->expr_lhs, this->expr_rhs, this->factor);
+	// printf("%d", this->getLineno());
+	puts("");
+	
+	if (this->type != NONE) {
+		if (this->expr_lhs != nullptr) {
+			this->expr_lhs->build_symbol_table("");
+		}
+		if (this->expr_rhs != nullptr){	//union
+			this->expr_rhs->build_symbol_table("");
+		}
+	} else {
+		printf("type: %d", this->type);puts("");
+		if (this->factor != nullptr) {
+			this->factor->build_symbol_table("");
+		}
 	}
 	return "";
 }
 
 std::string Factor_id_Node::build_symbol_table(std::string type) {
+	puts("Factor_id_Node");
 	if (this->id != nullptr) {
 		//check id
 	}
@@ -529,6 +563,7 @@ std::string Factor_id_Node::build_symbol_table(std::string type) {
 }
 
 std::string Factor_unary_Node::build_symbol_table(std::string type) {
+	puts("Factor_unary_Node");
 	//ignore type, for {NOT, MINUS}
 	if (this->factor != nullptr) {
 		this->factor->build_symbol_table("");
@@ -537,6 +572,7 @@ std::string Factor_unary_Node::build_symbol_table(std::string type) {
 }
 
 std::string Func_call_Node::build_symbol_table(std::string type) {
+	puts("Func_call_Node");
 	if (this->id != nullptr) {
 		//st_check
 	}
@@ -548,6 +584,7 @@ std::string Func_call_Node::build_symbol_table(std::string type) {
 }
 
 std::string Factor_arr_Node::build_symbol_table(std::string type) {
+	puts("Factor_arr_Node");
 	if (this->id != nullptr) {
 		//st_check
 	}
@@ -558,6 +595,7 @@ std::string Factor_arr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Factor_record_Node::build_symbol_table(std::string type) {
+	puts("Factor_record_Node");
 	if (this->record != nullptr) {
 		//st_check	whether member in 
 		//make_index
@@ -576,6 +614,7 @@ std::string Factor_record_Node::build_symbol_table(std::string type) {
 
 //  ======================  args  ====================
 std::string Args_list_Node::build_symbol_table(std::string type) {
+	puts("Args_list_Node");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -638,12 +677,12 @@ std::string System_type_decl_Node::build_symbol_table(std::string type) {
 	Type sys_type = this->getType();
 	table_unit * t_unit = st->st_lookup(type);
 	if (t_unit != nullptr) {
-		if (sys_type == INT) 	t_unit->type = "INT";
-		if (sys_type == REAL) 	t_unit->type = "REAL";
-		if (sys_type == ENUM) 	t_unit->type = "ENUM";
-		if (sys_type == CHAR) 	t_unit->type = "CHAR";
-		if (sys_type == STRING) t_unit->type = "STRING";
-		if (sys_type == BOOL) 	t_unit->type = "BOOL";
+		if (sys_type == INT) 	t_unit->type = ".byte";
+		if (sys_type == REAL) 	t_unit->type = ".float";
+		if (sys_type == ENUM) 	t_unit->type = ".enum";
+		if (sys_type == CHAR) 	t_unit->type = ".byte";
+		if (sys_type == STRING) t_unit->type = ".asciiz";
+		if (sys_type == BOOL) 	t_unit->type = ".bool";
 		puts("system_type_ok!!!");
 		puts(type.c_str());
 	}

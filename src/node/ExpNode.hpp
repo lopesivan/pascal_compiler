@@ -106,8 +106,8 @@ class Factor_arr_Node : public Factor_Node{
 public:
     Factor_arr_Node(Id_Node *id, Expression_Node *index)
         :id(id), index(index){}
-
     std::string build_symbol_table(std::string);
+
 private:
     Id_Node *id;
     Expression_Node *index;
@@ -117,8 +117,8 @@ class Factor_record_Node : public Factor_Node{
 public:
     Factor_record_Node(Id_Node *record, Id_Node *member)
         :record(record), member(member){}
-
     std::string build_symbol_table(std::string type);
+    
 private:
     Id_Node *record;
     Id_Node *member;
