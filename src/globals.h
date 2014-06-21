@@ -22,6 +22,9 @@
 #include "node/DeclNode.hpp"
 #include "node/StmtNode.hpp"
 
+
+#include "symtab/symboltable.h" //symbol table include
+
 /* the name of the following file may change */
 #include "pascal.tab.h"
 

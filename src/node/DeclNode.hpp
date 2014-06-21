@@ -2,6 +2,7 @@
 #define _DECLNODE_
 
 #include "TreeNode.hpp"
+#include "../symtab/symboltable.h"
 
 class Type_part_Node; // Type_decl_list_Node;
 class Type_decl_Node;
@@ -24,20 +25,29 @@ public:
 	explicit Type_part_Node(Type_decl_list_Node *list)
 		:list(list){}
     void genCode();
+	std::string build_symbol_table(std::string type = "");
+	
 private:
 	Type_decl_list_Node * list;
 };
 
 class Type_decl_Node : public TreeNode{
+public:
+	virtual std::string build_symbol_table(std::string){};
+
 protected:
 	Type_decl_Node(){}
 };
 
+
+class Simple_type_decl_Node;
 class Array_type_decl_Node : public Type_decl_Node{
 public:
 	Array_type_decl_Node(Simple_type_decl_Node *range, Type_decl_Node *type)
 		:range(range), type(type){}
     void genCode();
+	std::string build_symbol_table(std::string);
+
 public:
 	Simple_type_decl_Node * range;
 	Type_decl_Node * type;
@@ -48,6 +58,8 @@ public:
 	Field_decl_Node(Name_list_Node *name_list, Type_decl_Node *type)
 		:name_list(name_list), type(type){}
     void genCode();
+	std::string build_symbol_table(std::string);
+
 private:
 	Name_list_Node *name_list;
 	Type_decl_Node *type;
@@ -61,6 +73,8 @@ public:
 	explicit Field_decl_list_Node(Field_decl_Node *decl)
 		:decl(decl){}
     void genCode();
+	std::string build_symbol_table(std::string);
+
 private:
 	Field_decl_list_Node *prev = nullptr;
 	Field_decl_Node *decl;
@@ -71,6 +85,8 @@ public:
 	explicit Record_type_decl_Node(Field_decl_list_Node* list)
         :list(list){}
     void genCode();
+    std::string build_symbol_table(std::string);
+
 private:
 	Field_decl_list_Node *list;
 };
@@ -90,6 +106,8 @@ public:
         return type;
     }
     void genCode();
+    std::string build_symbol_table(std::string);
+
 private:
 	Type type;
 };
@@ -98,6 +116,7 @@ class Alias_type_decl_Node : public Simple_type_decl_Node{
 public:
 	explicit Alias_type_decl_Node(Id_Node* id):id(id){}
     void genCode();
+	std::string build_symbol_table(std::string);
 private:
 	Id_Node *id;
 };
@@ -107,6 +126,8 @@ public:
 	explicit Enum_type_decl_Node(Name_list_Node *name_list)
 		:name_list(name_list){}
     void genCode();
+	std::string build_symbol_table(std::string);
+
 private:
 	Name_list_Node *name_list;
 };
@@ -123,6 +144,8 @@ public:
 		bool upperNeg, Const_value_Node *high)
 		:lowerBound(low), upperBound(high), isLowerNeg(lowerNeg), isUpperNeg(upperNeg){}
     void genCode();
+	std::string build_symbol_table(std::string);
+
 private:
 	Const_value_Node *lowerBound;
 	Const_value_Node *upperBound;
@@ -136,6 +159,8 @@ public:
 	Subrange_id_type_decl_Node(Id_Node* lower, Id_Node* upper)
 		:lower(lower), upper(upper){}
     void genCode();
+	std::string build_symbol_table(std::string);
+	
 private:
 	Id_Node* lower;
 	Id_Node* upper;

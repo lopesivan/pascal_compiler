@@ -9,10 +9,13 @@ extern FILE* yyin;
 FILE * source;  //input source code
 FILE * listing = stdout; //used to output debug info
 
+symboltable* st = new symboltable();//external symboltable operator
+
 extern TreeNode * do_parse(void);
 extern int yy_flex_debug;
 
 int main( int argc, char * argv[] ){
+  int i;
   char pgm[120]; /* source code file name */
   if (argc != 2){ 
     fprintf(stderr,"usage: %s <filename>\n",argv[0]);
@@ -41,6 +44,21 @@ int main( int argc, char * argv[] ){
   
   auto syntaxTree = dynamic_cast<Program_Node*>(do_parse());
 
+  st->global = 1;
+  syntaxTree->build_symbol_table("");
+  puts("=========symtab debug============");
+  for (i=0; i<SIZE; i++) {
+    if (st->units[i].use == 1) {
+      puts("=======================");
+      printf("name: %s", st->units[i].name.c_str()); puts("");
+      printf("type: %s", st->units[i].type.c_str()); puts("");
+      printf("array_start: %d", st->units[i].array_start); puts("");
+      printf("volumn: %d", st->units[i].volumn); puts("");
+      printf("isrecord: %d", st->units[i].volumn); puts("");
+      printf("volumn: %d", st->units[i].volumn); puts("");
+    }
+  }
+  puts("=========symtab debug  end========");
   fclose(source);
   return 0;
 }

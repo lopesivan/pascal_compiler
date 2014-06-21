@@ -2,6 +2,7 @@
 #define _EXPNODE_H_
 
 #include "TreeNode.hpp"
+#include "../symtab/symboltable.h"
 
 class Id_Node;
 class Factor_Node;
@@ -30,16 +31,26 @@ class Id_Node : public TreeNode{
 public:
 	Id_Node(const std::string& name) : name(name){}
   void genCode();
+    std::string get_name() { return this->name; }
+
+public:
+    table_unit * sym_unit;
 private:
 	std::string name;
 };
 
 class Factor_Node : public TreeNode{
+public:
+    virtual std::string build_symbol_table(std::string type){};
 protected:
     Factor_Node(){}
 };
 
 class Const_value_Node : public Factor_Node{
+public:
+    virtual int get_value(){};
+    std::string build_symbol_table(std::string type);
+    
 protected:
     Const_value_Node(){}
 };
@@ -48,6 +59,8 @@ class ConstInt_Node : public Const_value_Node{
 public:
     ConstInt_Node(int val): val(val){}
     void genCode();
+    int get_value(){return this->val;}
+
 private:
     int val;
 };
@@ -89,6 +102,8 @@ class Factor_id_Node : public Factor_Node{
 public:
     Factor_id_Node(Id_Node* id):id(id){}
     void genCode();
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node *id;
 };
@@ -99,6 +114,8 @@ public:
 public:
     Factor_unary_Node(Type type, Factor_Node *factor): type(type), factor(factor){}
     void genCode();
+    std::string build_symbol_table(std::string type);
+
 private:
     Type type;
     Factor_Node *factor;
@@ -110,6 +127,8 @@ public:
     Func_call_Node(Id_Node* id, Args_list_Node* args): id(id), args(args){}
     explicit Func_call_Node(Id_Node* id): id(id), args(nullptr){}
     void genCode();
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node* id;
     Args_list_Node* args;
@@ -120,6 +139,8 @@ public:
     Factor_arr_Node(Id_Node *id, Expression_Node *index)
         :id(id), index(index){}
     void genCode();
+    std::string build_symbol_table(std::string);
+
 private:
     Id_Node *id;
     Expression_Node *index;
@@ -130,6 +151,8 @@ public:
     Factor_record_Node(Id_Node *record, Id_Node *member)
         :record(record), member(member){}
     void genCode();
+    std::string build_symbol_table(std::string type);
+
 private:
     Id_Node *record;
     Id_Node *member;
@@ -148,6 +171,9 @@ public:
     explicit Expr_Node(Factor_Node *factor)
         :type(NONE), factor(factor){}
     void genCode();
+
+    std::string build_symbol_table(std::string type);
+
 private:
     Op_type type;
     union{
@@ -168,6 +194,9 @@ public:
     Expression_Node(Expr_Node* expr)
         :type(NONE), expression(nullptr), expr(expr){}
     void genCode();
+
+    std::string build_symbol_table(std::string type);
+
 private:
     Cmp_type type;
     Expression_Node* expression;//may be null, first evaluate

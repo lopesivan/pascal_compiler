@@ -2,6 +2,7 @@
 #define _MODULENODE_HPP_
 
 #include "TreeNode.hpp"
+#include "../symtab/symboltable.h"
 
 class Val_para_list_Node; // Name_list_Node
 class Var_para_list_Node;
@@ -30,14 +31,23 @@ class Val_para_list_Node : public TreeNode{
 public:
 	explicit Val_para_list_Node(Name_list_Node *list):list(list){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+	Name_list_Node * get_list() {return list;}
+
 private:
 	Name_list_Node * list;
 };
+
 
 class Var_para_list_Node : public TreeNode {
 public:
   explicit Var_para_list_Node(Name_list_Node *list):list(list){}
   void genCode();
+	explicit Var_para_list_Node(Name_list_Node *list):list(list){}
+	
+	std::string build_symbol_table(std::string type = "");
+	Name_list_Node * get_list() {return list;}
+
 private:
   Name_list_Node * list;
 };
@@ -51,6 +61,8 @@ public:
 		Simple_type_decl_Node *type)
 		:isVal(true), val_para_list(val_para_list), type(type){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
 private:
     bool isVal;
     union{
@@ -67,6 +79,8 @@ public:
 	explicit Para_decl_list_Node(Para_type_list_Node *type)
 		:prev(nullptr), type(type){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
 private:
 	Para_decl_list_Node * prev;
 	Para_type_list_Node * type;
@@ -76,6 +90,8 @@ class Parameters_Node : public TreeNode{
 public:
 	Parameters_Node(Para_decl_list_Node * list):list(list){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
 private:
 	Para_decl_list_Node * list;
 };
@@ -85,6 +101,8 @@ public:
 	Procedure_decl_Node(Id_Node* id, Parameters_Node* paras, 
             Routine_Node* routine):id(id), paras(paras), routine(routine){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
 private:
 	Id_Node* id;
 	Parameters_Node * paras;
@@ -97,6 +115,9 @@ public:
 		Parameters_Node* paras, Simple_type_decl_Node* ret_type, Routine_Node* routine)
 		:id(id), paras(paras), ret_type(ret_type), routine(routine){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
+
 private:
 	Id_Node* id;
 	Parameters_Node * paras;
@@ -110,6 +131,9 @@ public:
     explicit Const_part_Node(Const_expr_list_Node *const_expr_list)
         :const_expr_list(const_expr_list){}
   void genCode();
+    std::string build_symbol_table(std::string type = "");
+
+
 private:
     Const_expr_list_Node *const_expr_list;
 };
@@ -119,6 +143,9 @@ public:
     explicit Var_part_Node(Var_decl_list_Node *list)
         :list(list){}
   void genCode();
+
+    std::string build_symbol_table(std::string type = "");
+
 private:
     Var_decl_list_Node * list;
 };
@@ -135,6 +162,10 @@ public:
     Routine_part_Node(Procedure_decl_Node* proc)
     	:prev(nullptr), proc(proc), isFunction(false){}
   void genCode();
+    bool get_isfunction() { return isFunction;};
+    std::string build_symbol_table(std::string type = "");
+
+
 private:
     Routine_part_Node * prev;
     union{
@@ -149,6 +180,9 @@ public:
 	Program_head_Node(Id_Node* id)
 		:id(id){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
+
 private:
 	Id_Node* id;
 };
@@ -160,6 +194,8 @@ public:
 		:const_part(const_part), type_part(type_part), 
 		var_part(var_part), routine_part(routine_part){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
 private:
 	Const_part_Node *const_part;
 	Type_part_Node *type_part;
@@ -172,6 +208,8 @@ public:
 	explicit Routine_body_Node(Compound_stmt_Node * stmts)
 		:stmts(stmts){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+	
 private:
 	Compound_stmt_Node * stmts;
 };
@@ -181,6 +219,8 @@ public:
 	Routine_Node(Routine_head_Node *head, Routine_body_Node *body)
 		:head(head), body(body){}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
+
 private:
 	Routine_head_Node *head;
 	Routine_body_Node *body;
@@ -192,6 +232,7 @@ public:
 		:head(head), routine(routine){
 	}
   void genCode();
+	std::string build_symbol_table(std::string type = "");
 	
 private:
 	Program_head_Node *head;
