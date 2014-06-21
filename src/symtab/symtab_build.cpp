@@ -519,6 +519,9 @@ std::string Stmt_list_Node::build_symbol_table(std::string type) {
 
 
 // //==================Exp Node======================
+std::string Const_value_Node::build_symbol_table(std::string type) {
+	return "";
+}
 std::string Expression_Node::build_symbol_table(std::string type) {
 	//Cmp_type is compare_operator, ignore;
 	puts("***expression_node***");
@@ -638,18 +641,18 @@ std::string Array_type_decl_Node::build_symbol_table(std::string type) {
 	if (this->range != nullptr) {
 		type_range = this->range->build_symbol_table(type);
 	}
-	//update
+	
 	return type_name;
 }
 
 std::string Field_decl_Node::build_symbol_table(std::string type) {
 	std::string type_name;
-	if (this->type != nullptr) {
-		type_name = this->type->build_symbol_table("");		//record type_name
-	}
-
 	if (this->name_list != nullptr) {
 		this->name_list->build_symbol_table(type_name);
+	}
+
+	if (this->type != nullptr) {
+		this->type->build_symbol_table(type);		//record type_name
 	}
 	return "";
 }
@@ -692,25 +695,31 @@ std::string System_type_decl_Node::build_symbol_table(std::string type) {
 std::string Alias_type_decl_Node::build_symbol_table(std::string type) {
 	std::string type_name;
 	if (this->id != nullptr) {
-		//update
 		type_name = this->id->get_name();
+		table_unit *t = st->st_lookup(type);
+		t->type = type_name;
 	}
 	return "";
 }
 
 std::string Enum_type_decl_Node::build_symbol_table(std::string type) {
 	if (this->name_list != nullptr) {
-		this->name_list->build_symbol_table(type);//???
+		this->name_list->build_symbol_table(type);
 	}
 	return "";
 }
+
+
 
 std::string Subrange_const_value_type_decl_Node::build_symbol_table(std::string type) {
 	int low = this->lowerBound->get_value();
 	if (this->isLowerNeg) low = -low;
 	int up = this->upperBound->get_value();
 	if (this->isUpperNeg) up = - up;
-	//update
+	table_unit *t = st->st_lookup(type);
+	t->array_start = low;
+	t->volumn = up - low + 1;
+	t->isarray = 1;
 	return "";
 }
 
