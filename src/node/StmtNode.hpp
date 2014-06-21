@@ -119,11 +119,33 @@ private:
 
 class Read_stmt_Node : public Proc_stmt_Node{
 public:
-    Read_stmt_Node(Factor_Node* factor)
-        :Proc_stmt_Node(new Id_Node("read"), nullptr), factor(factor){}
+    Read_stmt_Node(Id_Node* id)
+        :Proc_stmt_Node(new Id_Node("read"), 
+            new Args_list_Node(
+                new Expression_Node(
+                    new Expr_Node(
+                        new Factor_id_Node(id))))), id(id){}
     void genCode();
 private:
-    Factor_Node* factor;
+    Id_Node* id;//shortcut of args
+};
+
+class Write_stmt_Node : public Proc_stmt_Node{
+public:
+    Write_stmt_Node(Expression_Node* expression)
+        :Proc_stmt_Node(new Id_Node("write"),
+            new Args_list_Node(expression)), expression(expression){}
+private:
+    Expression_Node* expression;//shortcut of args from Proc_stmt_Node
+};
+
+class Writeln_stmt_Node : public Proc_stmt_Node{
+public:
+    Writeln_stmt_Node(Expression_Node* expression)
+        :Proc_stmt_Node(new Id_Node("write"),
+            new Args_list_Node(expression)), expression(expression){}
+private:
+    Expression_Node* expression;//shortcut of args from Proc_stmt_Node
 };
 
 class Compound_stmt_Node : public Non_label_stmt_Node{

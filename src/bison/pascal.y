@@ -90,8 +90,8 @@ extern char* yytext;
 %token<constBool>   P_FALSE;
 %token  STRING
 %token PROGRAM DOT SEMI COMMA EQUAL CONST ARRAY TYPE LB RB OF RECORD END COLON LP RP DOTDOT MINUS VAR FUNCTION NOT GE GT LE LT
-%token PLUS MUL DIV AND MOD UNEQUAL OR ASSIGN P_BEGIN IF ELSE THEN REPEAT UNTIL WHILE DO FOR GOTO CASE TO DOWNTO READ
-%token TYPEINTEGER TYPEREAL TYPECHAR TYPESTRING TYPEBOOL P_FALSE P_TRUE PROCEDURE 
+%token PLUS MUL DIV AND MOD UNEQUAL OR ASSIGN P_BEGIN IF ELSE THEN REPEAT UNTIL WHILE DO FOR GOTO CASE TO DOWNTO READ WRITE WRITELN
+%token TYPEINTEGER TYPEREAL TYPECHAR TYPESTRING TYPEBOOL PROCEDURE  
 
 %start program
 
@@ -455,9 +455,18 @@ proc_stmt : id LP RP{
     $$ = new Proc_stmt_Node($1, $3);
     $$->setLineno(lineno);
 }
-|  READ  LP  factor  RP {
+|  READ  LP  id  RP {
     $$ = new Read_stmt_Node($3);
+    $$->setLineno(lineno);
 }
+| WRITE LP expression RP{
+    $$ = new Write_stmt_Node($3);
+    $$->setLineno(lineno);
+}
+| WRITELN LP expression RP{
+    $$ = new Writeln_stmt_Node($3);
+    $$->setLineno(lineno);
+};
 
 if_stmt : IF  expression  THEN  stmt  else_clause{ 
               $$ = new If_stmt_Node($2, $4, $5);

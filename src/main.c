@@ -1,5 +1,5 @@
-//#define SCAN_DEBUG
-//#define PARSE_DEBUG
+#define SCAN_DEBUG
+#define PARSE_DEBUG
 
 #include "globals.h"
 #include "pascal.tab.h"
