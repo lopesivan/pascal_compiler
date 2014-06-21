@@ -69,7 +69,11 @@ std::string Const_part_Node::build_symbol_table(std::string type) {
 
 
 std::string Const_expr_list_Node::build_symbol_table(std::string type) {
+	table_unit *q = st->st_lookup(this->id->get_name());
+	if (q != nullptr) {printf("Redefined of %s in line: %d", this->id->get_name().c_str(), this->id->getLineno() ); puts("");}
 	st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "const");
+	table_unit *p = st->st_lookup(this->id->get_name());
+	this->id->sym_unit = p;								//const def add into re-table
 
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
@@ -99,15 +103,18 @@ std::string Type_decl_list_Node::build_symbol_table(std::string type) {	//Treeno
 std::string Type_definition_Node::build_symbol_table(std::string type) { 	//Treenode
 	std::string type_name;
 	if (this->id != nullptr) {
-		table_unit *p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, type_name); 
-		this->id->sym_unit = p;
 		type_name = this->id->get_name();
+		// puts("");
+		// puts(this->id->get_name().c_str());
+		// puts("");
+		table_unit *p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, ""); 
+		this->id->sym_unit = p;				//reverse-link
+		this->id->sym_unit->istype = 1;
 	}
-
+	
 	if (this->type_decl != nullptr) {
 		this->type_decl->build_symbol_table(type_name);
 	}
-
 	return "";
 }
 
@@ -138,14 +145,14 @@ std::string Var_decl_Node::build_symbol_table(std::string type) {	//OK
 		this->name_list->build_symbol_table("");
 	}
 	Name_list_Node *p= this->name_list;
-	while (p->prev != nullptr) {
+	while (p->get_name_list() != nullptr) {
 		if (this->type != nullptr) {
-			this->type->build_symbol_table(p->id->get_name());
+			this->type->build_symbol_table(p->get_id()->get_name());
 		}
-		p = p->prev;
+		p = p->get_name_list();
 	}
 	if (this->type != nullptr) {
-		this->type->build_symbol_table(p->id->get_name());
+		this->type->build_symbol_table(p->get_id()->get_name());
 	}
 	return "";
 }
@@ -182,16 +189,19 @@ std::string Routine_part_Node::build_symbol_table(std::string type) {
 }
 
 
-std::string Function_decl_Node::build_symbol_table(std::string type) {
+std::string Function_decl_Node::build_symbol_table(std::string type) {				//reverse-link of func
 	if (this->id != nullptr) {
 		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "function");
 		//create new table
 		symboltable *new_st = new symboltable();
-		printf("%p", new_st);
-		puts("");
+		// printf("%p", new_st);
+		// puts("");
 		new_st->forward = st;
 		st->st_func_proc(this->id->get_name(), new_st);
 		st = new_st;
+		//reverse link
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 	}
 
 	if (this->paras != nullptr) {
@@ -199,8 +209,9 @@ std::string Function_decl_Node::build_symbol_table(std::string type) {
 	}
 
 	if (this->ret_type != nullptr) {
-		this->ret_type->build_symbol_table("");		
+		// this->ret_type->build_symbol_table("");	ignore	
 	}
+
 	if (this->routine != nullptr) {
 		this->routine->build_symbol_table("");
 	}
@@ -229,30 +240,39 @@ std::string Para_decl_list_Node::build_symbol_table(std::string type) {
 }
 
 
-std::string Para_type_list_Node::build_symbol_table(std::string type) {
+std::string Para_type_list_Node::build_symbol_table(std::string type) {			//reverse link of paras
 	std::string type_name = " ";
 	if (this->isVal) {
 		this->val_para_list->get_list()->build_symbol_table();
 		Name_list_Node *p = this->val_para_list->get_list();
 
-		while (p->prev != nullptr) {
-			this->val_para_list->build_symbol_table(p->id->get_name());
-			table_unit *t = st->st_lookup(p->id->get_name());
+		while (p->get_name_list() != nullptr) {
+			this->val_para_list->build_symbol_table(p->get_id()->get_name());
+			table_unit *t = st->st_lookup(p->get_id()->get_name());
 			t->isref = 1;
-			p = p->prev;
+			p->get_id()->sym_unit = t;
+			p = p->get_name_list();
 		}
-		this->val_para_list->build_symbol_table(p->id->get_name());
+		this->val_para_list->build_symbol_table(p->get_id()->get_name());
+		table_unit *t = st->st_lookup(p->get_id()->get_name());
+		t->isref = 1;
+		p->get_id()->sym_unit = t;
+
 	} else {
 		this->var_para_list->get_list()->build_symbol_table();
 		Name_list_Node *p = this->var_para_list->get_list();
 
-		while (p->prev != nullptr) {
-			this->var_para_list->build_symbol_table(p->id->get_name());
-			table_unit *t = st->st_lookup(p->id->get_name());
+		while (p->get_name_list() != nullptr) {
+			this->var_para_list->build_symbol_table(p->get_id()->get_name());
+			table_unit *t = st->st_lookup(p->get_id()->get_name());
 			t->isref = 0;
-			p = p->prev;
+			p->get_id()->sym_unit = t;
+			p = p->get_name_list();
 		}
-		this->var_para_list->build_symbol_table(p->id->get_name());
+		this->var_para_list->build_symbol_table(p->get_id()->get_name());
+		table_unit *t = st->st_lookup(p->get_id()->get_name());
+		t->isref = 0;
+		p->get_id()->sym_unit = t;
 	}
 	return "";
 }
@@ -281,7 +301,9 @@ std::string Procedure_decl_Node::build_symbol_table(std::string type) {
 		new_st->forward = st;
 		st->st_func_proc(this->id->get_name(), new_st);
 		st = new_st;
-
+		//reverse link
+		table_unit *p = st->st_lookup(this->id->get_name());				//reverse_link of proc
+		this->id->sym_unit = p;
 	}
 
 	if (this->paras != nullptr) {
@@ -307,9 +329,7 @@ std::string Routine_body_Node::build_symbol_table(std::string type) {
 
 
 std::string Stmt_Node::build_symbol_table(std::string type) {
-	puts("---stmt_in---");
 	if (this->get_hasLable()) {
-		puts("how to deal with label");
 		this->stmt->build_symbol_table(type);
 	} else {
 		this->stmt->build_symbol_table(type);
@@ -320,7 +340,7 @@ std::string Stmt_Node::build_symbol_table(std::string type) {
 
 //================stmt node=======================
 std::string Assign_stmt_Node::build_symbol_table(std::string type) {
-	puts("===assign===");
+	// puts("===assign===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -329,7 +349,7 @@ std::string Assign_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Assign_id_stmt_Node::build_symbol_table(std::string type) {
-	puts("===assign_id===");
+	// puts("===assign_id===");
 	std::string type_name;
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
@@ -342,10 +362,12 @@ std::string Assign_id_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Assign_arr_stmt_Node::build_symbol_table(std::string type) {
-	puts("===assign_arr===");
+	// puts("===assign_arr===");
 	std::string type_name;	//arr_name, index, expr,
 	if (this->arr_name != nullptr) {
 		//check this->id type;
+		table_unit *t = st->st_lookup(this->arr_name->get_name());		//array re-link
+		this->arr_name->sym_unit = t;
 	}
 	if (this->index != nullptr) {
 		this->index->build_symbol_table("");
@@ -358,16 +380,17 @@ std::string Assign_arr_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Assign_record_stmt_Node::build_symbol_table(std::string type) {
-	puts("===assign_rec===");
+	// puts("===assign_rec===");
 	if (this->record_name != nullptr) {
-		//check
-		//make
+		table_unit *p = st->st_lookup(this->record_name->get_name());	//record_name re-link
+		this->record_name->sym_unit = p;
 	}
 	if (this->member != nullptr) {
-		//check
-		//make
+		table_unit *p = st->st_lookup(this->member->get_name());		//member_name re-link
+		//some correctness check here
+		this->record_name->sym_unit = p;
 	}
-	if (this->expr != nullptr) {
+	if (this->expr != nullptr) {										
 		this->expr->build_symbol_table("");
 	}
 	return "";
@@ -375,21 +398,20 @@ std::string Assign_record_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Proc_stmt_Node::build_symbol_table(std::string type) {
-	puts("===proc_stmt_node===");
+	// puts("===proc_stmt_node===");
 	if (this->id != nullptr) {
-		//check
-		//make
+		table_unit *p = st->st_lookup(this->id->get_name());		//proc name re-link
+		this->id->sym_unit = p;
 	}
 	if (this->args != nullptr) {
-		//check
-		//make
+		this->args->build_symbol_table("");			//still local re-link.
 	}
 	return "";
 }
 
 
 std::string Read_stmt_Node::build_symbol_table(std::string type) {
-	puts("===read===");
+	// puts("===read===");
 	if (this->factor != nullptr) {
 		this->factor->build_symbol_table("");
 	}
@@ -397,16 +419,16 @@ std::string Read_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Compound_stmt_Node::build_symbol_table(std::string type) {
-	puts("===Compound===");
+	// puts("===Compound===");
 	if (this->stmts != nullptr) {
-		puts("---Compound_stmt_Node---");
+		// puts("---Compound_stmt_Node---");
 		this->stmts->build_symbol_table("");
 	}
 	return "";
 }
 
 std::string Else_clause_Node::build_symbol_table(std::string type) {
-	puts("===else===");
+	// puts("===else===");
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table("");
 	}
@@ -414,7 +436,7 @@ std::string Else_clause_Node::build_symbol_table(std::string type) {
 }
 
 std::string If_stmt_Node::build_symbol_table(std::string type) {
-	puts("===if_stmt===");
+	// puts("===if_stmt===");
 	if (this->exp != nullptr) {
 		this->exp->build_symbol_table("");
 	}
@@ -428,7 +450,7 @@ std::string If_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Repeat_stmt_Node::build_symbol_table(std::string type) {
-	puts("===repeat===");
+	// puts("===repeat===");
 	if (this->stmts != nullptr) {
 		this->stmts->build_symbol_table("");
 	}
@@ -439,7 +461,7 @@ std::string Repeat_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string While_stmt_Node::build_symbol_table(std::string type) {
-	puts("===while===");
+	// puts("===while===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -450,10 +472,10 @@ std::string While_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string For_stmt_Node::build_symbol_table(std::string type) {
-	puts("===for===");
+	// puts("===for===");
 	if (this->id != nullptr) {
-		//check
-		//make
+		table_unit *t = st->st_lookup(this->id->get_name());   	//for stmt, rolling variable-link 
+		this->id->sym_unit = t;
 	}
 	if (this->id_exp != nullptr) {
 		this->id_exp->build_symbol_table("");
@@ -469,7 +491,7 @@ std::string For_stmt_Node::build_symbol_table(std::string type) {
 
 
 std::string Case_expr_Node::build_symbol_table(std::string type) {
-	puts("===case_expr===");
+	// puts("===case_expr===");
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table();
 	}
@@ -477,7 +499,7 @@ std::string Case_expr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Case_const_val_expr_Node::build_symbol_table(std::string type) {
-	puts("===case const===");
+	// puts("===case const===");
 	//ignore const_val, for no id
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table("");
@@ -486,9 +508,10 @@ std::string Case_const_val_expr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Case_id_expr_Node::build_symbol_table(std::string type) {
-	puts("===case id===");
+	// puts("===case id===");
 	if (this->id != nullptr) {
-		//check
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 		//make
 	}
 
@@ -499,7 +522,7 @@ std::string Case_id_expr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Case_expr_list_Node::build_symbol_table(std::string type) {
-	puts("===case expr===");
+	// puts("===case expr===");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -511,7 +534,7 @@ std::string Case_expr_list_Node::build_symbol_table(std::string type) {
 
 
 std::string Case_stmt_Node::build_symbol_table(std::string type) {
-	puts("===case stmt===");
+	// puts("===case stmt===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -526,7 +549,7 @@ std::string Goto_stmt_Node::build_symbol_table(std::string type) {
 }
 
 std::string Stmt_list_Node::build_symbol_table(std::string type) {
-	puts("===stmt list===");
+	// puts("===stmt list===");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -546,7 +569,7 @@ std::string Const_value_Node::build_symbol_table(std::string type) {
 }
 std::string Expression_Node::build_symbol_table(std::string type) {
 	//Cmp_type is compare_operator, ignore;
-	puts("***expression_node***");
+	// puts("***expression_node***");
 	if (this->expression != nullptr) {
 		this->expression->build_symbol_table("");
 	}
@@ -558,10 +581,10 @@ std::string Expression_Node::build_symbol_table(std::string type) {
 
 std::string Expr_Node::build_symbol_table(std::string type) {
 	// ignore op_type
-	puts("***expr_node***");
-	printf("%p, %p, %p", this->expr_lhs, this->expr_rhs, this->factor);
+	// puts("***expr_node***");
+	// printf("%p, %p, %p", this->expr_lhs, this->expr_rhs, this->factor);
 	// printf("%d", this->getLineno());
-	puts("");
+	// puts("");
 	
 	if (this->type != NONE) {
 		if (this->expr_lhs != nullptr) {
@@ -571,7 +594,7 @@ std::string Expr_Node::build_symbol_table(std::string type) {
 			this->expr_rhs->build_symbol_table("");
 		}
 	} else {
-		printf("type: %d", this->type);puts("");
+		// printf("type: %d", this->type);puts("");
 		if (this->factor != nullptr) {
 			this->factor->build_symbol_table("");
 		}
@@ -580,15 +603,17 @@ std::string Expr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Factor_id_Node::build_symbol_table(std::string type) {
-	puts("Factor_id_Node");
+	// puts("Factor_id_Node");
 	if (this->id != nullptr) {
 		//check id
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 	}
 	return "";
 }
 
 std::string Factor_unary_Node::build_symbol_table(std::string type) {
-	puts("Factor_unary_Node");
+	// puts("Factor_unary_Node");
 	//ignore type, for {NOT, MINUS}
 	if (this->factor != nullptr) {
 		this->factor->build_symbol_table("");
@@ -597,7 +622,7 @@ std::string Factor_unary_Node::build_symbol_table(std::string type) {
 }
 
 std::string Func_call_Node::build_symbol_table(std::string type) {
-	puts("Func_call_Node");
+	// puts("Func_call_Node");
 	if (this->id != nullptr) {
 		//st_check
 	}
@@ -609,7 +634,7 @@ std::string Func_call_Node::build_symbol_table(std::string type) {
 }
 
 std::string Factor_arr_Node::build_symbol_table(std::string type) {
-	puts("Factor_arr_Node");
+	// puts("Factor_arr_Node");
 	if (this->id != nullptr) {
 		//st_check
 	}
@@ -620,7 +645,7 @@ std::string Factor_arr_Node::build_symbol_table(std::string type) {
 }
 
 std::string Factor_record_Node::build_symbol_table(std::string type) {
-	puts("Factor_record_Node");
+	// puts("Factor_record_Node");
 	if (this->record != nullptr) {
 		//st_check	whether member in 
 		//make_index
@@ -639,7 +664,7 @@ std::string Factor_record_Node::build_symbol_table(std::string type) {
 
 //  ======================  args  ====================
 std::string Args_list_Node::build_symbol_table(std::string type) {
-	puts("Args_list_Node");
+	// puts("Args_list_Node");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -708,8 +733,8 @@ std::string System_type_decl_Node::build_symbol_table(std::string type) {
 		if (sys_type == CHAR) 	t_unit->type = ".byte";
 		if (sys_type == STRING) t_unit->type = ".asciiz";
 		if (sys_type == BOOL) 	t_unit->type = ".bool";
-		puts("system_type_ok!!!");
-		puts(type.c_str());
+		// puts("system_type_ok!!!");
+		// puts(type.c_str());
 	}
 	return "";
 }

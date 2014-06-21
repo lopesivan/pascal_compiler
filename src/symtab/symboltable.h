@@ -50,6 +50,9 @@ public:
 	int isarray;			//array or not
 	int array_start;		//array_start
 	int volumn;				//[100] (if have)
+
+	//if type
+	int istype;				//if type
 	//if record
 	int isrecord;			//if record
 	std::string belong;		//belong to which type
@@ -138,11 +141,11 @@ public:
 			t->next->next = NULL;
 		}
 
-		printf("finish insert: --------- %s", name.c_str());
-		puts("");
-		printf("type: %s", type.c_str());
-		puts("");
-		return l;
+		// printf("finish insert: --------- %s", name.c_str());
+		// puts("");
+		// printf("type: %s", type.c_str());
+		// puts("");
+		return &units[h];
 	}
 
 public:
