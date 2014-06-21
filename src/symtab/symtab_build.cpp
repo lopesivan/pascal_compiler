@@ -23,7 +23,7 @@ std::string Program_Node::build_symbol_table(std::string type) {
 
 std::string Program_head_Node::build_symbol_table(std::string type) {
 	if (this->id != nullptr) {
-		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "program_id");
+		// st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "program_id");
 		//insert program head for fun
 	}
 	return "";
@@ -232,18 +232,41 @@ std::string Para_decl_list_Node::build_symbol_table(std::string type) {
 std::string Para_type_list_Node::build_symbol_table(std::string type) {
 	std::string type_name = " ";
 	if (this->isVal) {
-		// type_name = this->type->build_symbol_table();	//??????TODO
-		// this->val_para_list->build_symbol_table(type_name);
+		this->val_para_list->get_list()->build_symbol_table();
+		Name_list_Node *p = this->val_para_list->get_list();
+
+		while (p->prev != nullptr) {
+			this->val_para_list->build_symbol_table(p->id->get_name());
+			table_unit *t = st->st_lookup(p->id->get_name());
+			t->isref = 1;
+			p = p->prev;
+		}
+		this->val_para_list->build_symbol_table(p->id->get_name());
 	} else {
-		// type_name = this->type->build_symbol_table();		//??????TODO
-		// this->val_para_list->build_symbol_table(type_name);		
+		this->var_para_list->get_list()->build_symbol_table();
+		Name_list_Node *p = this->var_para_list->get_list();
+
+		while (p->prev != nullptr) {
+			this->var_para_list->build_symbol_table(p->id->get_name());
+			table_unit *t = st->st_lookup(p->id->get_name());
+			t->isref = 0;
+			p = p->prev;
+		}
+		this->var_para_list->build_symbol_table(p->id->get_name());
 	}
 	return "";
-	//??????????????????????/TODO
 }
 
 std::string Var_para_list_Node::build_symbol_table(std::string type) {
-	if (this->list !=nullptr) {
+	if (this->list != nullptr) {
+		this->list->build_symbol_table("");
+	}
+	return "";
+}
+
+
+std::string Val_para_list_Node::build_symbol_table(std::string type) {
+	if (this->list != nullptr) {
 		this->list->build_symbol_table("");
 	}
 	return "";
@@ -286,10 +309,9 @@ std::string Routine_body_Node::build_symbol_table(std::string type) {
 std::string Stmt_Node::build_symbol_table(std::string type) {
 	puts("---stmt_in---");
 	if (this->get_hasLable()) {
-		puts("how deal with label");
-		// this->stmt->build_symbol_table("");
+		puts("how to deal with label");
+		this->stmt->build_symbol_table(type);
 	} else {
-		puts("error");
 		this->stmt->build_symbol_table(type);
 	}						
 	return "";

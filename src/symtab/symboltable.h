@@ -53,7 +53,8 @@ public:
 	//if record
 	int isrecord;			//if record
 	std::string belong;		//belong to which type
-
+	//if func_proc
+	int isref;				//if func_porc
 
 	//designed for code-gen
 	int memloc;				//record memory_location
@@ -65,7 +66,7 @@ public:
 class symboltable
 {
 public:
-	symboltable(){ this->forward = this; };
+	symboltable(){ this->forward = this; this->global = 0;};
 	~symboltable(){};
 	
 
@@ -80,7 +81,7 @@ public:
 		if ((l->use == 1) && (name.compare(l->name) == 0)) {
 			return l;
 		}
-		//------------
+		//--------------
 		while (p->forward != p) {
 			table_unit *l = &(p->units[h]);
 
@@ -156,7 +157,7 @@ public:
 	symboltable * forward;
 public:
 	table_unit units[SIZE];
-	
+	int global;
 };
 
 

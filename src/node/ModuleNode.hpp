@@ -7,8 +7,9 @@
 class Val_para_list_Node : public TreeNode{
 public:
 	explicit Val_para_list_Node(Name_list_Node *list):list(list){}
-
 	std::string build_symbol_table(std::string type = "");
+	Name_list_Node * get_list() {return list;}
+
 private:
 	Name_list_Node * list;
 };
@@ -18,6 +19,7 @@ public:
 	explicit Var_para_list_Node(Name_list_Node *list):list(list){}
 	
 	std::string build_symbol_table(std::string type = "");
+	Name_list_Node * get_list() {return list;}
 private:
 	Name_list_Node * list;
 };

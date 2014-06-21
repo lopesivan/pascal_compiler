@@ -25,6 +25,7 @@ protected:
 class Const_value_Node : public Factor_Node{
 public:
     virtual int get_value(){};
+    std::string build_symbol_table(std::string type);
     
 protected:
     Const_value_Node(){}
@@ -118,7 +119,7 @@ public:
     Factor_record_Node(Id_Node *record, Id_Node *member)
         :record(record), member(member){}
     std::string build_symbol_table(std::string type);
-    
+
 private:
     Id_Node *record;
     Id_Node *member;

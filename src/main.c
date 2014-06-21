@@ -43,13 +43,19 @@ int main( int argc, char * argv[] ){
 #endif
   
   auto syntaxTree = dynamic_cast<Program_Node*>(do_parse());
+
+  st->global = 1;
   syntaxTree->build_symbol_table("");
   puts("=========symtab debug============");
   for (i=0; i<SIZE; i++) {
     if (st->units[i].use == 1) {
       puts("=======================");
-      printf("%s", st->units[i].name.c_str()); puts("");
-      printf("%s", st->units[i].type.c_str()); puts("");
+      printf("name: %s", st->units[i].name.c_str()); puts("");
+      printf("type: %s", st->units[i].type.c_str()); puts("");
+      printf("array_start: %d", st->units[i].array_start); puts("");
+      printf("volumn: %d", st->units[i].volumn); puts("");
+      printf("isrecord: %d", st->units[i].volumn); puts("");
+      printf("volumn: %d", st->units[i].volumn); puts("");
     }
   }
   puts("=========symtab debug  end========");
