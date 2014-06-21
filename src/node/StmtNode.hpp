@@ -166,6 +166,8 @@ public:
         :Proc_stmt_Node(new Id_Node("write"),
             new Args_list_Node(expression)), expression(expression){}
     void gen_code(CodeGenerator* cg, int block_id){}
+    string build_symbol_table(string type);
+
 private:
     Expression_Node* expression;//shortcut of args from Proc_stmt_Node
 };
@@ -176,6 +178,7 @@ public:
         :Proc_stmt_Node(new Id_Node("write"),
             new Args_list_Node(expression)), expression(expression){}
     void gen_code(CodeGenerator* cg, int block_id);
+    string build_symbol_table(string type = "");
     
 private:
     Expression_Node* expression;//shortcut of args from Proc_stmt_Node

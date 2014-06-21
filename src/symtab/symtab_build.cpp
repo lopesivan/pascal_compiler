@@ -391,9 +391,26 @@ string Proc_stmt_Node::build_symbol_table(string type) {
 
 string Read_stmt_Node::build_symbol_table(string type) {
 	puts("===read===");
-//	if (this->factor != nullptr) {
-//		this->factor->build_symbol_table("");
-//	}
+	if (this->id != nullptr) {
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;									//re-link of id in read
+	}
+	return "";
+}
+
+string Write_stmt_Node::build_symbol_table(string type) {
+	puts("====write====");
+	if (this->expression != nullptr) {
+		this->expression->build_symbol_table("");
+	}
+	return "";
+}
+
+string Writeln_stmt_Node::build_symbol_table(string type) {
+	puts("writeln");
+	if (this->expression != nullptr) {
+		this->expression->build_symbol_table("");
+	}
 	return "";
 }
 
