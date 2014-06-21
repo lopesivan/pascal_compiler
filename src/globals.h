@@ -1,6 +1,8 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
+#define DEBUG
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -17,10 +19,16 @@
 
 #ifndef YYPARSER
 
+// Node
+#include "node/TreeNode.hpp"
 #include "node/ExpNode.hpp"
 #include "node/ModuleNode.hpp"
 #include "node/DeclNode.hpp"
 #include "node/StmtNode.hpp"
+// Symbol table
+#include "symtab/symboltable.h"
+// Code generation
+#include "codegen/codegen.hpp"
 
 /* the name of the following file may change */
 #include "pascal.tab.h"

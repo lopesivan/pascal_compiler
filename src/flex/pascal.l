@@ -72,6 +72,8 @@ char        [^\n\t \r]
 "to"		{return TO;}
 "downto"	{return DOWNTO;}
 "read"		{return READ;}
+"write"     {return WRITE;}
+"writeln"   {return WRITELN;}
 "Integer"	{return TYPEINTEGER;}
 "real"	    {return TYPEREAL;}
 "char"      {return TYPECHAR;}

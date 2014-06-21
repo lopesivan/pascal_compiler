@@ -1,15 +1,11 @@
-program helloworld;
+program hello;
+
+const
+  helloworld = "Hello world!";
+var
+  anotherhello: integer;
 
 Begin
-   printchar('H');
-   printchar('e');
-   printchar('l');
-   printchar('l');
-   printchar('o');
-   printchar(' ');
-   printchar('W');
-   printchar('o');
-   printchar('r');
-   printchar('l');
-   printchar('d');
+  anotherhello := helloworld;
+  writeln(helloworld);
 End.

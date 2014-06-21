@@ -3,6 +3,10 @@
 
 #include "TreeNode.hpp"
 #include <sstream>
+#include "../symtab/symboltable.h"
+#include "../codegen/codegen.hpp"
+
+using namespace std;
 
 class Id_Node;
 class Factor_Node;
@@ -27,23 +31,33 @@ class Expression_Node; // Expression_Node, Expr_Node
 class Expression_list_Node; // Expression_list_Node, Expression_Node
 
 
-class Id_Node : public TreeNode{
+class Id_Node : public TreeNode {
 public:
-	Id_Node(const std::string& name) : name(name){}
-	string get_name() {return name;}
-  void gen_code(CodeGenerator* cg, int block_id);
+	  Id_Node(const string& name) : name(name){}
+	  string get_name() {return name;}
+  
+public:
+    table_unit * sym_unit;
 private:
-	std::string name;
+  	string name;
 };
 
 class Factor_Node : public TreeNode{
+public:
+    virtual string build_symbol_table(string type){}
+    virtual void gen_compute_code(CodeBlock* cb, string result_reg){}
 protected:
     Factor_Node(){}
 };
 
 class Const_value_Node : public Factor_Node{
 public:
-  virtual void gen_data(CodeGenerator* cg);
+    virtual string get_val(){};
+    virtual int get_value(){};
+    virtual string get_type(){};
+    string build_symbol_table(string type);
+    virtual void gen_compute_code(CodeBlock* cb, string result_reg){}
+    
 protected:
     Const_value_Node(){}
 };
@@ -52,8 +66,11 @@ class ConstInt_Node : public Const_value_Node{
 public:
     ConstInt_Node(int val): val(val){type = ".word";}
     string get_val() { return to_string(val); }
+    int get_value() { return val; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
+    void gen_compute_code(CodeBlock* cb, string result_reg){}
+
 private:
     int val;
     string type;
@@ -65,6 +82,7 @@ public:
     string get_val() { return to_string(val); }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
+    void gen_compute_code(CodeBlock* cb, string result_reg){}
 private:
     double val;
     string type;
@@ -73,9 +91,10 @@ private:
 class ConstChar_Node : public Const_value_Node{
 public:
     ConstChar_Node(char val): val(val){type = ".byte";}
-    string get_val() { return "'" + to_string(val) + "'" }
+    string get_val() { return "'" + to_string(val) + "'"; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
+    void gen_compute_code(CodeBlock* cb, string result_reg){}
 private:
     char val;
     string type;
@@ -84,9 +103,10 @@ private:
 class ConstBool_Node : public Const_value_Node{
 public:
     ConstBool_Node(bool val): val(val){type = ".byte";}
-    string get_val() { if (bool) return "1" else return "0"; }
+    string get_val() { if (val) return "1"; else return "0"; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
+    void gen_compute_code(CodeBlock* cb, string result_reg){}
 private:
     bool val;
     string type;
@@ -94,12 +114,13 @@ private:
 
 class ConstStr_Node : public Const_value_Node{
 public:
-    ConstStr_Node(const std::string& val): val(val){type = ".asciiz"}
+    ConstStr_Node(const string& val): val(val){type = ".asciiz";}
     string get_val() { return "\"" + val + "\""; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
+    void gen_compute_code(CodeBlock* cb, string result_reg){}
 private:
-    std::string val;
+    string val;
     string type;
 };
 
@@ -107,7 +128,9 @@ private:
 class Factor_id_Node : public Factor_Node{
 public:
     Factor_id_Node(Id_Node* id):id(id){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    string build_symbol_table(string type);
+    void gen_compute_code(CodeBlock* cb, string result_reg);
+
 private:
     Id_Node *id;
 };
@@ -117,7 +140,9 @@ public:
     enum Type {NOT, MINUS};
 public:
     Factor_unary_Node(Type type, Factor_Node *factor): type(type), factor(factor){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    string build_symbol_table(string type);
+    void gen_code(CodeGenerator* cg, int block_id) {}
+
 private:
     Type type;
     Factor_Node *factor;
@@ -128,7 +153,9 @@ class Func_call_Node : public Factor_Node{
 public:
     Func_call_Node(Id_Node* id, Args_list_Node* args): id(id), args(args){}
     explicit Func_call_Node(Id_Node* id): id(id), args(nullptr){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    string build_symbol_table(string type);
+    void gen_code(CodeGenerator* cg, int block_id) {}
+
 private:
     Id_Node* id;
     Args_list_Node* args;
@@ -138,7 +165,9 @@ class Factor_arr_Node : public Factor_Node{
 public:
     Factor_arr_Node(Id_Node *id, Expression_Node *index)
         :id(id), index(index){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    string build_symbol_table(string);
+    void gen_code(CodeGenerator* cg, int block_id) {}
+
 private:
     Id_Node *id;
     Expression_Node *index;
@@ -148,7 +177,9 @@ class Factor_record_Node : public Factor_Node{
 public:
     Factor_record_Node(Id_Node *record, Id_Node *member)
         :record(record), member(member){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    string build_symbol_table(string type);
+    void gen_code(CodeGenerator* cg, int block_id) {}
+
 private:
     Id_Node *record;
     Id_Node *member;
@@ -166,7 +197,9 @@ public:
     //factor
     explicit Expr_Node(Factor_Node *factor)
         :type(NONE), factor(factor){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    string build_symbol_table(string type);
+    void gen_compute_code(CodeBlock* cb, string result_reg);
+
 private:
     Op_type type;
     union{
@@ -186,7 +219,10 @@ public:
         Expr_Node* expr):type(type), expression(expression), expr(expr){}
     Expression_Node(Expr_Node* expr)
         :type(NONE), expression(nullptr), expr(expr){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    void gen_compute_code(CodeBlock* cb, string result_reg);
+
+    string build_symbol_table(string type);
+
 private:
     Cmp_type type;
     Expression_Node* expression;//may be null, first evaluate
@@ -198,7 +234,7 @@ public:
     Expression_list_Node(Expression_list_Node* prev, Expression_Node* node)
         :prev(prev), node(node){}
     explicit Expression_list_Node(Expression_Node* node):prev(nullptr), node(node){}
-    void gen_code(CodeGenerator* cg, int block_id);
+    void gen_code(CodeGenerator* cg, int block_id) {}
 private:
     Expression_list_Node* prev;
     Expression_Node* node;
