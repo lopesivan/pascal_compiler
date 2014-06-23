@@ -276,6 +276,7 @@ void Factor_id_Node::gen_compute_code(CodeBlock* cb, string result_reg)
 {
 #ifdef DEBUG
   printf("Generate code for Factor_id\n");
+  printf("this->id = %p\n", this->id);
   printf("Factor type is %s\n", this->id->sym_unit->type.c_str());
 #endif
   if (this->id->sym_unit->type == "const")

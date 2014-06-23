@@ -2,3 +2,5 @@
 pascal
 pascal.tab.*
 scan.c
+*.swp
+*~

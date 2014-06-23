@@ -3,7 +3,7 @@ program hello;
 const
   helloworld = "Hello world!";
 var
-  anotherhello: integer;
+  anotherhello: string;
 
 Begin
   anotherhello := helloworld;
