@@ -24,7 +24,7 @@ string Program_Node::build_symbol_table(string type) {
 
 string Program_head_Node::build_symbol_table(string type) {
 	if (this->id != nullptr) {
-		// st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "program_id");
+		// table_unit *p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "program_id");
 		//insert program head for fun
 	}
 	return "";
@@ -207,7 +207,9 @@ string Function_decl_Node::build_symbol_table(string type) {
 	}
 
 	//point back to old table
-	st = st->forward;
+	if (this->id != nullptr) {
+		st = st->forward;
+	}
 	return "";
 }
 
@@ -293,7 +295,9 @@ string Procedure_decl_Node::build_symbol_table(string type) {
 		this->routine->build_symbol_table("");
 	}
 	//back
-	st = st->forward;
+	if (this->id != nullptr) {
+		st = st->forward;
+	}
 	return "";
 }
 
@@ -336,8 +340,9 @@ string Assign_id_stmt_Node::build_symbol_table(string type) {
 		this->expr->build_symbol_table("");
 	}
 	if (this->id != nullptr) {
-		//check this->id type;
-		//make index
+		//check
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 	}
 	return "";
 }
@@ -346,7 +351,9 @@ string Assign_arr_stmt_Node::build_symbol_table(string type) {
 	puts("===assign_arr===");
 	string type_name;	//arr_name, index, expr,
 	if (this->arr_name != nullptr) {
-		//check this->id type;
+		//check
+		table_unit *p = st->st_lookup(this->arr_name->get_name());
+		this->arr_name->sym_unit = p;
 	}
 	if (this->index != nullptr) {
 		this->index->build_symbol_table("");
@@ -361,12 +368,13 @@ string Assign_arr_stmt_Node::build_symbol_table(string type) {
 string Assign_record_stmt_Node::build_symbol_table(string type) {
 	puts("===assign_rec===");
 	if (this->record_name != nullptr) {
-		//check
-		//make
+		table_unit *p = st->st_lookup(this->record_name->get_name());
+		this->record_name->sym_unit = p;
 	}
 	if (this->member != nullptr) {
+		table_unit *p = st->st_lookup(this->member->get_name());
+		this->member->sym_unit = p;
 		//check
-		//make
 	}
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
@@ -378,12 +386,11 @@ string Assign_record_stmt_Node::build_symbol_table(string type) {
 string Proc_stmt_Node::build_symbol_table(string type) {
 	puts("===proc_stmt_node===");
 	if (this->id != nullptr) {
-		//check
-		//make
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 	}
 	if (this->args != nullptr) {
-		//check
-		//make
+		this->args->build_symbol_table("");
 	}
 	return "";
 }
@@ -405,8 +412,8 @@ string Write_stmt_Node::build_symbol_table(string type) {
 	}
 	return "";
 }
-
-string Writeln_stmt_Node::build_symbol_table(string type) {
+string
+ Writeln_stmt_Node::build_symbol_table(string type) {
 	puts("writeln");
 	if (this->expression != nullptr) {
 		this->expression->build_symbol_table("");
@@ -470,8 +477,9 @@ string While_stmt_Node::build_symbol_table(string type) {
 string For_stmt_Node::build_symbol_table(string type) {
 	puts("===for===");
 	if (this->id != nullptr) {
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 		//check
-		//make
 	}
 	if (this->id_exp != nullptr) {
 		this->id_exp->build_symbol_table("");
@@ -506,8 +514,9 @@ string Case_const_val_expr_Node::build_symbol_table(string type) {
 string Case_id_expr_Node::build_symbol_table(string type) {
 	puts("===case id===");
 	if (this->id != nullptr) {
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 		//check
-		//make
 	}
 
 	if (this->stmt != nullptr) {
@@ -577,9 +586,9 @@ string Expression_Node::build_symbol_table(string type) {
 string Expr_Node::build_symbol_table(string type) {
 	// ignore op_type
 	puts("***expr_node***");
-	printf("%p, %p, %p", this->expr_lhs, this->expr_rhs, this->factor);
+	// printf("%p, %p, %p", this->expr_lhs, this->expr_rhs, this->factor);
 	// printf("%d", this->getLineno());
-	puts("");
+	// puts("");
 	
 	if (this->type != NONE) {
 		if (this->expr_lhs != nullptr) {
@@ -600,7 +609,9 @@ string Expr_Node::build_symbol_table(string type) {
 string Factor_id_Node::build_symbol_table(string type) {
 	puts("Factor_id_Node");
 	if (this->id != nullptr) {
-		//check id
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
+		//check
 	}
 	return "";
 }
@@ -618,6 +629,8 @@ string Func_call_Node::build_symbol_table(string type) {
 	puts("Func_call_Node");
 	if (this->id != nullptr) {
 		//st_check
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 	}
 	if (this->args != nullptr) {
 		//if id_check-->so do it;
@@ -630,6 +643,8 @@ string Factor_arr_Node::build_symbol_table(string type) {
 	puts("Factor_arr_Node");
 	if (this->id != nullptr) {
 		//st_check
+		table_unit *p = st->st_lookup(this->id->get_name());
+		this->id->sym_unit = p;
 	}
 	if (this->index != nullptr) {
 		this->index->build_symbol_table("");
@@ -642,10 +657,14 @@ string Factor_record_Node::build_symbol_table(string type) {
 	if (this->record != nullptr) {
 		//st_check	whether member in 
 		//make_index
+		table_unit *p = st->st_lookup(this->record->get_name());
+		this->record->sym_unit = p;
 	}
-	if (this->record != nullptr) {
+	if (this->member != nullptr) {
 		//st_check
 		//make_index
+		table_unit *p = st->st_lookup(this->member->get_name());
+		this->member->sym_unit = p;
 	}
 	return "";
 }
@@ -726,8 +745,6 @@ string System_type_decl_Node::build_symbol_table(string type) {
 		if (sys_type == CHAR) 	t_unit->type = ".byte";
 		if (sys_type == STRING) t_unit->type = ".asciiz";
 		if (sys_type == BOOL) 	t_unit->type = ".byte";
-		puts("system_type_ok!!!");
-		puts(type.c_str());
 	}
 	return "";
 }
