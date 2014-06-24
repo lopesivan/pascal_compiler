@@ -46,8 +46,12 @@ class Factor_Node : public TreeNode{
 public:
     virtual string build_symbol_table(string type){}
     virtual void gen_compute_code(CodeBlock* cb, string result_reg){}
+    std::string get_attr_type() const{
+        return attr_type;
+    }
 protected:
     Factor_Node(){}
+    std::string attr_type;
 };
 
 class Const_value_Node : public Factor_Node{
@@ -64,12 +68,15 @@ protected:
 
 class ConstInt_Node : public Const_value_Node{
 public:
-    ConstInt_Node(int val): val(val){type = ".word";}
+    ConstInt_Node(int val): val(val){
+        type = ".word";
+        attr_type = "integer";
+    }
     string get_val() { return to_string(val); }
     int get_value() { return val; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
-    void gen_compute_code(CodeBlock* cb, string result_reg){}
+    void gen_compute_code(CodeBlock* cb, string result_reg);
 
 private:
     int val;
@@ -78,7 +85,10 @@ private:
 
 class ConstDouble_Node : public Const_value_Node{
 public:
-    ConstDouble_Node(double val): val(val){type = ".double";}
+    ConstDouble_Node(double val): val(val){
+        type = ".double";
+        attr_type = "float";
+    }
     string get_val() { return to_string(val); }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
@@ -90,7 +100,10 @@ private:
 
 class ConstChar_Node : public Const_value_Node{
 public:
-    ConstChar_Node(char val): val(val){type = ".byte";}
+    ConstChar_Node(char val): val(val){
+        type = ".byte";
+        attr_type = "char";
+    }
     string get_val() { return "'" + to_string(val) + "'"; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
@@ -102,7 +115,10 @@ private:
 
 class ConstBool_Node : public Const_value_Node{
 public:
-    ConstBool_Node(bool val): val(val){type = ".byte";}
+    ConstBool_Node(bool val): val(val){
+        type = ".byte";
+        attr_type = "char";
+    }
     string get_val() { if (val) return "1"; else return "0"; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
@@ -114,7 +130,10 @@ private:
 
 class ConstStr_Node : public Const_value_Node{
 public:
-    ConstStr_Node(const string& val): val(val){type = ".asciiz";}
+    ConstStr_Node(const string& val): val(val){
+        type = ".asciiz";
+        attr_type = "string";
+    }
     string get_val() { return "\"" + val + "\""; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
@@ -142,7 +161,7 @@ public:
     Factor_unary_Node(Type type, Factor_Node *factor): type(type), factor(factor){}
     string build_symbol_table(string type);
     void gen_code(CodeGenerator* cg, int block_id) {}
-
+    void gen_compute_code(CodeBlock* cb, string result_reg);
 private:
     Type type;
     Factor_Node *factor;
@@ -199,7 +218,9 @@ public:
         :type(NONE), factor(factor){}
     string build_symbol_table(string type);
     void gen_compute_code(CodeBlock* cb, string result_reg);
-
+    std::string get_attr_type() const{
+        return attr_type;
+    }
 private:
     Op_type type;
     union{
@@ -209,6 +230,7 @@ private:
         };
         Factor_Node* factor;
     };
+    std::string attr_type;
 };
 
 class Expression_Node : public Factor_Node{
@@ -222,10 +244,9 @@ public:
     void gen_compute_code(CodeBlock* cb, string result_reg);
 
     string build_symbol_table(string type);
-
 private:
     Cmp_type type;
-    Expression_Node* expression;//may be null, first evaluate
+    Expression_Node* expression;//may be null when type is NONE, first evaluate
     Expr_Node* expr;
 };
 

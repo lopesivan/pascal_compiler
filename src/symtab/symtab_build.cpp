@@ -7,10 +7,14 @@
 #include "../node/StmtNode.hpp"
 
 using namespace std;
+void print_err(const std::string& msg){
+	fprintf(stderr, "error: %s\n", msg.c_str());
+	exit(0);
+}
 
 /*ModuleNode*/
-//string build_symbol_table(string type)
-//return type
+//string build_symbol_table(string type) => info about parent
+//return type => info from child
 
 //1. program head
 string Program_Node::build_symbol_table(string type) {
@@ -584,6 +588,13 @@ string Expression_Node::build_symbol_table(string type) {
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
+
+	if((this->type != NONE) && (expression->attr_type != expr->get_attr_type())) {
+        fprintf(stderr, "type mismatch for compare at line %d\n left: %s, right: %s",
+                    getLineno(), expression->attr_type.c_str(), expr->get_attr_type().c_str());
+        exit(0);
+	}else
+		attr_type = expr->get_attr_type();
 	return "";
 }
 
@@ -595,15 +606,23 @@ string Expr_Node::build_symbol_table(string type) {
 	// //puts("");
 	
 	if (this->type != NONE) {
-		if (this->expr_lhs != nullptr) {
-			this->expr_lhs->build_symbol_table("");
-		}
-		if (this->expr_rhs != nullptr){	//union
-			this->expr_rhs->build_symbol_table("");
-		}
+		this->expr_lhs->build_symbol_table("");
+		const auto& attr_left = expr_lhs->get_attr_type();
+		this->expr_rhs->build_symbol_table("");
+		const auto& attr_right = expr_rhs->get_attr_type();
+		if(attr_left != attr_right){
+            fprintf(stderr, "type mismatch for arithmetic at line %d\n left: %s, right: %s\n",
+                    getLineno(), attr_left.c_str(), attr_right.c_str());
+            fprintf(stderr, "operation: %d\n", this->type);
+            exit(0);
+		}else
+			attr_type = attr_left;
 	} else {
 		if (this->factor != nullptr) {
 			this->factor->build_symbol_table("");
+			attr_type = factor->get_attr_type();
+            puts("[debug] Expr_Node::build_symbol_table()");
+            printf("Expr is a factor, type: %s\n", attr_type.c_str());
 		}
 	}
 	return "";
@@ -615,6 +634,7 @@ string Factor_id_Node::build_symbol_table(string type) {
 		table_unit *p = st->st_lookup(this->id->get_name());
 		this->id->sym_unit = p;
 		//check
+		attr_type = p->type;
 	}
 	return "";
 }
@@ -624,6 +644,7 @@ string Factor_unary_Node::build_symbol_table(string type) {
 	//ignore type, for {NOT, MINUS}
 	if (this->factor != nullptr) {
 		this->factor->build_symbol_table("");
+		attr_type = factor->get_attr_type();
 	}
 	return "";
 }
