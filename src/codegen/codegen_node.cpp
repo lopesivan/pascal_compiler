@@ -117,7 +117,7 @@ void Name_list_Node::parse_var(CodeGenerator* cg, int block_id)
   {
     // parse global variable
     // Only need to create corresponding data strict.
-    if (type == ".asciiz")
+    if (type.compare(".asciiz") == 0)
       data += ".align 8 asciiz ''";
     else
       data += type + " 0";

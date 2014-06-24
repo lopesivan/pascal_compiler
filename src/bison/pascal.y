@@ -19,6 +19,7 @@ extern void yyerror(const char *message);
 extern char* yytext;
 %}
 %debug
+%define parse.error verbose
 
 %union {
     TreeNode* tree_node;
@@ -669,6 +670,17 @@ void yyerror(char const *s){
 }
 
 TreeNode * do_parse(void){
-    yyparse();
-    return savedTree;
+    auto res = yyparse();
+    switch(res){
+      case 0: 
+        return savedTree;
+        break;
+      case 1:
+        exit(0);
+        break;
+      case 2:
+        fprintf(stderr, "%s\n", "Memory exhausted.");
+        exit(0);
+        break;
+    }
 }
