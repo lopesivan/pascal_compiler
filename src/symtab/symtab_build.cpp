@@ -139,14 +139,16 @@ string Var_decl_Node::build_symbol_table(string type) {	//OK
 	string v_name;
 	if (this->name_list != nullptr) {
 		this->name_list->build_symbol_table("");
-	}
+	}//insert_names
 	Name_list_Node *p= this->name_list;
 	while (p->get_prev() != nullptr) {
 		if (this->type != nullptr) {
 			this->type->build_symbol_table(p->get_id()->get_name());
 		}
+		printf("000000%p\n", p->get_id()->sym_unit);
 		p = p->get_prev();
 	}
+
 	if (this->type != nullptr) {
 		this->type->build_symbol_table(p->get_id()->get_name());
 	}
@@ -191,7 +193,7 @@ string Function_decl_Node::build_symbol_table(string type) {
 		//create new table
 		symboltable *new_st = new symboltable();
 		printf("%p", new_st);
-		puts("");
+		//puts("");
 		new_st->forward = st;
 		st->st_func_proc(this->id->get_name(), new_st);
 		st = new_st;
@@ -314,9 +316,9 @@ string Routine_body_Node::build_symbol_table(string type) {
 
 
 string Stmt_Node::build_symbol_table(string type) {
-	puts("---stmt_in---");
+	//puts("---stmt_in---");
 	if (this->get_hasLable()) {
-		puts("how to deal with label");
+		//puts("how to deal with label");
 		this->stmt->build_symbol_table(type);
 	} else {
 		this->stmt->build_symbol_table(type);
@@ -327,7 +329,7 @@ string Stmt_Node::build_symbol_table(string type) {
 
 //================stmt node=======================
 string Assign_stmt_Node::build_symbol_table(string type) {
-	puts("===assign===");
+	//puts("===assign===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -336,7 +338,7 @@ string Assign_stmt_Node::build_symbol_table(string type) {
 
 
 string Assign_id_stmt_Node::build_symbol_table(string type) {
-	puts("===assign_id===");
+	//puts("===assign_id===");
 	string type_name;
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
@@ -350,7 +352,7 @@ string Assign_id_stmt_Node::build_symbol_table(string type) {
 }
 
 string Assign_arr_stmt_Node::build_symbol_table(string type) {
-	puts("===assign_arr===");
+	//puts("===assign_arr===");
 	string type_name;	//arr_name, index, expr,
 	if (this->arr_name != nullptr) {
 		//check
@@ -368,7 +370,7 @@ string Assign_arr_stmt_Node::build_symbol_table(string type) {
 
 
 string Assign_record_stmt_Node::build_symbol_table(string type) {
-	puts("===assign_rec===");
+	//puts("===assign_rec===");
 	if (this->record_name != nullptr) {
 		table_unit *p = st->st_lookup(this->record_name->get_name());
 		this->record_name->sym_unit = p;
@@ -386,7 +388,7 @@ string Assign_record_stmt_Node::build_symbol_table(string type) {
 
 
 string Proc_stmt_Node::build_symbol_table(string type) {
-	puts("===proc_stmt_node===");
+	//puts("===proc_stmt_node===");
 	if (this->id != nullptr) {
 		table_unit *p = st->st_lookup(this->id->get_name());
 		this->id->sym_unit = p;
@@ -399,7 +401,7 @@ string Proc_stmt_Node::build_symbol_table(string type) {
 
 
 string Read_stmt_Node::build_symbol_table(string type) {
-	puts("===read===");
+	//puts("===read===");
 	if (this->id != nullptr) {
 		table_unit *p = st->st_lookup(this->id->get_name());
 		this->id->sym_unit = p;									//re-link of id in read
@@ -408,7 +410,7 @@ string Read_stmt_Node::build_symbol_table(string type) {
 }
 
 string Write_stmt_Node::build_symbol_table(string type) {
-	puts("====write====");
+	//puts("====write====");
 	if (this->expression != nullptr) {
 		this->expression->build_symbol_table("");
 	}
@@ -416,7 +418,7 @@ string Write_stmt_Node::build_symbol_table(string type) {
 }
 string
  Writeln_stmt_Node::build_symbol_table(string type) {
-	puts("writeln");
+	//puts("writeln");
 	if (this->expression != nullptr) {
 		this->expression->build_symbol_table("");
 	}
@@ -424,16 +426,16 @@ string
 }
 
 string Compound_stmt_Node::build_symbol_table(string type) {
-	puts("===Compound===");
+	//puts("===Compound===");
 	if (this->stmts != nullptr) {
-		puts("---Compound_stmt_Node---");
+		//puts("---Compound_stmt_Node---");
 		this->stmts->build_symbol_table("");
 	}
 	return "";
 }
 
 string Else_clause_Node::build_symbol_table(string type) {
-	puts("===else===");
+	//puts("===else===");
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table("");
 	}
@@ -441,7 +443,7 @@ string Else_clause_Node::build_symbol_table(string type) {
 }
 
 string If_stmt_Node::build_symbol_table(string type) {
-	puts("===if_stmt===");
+	//puts("===if_stmt===");
 	if (this->exp != nullptr) {
 		this->exp->build_symbol_table("");
 	}
@@ -455,7 +457,7 @@ string If_stmt_Node::build_symbol_table(string type) {
 }
 
 string Repeat_stmt_Node::build_symbol_table(string type) {
-	puts("===repeat===");
+	//puts("===repeat===");
 	if (this->stmts != nullptr) {
 		this->stmts->build_symbol_table("");
 	}
@@ -466,7 +468,7 @@ string Repeat_stmt_Node::build_symbol_table(string type) {
 }
 
 string While_stmt_Node::build_symbol_table(string type) {
-	puts("===while===");
+	//puts("===while===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -477,7 +479,7 @@ string While_stmt_Node::build_symbol_table(string type) {
 }
 
 string For_stmt_Node::build_symbol_table(string type) {
-	puts("===for===");
+	//puts("===for===");
 	if (this->id != nullptr) {
 		table_unit *p = st->st_lookup(this->id->get_name());
 		this->id->sym_unit = p;
@@ -497,7 +499,7 @@ string For_stmt_Node::build_symbol_table(string type) {
 
 
 string Case_expr_Node::build_symbol_table(string type) {
-	puts("===case_expr===");
+	//puts("===case_expr===");
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table();
 	}
@@ -505,7 +507,7 @@ string Case_expr_Node::build_symbol_table(string type) {
 }
 
 string Case_const_val_expr_Node::build_symbol_table(string type) {
-	puts("===case const===");
+	//puts("===case const===");
 	//ignore const_val, for no id
 	if (this->stmt != nullptr) {
 		this->stmt->build_symbol_table("");
@@ -514,7 +516,7 @@ string Case_const_val_expr_Node::build_symbol_table(string type) {
 }
 
 string Case_id_expr_Node::build_symbol_table(string type) {
-	puts("===case id===");
+	//puts("===case id===");
 	if (this->id != nullptr) {
 		table_unit *p = st->st_lookup(this->id->get_name());
 		this->id->sym_unit = p;
@@ -528,7 +530,7 @@ string Case_id_expr_Node::build_symbol_table(string type) {
 }
 
 string Case_expr_list_Node::build_symbol_table(string type) {
-	puts("===case expr===");
+	//puts("===case expr===");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -540,7 +542,7 @@ string Case_expr_list_Node::build_symbol_table(string type) {
 
 
 string Case_stmt_Node::build_symbol_table(string type) {
-	puts("===case stmt===");
+	//puts("===case stmt===");
 	if (this->expr != nullptr) {
 		this->expr->build_symbol_table("");
 	}
@@ -555,7 +557,7 @@ string Goto_stmt_Node::build_symbol_table(string type) {
 }
 
 string Stmt_list_Node::build_symbol_table(string type) {
-	puts("===stmt list===");
+	//puts("===stmt list===");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -575,7 +577,7 @@ string Const_value_Node::build_symbol_table(string type) {
 }
 string Expression_Node::build_symbol_table(string type) {
 	//Cmp_type is compare_operator, ignore;
-	puts("***expression_node***");
+	//puts("***expression_node***");
 	if (this->expression != nullptr) {
 		this->expression->build_symbol_table("");
 	}
@@ -587,10 +589,10 @@ string Expression_Node::build_symbol_table(string type) {
 
 string Expr_Node::build_symbol_table(string type) {
 	// ignore op_type
-	puts("***expr_node***");
+	//puts("***expr_node***");
 	// printf("%p, %p, %p", this->expr_lhs, this->expr_rhs, this->factor);
 	// printf("%d", this->getLineno());
-	// puts("");
+	// //puts("");
 	
 	if (this->type != NONE) {
 		if (this->expr_lhs != nullptr) {
@@ -600,7 +602,6 @@ string Expr_Node::build_symbol_table(string type) {
 			this->expr_rhs->build_symbol_table("");
 		}
 	} else {
-		printf("type: %d", this->type);puts("");
 		if (this->factor != nullptr) {
 			this->factor->build_symbol_table("");
 		}
@@ -609,7 +610,7 @@ string Expr_Node::build_symbol_table(string type) {
 }
 
 string Factor_id_Node::build_symbol_table(string type) {
-	puts("Factor_id_Node");
+	//puts("Factor_id_Node");
 	if (this->id != nullptr) {
 		table_unit *p = st->st_lookup(this->id->get_name());
 		this->id->sym_unit = p;
@@ -619,7 +620,7 @@ string Factor_id_Node::build_symbol_table(string type) {
 }
 
 string Factor_unary_Node::build_symbol_table(string type) {
-	puts("Factor_unary_Node");
+	//puts("Factor_unary_Node");
 	//ignore type, for {NOT, MINUS}
 	if (this->factor != nullptr) {
 		this->factor->build_symbol_table("");
@@ -628,7 +629,7 @@ string Factor_unary_Node::build_symbol_table(string type) {
 }
 
 string Func_call_Node::build_symbol_table(string type) {
-	puts("Func_call_Node");
+	//puts("Func_call_Node");
 	if (this->id != nullptr) {
 		//st_check
 		table_unit *p = st->st_lookup(this->id->get_name());
@@ -642,7 +643,7 @@ string Func_call_Node::build_symbol_table(string type) {
 }
 
 string Factor_arr_Node::build_symbol_table(string type) {
-	puts("Factor_arr_Node");
+	//puts("Factor_arr_Node");
 	if (this->id != nullptr) {
 		//st_check
 		table_unit *p = st->st_lookup(this->id->get_name());
@@ -655,7 +656,7 @@ string Factor_arr_Node::build_symbol_table(string type) {
 }
 
 string Factor_record_Node::build_symbol_table(string type) {
-	puts("Factor_record_Node");
+	//puts("Factor_record_Node");
 	if (this->record != nullptr) {
 		//st_check	whether member in 
 		//make_index
@@ -678,7 +679,7 @@ string Factor_record_Node::build_symbol_table(string type) {
 
 //  ======================  args  ====================
 string Args_list_Node::build_symbol_table(string type) {
-	puts("Args_list_Node");
+	//puts("Args_list_Node");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
 	}
@@ -696,18 +697,19 @@ string Args_list_Node::build_symbol_table(string type) {
 string Array_type_decl_Node::build_symbol_table(string type) {
 	string type_name;
 	string type_range;
+	puts("array");
 	if (this->type != nullptr) {
 		type_name = this->type->build_symbol_table(type);
 	}
 	if (this->range != nullptr) {
 		type_range = this->range->build_symbol_table(type);
 	}
-	
 	return type_name;
 }
 
 string Field_decl_Node::build_symbol_table(string type) {
 	string type_name;
+	puts("field");
 	if (this->name_list != nullptr) {
 		this->name_list->build_symbol_table(type_name);
 	}
@@ -720,6 +722,7 @@ string Field_decl_Node::build_symbol_table(string type) {
 
 
 string Field_decl_list_Node::build_symbol_table(string type) {
+	puts("field_dec");
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table(type);
 	}
@@ -731,6 +734,7 @@ string Field_decl_list_Node::build_symbol_table(string type) {
 
 
 string Record_type_decl_Node::build_symbol_table(string type) {
+	puts("record");
 	if (this->list != nullptr) {
 		this->list->build_symbol_table(type);
 	}
@@ -747,6 +751,7 @@ string System_type_decl_Node::build_symbol_table(string type) {
 		if (sys_type == CHAR) 	t_unit->type = ".byte";
 		if (sys_type == STRING) t_unit->type = ".asciiz";
 		if (sys_type == BOOL) 	t_unit->type = ".byte";
+	} else {
 	}
 	return "";
 }

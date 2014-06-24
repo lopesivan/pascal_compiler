@@ -127,10 +127,16 @@ public:
 
 		while ((l->use != 0) && (name.compare(l->name) != 0)) {
 			l = l->next;
+// <<<<<<< HEAD
+// 		}
+// 		printf("%d\n", l->use);
+// 		if (l->use == 1) {
+// =======
 		}//table_unit is a list
 		//TODO: l == nullptr ?
 
-		if (l->use == 0) {//empty
+		if (l->use == 1) {//empty
+// >>>>>>> c2f6171731767e0de9b639c924a2545e5a2a5b9d
 			l = new table_unit();
 			l->use = 1;
 			l->name = name;
@@ -139,22 +145,33 @@ public:
 			l->lines->lineno = lineno;
 			l->lines->next = nullptr;
 			l->next = &units[h];
-			units[h] = *l; //insert to the front
-		} else {//already exists
-			lines_recorder *t = l->lines;
-			while (t->next != nullptr)
-				t = t->next;
-			t->next = new lines_recorder;
-			t->next->lineno = lineno;
-			t->next->next = nullptr;
-			//add lines_recorder to the list
+// <<<<<<< HEAD
+			units[h] = *l;
+		} else {
+			l->name = name;
+			l->type = type;
+			l->use = 1;
 		}
+		// printf("test: %p\n", l);
+		return l;
+// =======
+// 			units[h] = *l; //insert to the front
+// 		} else {//already exists
+// 			lines_recorder *t = l->lines;
+// 			while (t->next != nullptr)
+// 				t = t->next;
+// 			t->next = new lines_recorder;
+// 			t->next->lineno = lineno;
+// 			t->next->next = nullptr;
+// 			//add lines_recorder to the list
+// 		}
 
-		printf("finish insert: --------- %s", name.c_str());
-		puts("");
-		printf("type: %s", type.c_str());
-		puts("");
-		return l; //TODO return a copy's address?
+// 		printf("finish insert: --------- %s", name.c_str());
+// 		puts("");
+// 		printf("type: %s", type.c_str());
+// 		puts("");
+// 		return l; //TODO return a copy's address?
+// >>>>>>> c2f6171731767e0de9b639c924a2545e5a2a5b9d
 	}
 
 public:

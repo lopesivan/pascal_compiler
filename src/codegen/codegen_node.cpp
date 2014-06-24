@@ -12,7 +12,7 @@ string alloc_temp_var(CodeBlock* cb)
 #ifdef DEBUG
   printf("Alloc temp var t%d\n", cb->temp_var_count);
 #endif
-  return "t" + to_string(cb->temp_var_count);
+  return "$t" + to_string(cb->temp_var_count);
 }
 
 int free_temp_var(CodeBlock* cb)
@@ -35,7 +35,7 @@ int Program_Node::gen_code(CodeGenerator* cg)
 // Program_head = id
 int Program_head_Node::gen_code(CodeGenerator* cg)
 {
-  cg->code_blocks.push_back(new CodeBlock(this->id->get_name()));
+  cg->code_blocks.push_back(new CodeBlock("main"));
   return get_block_id(cg);
 }
 
@@ -78,7 +78,7 @@ void Const_expr_list_Node::gen_data(CodeGenerator* cg)
     string value = this->const_value->get_val();
     cg->data_blocks.push_back(new DataBlock(name + ": " + type + " " + value));
 #ifdef DEBUG
-    printf("%s\n", cg->data_blocks[cg->data_blocks.size()-1]->generated_data().c_str());
+    printf("Const: %s", cg->data_blocks[cg->data_blocks.size()-1]->generated_data().c_str());
 #endif
   }
 }
@@ -117,20 +117,22 @@ void Name_list_Node::parse_var(CodeGenerator* cg, int block_id)
   {
     // parse global variable
     // Only need to create corresponding data strict.
-    if (type == ".asciiz")
+    if (type.compare(".asciiz") == 0)
       data += ".align 8 asciiz ''";
     else
       data += type + " 0";
     cg->data_blocks.push_back(new DataBlock(data));
 #ifdef DEBUG
-    printf("%s\n", cg->data_blocks[cg->data_blocks.size()-1]->generated_data().c_str());
+    printf("this->id->sym_unit = %p\n", this->id->sym_unit);
+    printf("this->id->sym_unit->type = %s\n", this->id->sym_unit->type.c_str());
+    printf("Var: %s", cg->data_blocks[cg->data_blocks.size()-1]->generated_data().c_str());
 #endif
   }
   else
   {
     // parse function variable
     // Need to assign register to each variable.
-    cg->code_blocks[block_id]->variable_map[name] = "s" + to_string(cg->code_blocks[block_id]->var_count);
+    cg->code_blocks[block_id]->variable_map[name] = "$s" + to_string(cg->code_blocks[block_id]->var_count);
   }
 }
 
@@ -206,7 +208,7 @@ void Name_list_Node::parse_para(CodeGenerator* cg, int block_id)
     this->prev->parse_para(cg, block_id);
   cg->code_blocks[block_id]->para_count++;
   string name = this->id->sym_unit->name;
-  cg->code_blocks[block_id]->variable_map[name] = "a" + to_string(cg->code_blocks[block_id]->para_count);
+  cg->code_blocks[block_id]->variable_map[name] = "$a" + to_string(cg->code_blocks[block_id]->para_count);
 }
 
 void Routine_body_Node::gen_code(CodeGenerator* cg, int block_id)
