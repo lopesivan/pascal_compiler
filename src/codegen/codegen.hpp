@@ -18,14 +18,14 @@ public:
   int var_count;
   int para_count;
   int temp_var_count;
-  CodeBlock(string name) {
+  CodeBlock(const string& name){
     this->name = name;
     this->code = name + ":\n";
     this->var_count = 0;
     this->para_count = 0;
   }
   ~CodeBlock() {}
-  void add_line(string line) {code += "  " + line + "\n";}
+  void add_line(const string& line) {code += "  " + line + "\n";}
   string generated_code() { return code; }
   string get_name() { return name; }
 private:
@@ -35,17 +35,22 @@ private:
 
 class DataBlock {
 public:
-  DataBlock(string data) {this->data = "  " + data + "\n";}
+  DataBlock(const string& data) {this->data = "  " + data + "\n";}
   ~DataBlock() {}
   string generated_data() {return data;}
 private:
   string data;
 };
 
+/** 
+  * generator for the whole program
+  * maintain the code to write
+  * the output file handle
+  */
 class CodeGenerator {
 public:
-  vector<CodeBlock*> code_blocks;
-  vector<DataBlock*> data_blocks;
+  vector<CodeBlock*> code_blocks; //.text section
+  vector<DataBlock*> data_blocks; //.data section
 
   CodeGenerator(TreeNode* syntax_tree, char* code_file_name)
   {

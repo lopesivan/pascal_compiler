@@ -244,7 +244,7 @@ void Writeln_stmt_Node::gen_code(CodeGenerator* cg, int block_id)
   this->expression->gen_compute_code(cb, temp_var_reg);
   // write variable
   cb->add_line("li $v0, 4");
-  cb->add_line("move $a0, " + temp_var_reg);
+  cb->add_line("move $a0, $" + temp_var_reg);
   cb->add_line("syscall");
   // write new line
   cb->add_line("li $v0, 4");
@@ -280,7 +280,7 @@ void Factor_id_Node::gen_compute_code(CodeBlock* cb, string result_reg)
   printf("Factor type is %s\n", this->id->sym_unit->type.c_str());
 #endif
   if (this->id->sym_unit->type == "const")
-    cb->add_line("la " + result_reg + " " + this->id->get_name());
+    cb->add_line("la $" + result_reg + " " + this->id->get_name());
   else
   {}
 }
