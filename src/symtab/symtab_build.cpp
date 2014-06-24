@@ -9,6 +9,8 @@
 using namespace std;
 
 /*ModuleNode*/
+//string build_symbol_table(string type)
+//return type
 
 //1. program head
 string Program_Node::build_symbol_table(string type) {
