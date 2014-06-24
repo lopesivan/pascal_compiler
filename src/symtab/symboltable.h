@@ -119,8 +119,8 @@ public:
 		while ((l->use != 0) && (name.compare(l->name) != 0)) {
 			l = l->next;
 		}
-
-		if (l->use == 0) {
+		printf("%d\n", l->use);
+		if (l->use == 1) {
 			l = new table_unit();
 			l->use = 1;
 			l->name = name;
@@ -131,17 +131,11 @@ public:
 			l->next = &units[h];
 			units[h] = *l;
 		} else {
-			lines_recorder *t = l->lines;
-			while (t->next != NULL) t = t->next;
-			t->next = new lines_recorder;
-			t->next->lineno = lineno;
-			t->next->next = NULL;
+			l->name = name;
+			l->type = type;
+			l->use = 1;
 		}
 
-		printf("finish insert: --------- %s", name.c_str());
-		puts("");
-		printf("type: %s", type.c_str());
-		puts("");
 		return l;
 	}
 
