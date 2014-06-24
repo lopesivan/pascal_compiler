@@ -244,6 +244,23 @@ void Stmt_Node::gen_code(CodeGenerator* cg, int block_id)
     this->stmt->gen_code(cg, block_id);
 }
 
+void Write_stmt_Node::gen_code(CodeGenerator* cg, int block_id){
+    string temp_var_reg = alloc_temp_var(cg->code_blocks[block_id]);
+    CodeBlock* cb = cg->code_blocks[block_id];
+    
+    // write variable
+    if(expression->get_attr_type() == "integer"){
+        cb->add_line("li $v0, 1");//print int
+    }else
+        cb->add_line("li $v0, 4");//print string
+
+    this->expression->gen_compute_code(cb, temp_var_reg);
+    cb->add_line("move $a0, " + temp_var_reg);
+    free_temp_var(cb);
+
+    cb->add_line("syscall");
+}
+
 void Writeln_stmt_Node::gen_code(CodeGenerator* cg, int block_id)
 {
 #ifdef DEBUG
@@ -252,20 +269,38 @@ void Writeln_stmt_Node::gen_code(CodeGenerator* cg, int block_id)
 #endif
     string temp_var_reg = alloc_temp_var(cg->code_blocks[block_id]);
     CodeBlock* cb = cg->code_blocks[block_id];
-    this->expression->gen_compute_code(cb, temp_var_reg);
+    
     // write variable
     if(expression->get_attr_type() == "integer"){
         cb->add_line("li $v0, 1");//print int
     }else
         cb->add_line("li $v0, 4");//print string
+
+    this->expression->gen_compute_code(cb, temp_var_reg);
     cb->add_line("move $a0, " + temp_var_reg);
     free_temp_var(cb);
+
     cb->add_line("syscall");
     
     // write new line
     cb->add_line("li $v0, 4");
     cb->add_line("la $a0, __newline__");
     cb->add_line("syscall");
+}
+
+void Read_stmt_Node::gen_code(CodeGenerator* cg, int block_id){
+    CodeBlock* cb = cg->code_blocks[block_id];
+
+    const auto &type = id->sym_unit->type;
+    printf("read_stmt type: %s\n", type.c_str());
+    if(type == ".word"){
+        cb->add_line("li $v0, 5");
+    }else if(type == ".asciiz"){
+        cb->add_line("li $v0, 8");
+    }
+    cb->add_line("syscall");
+    cb->add_line(build_instr("sw", "$v0", id->get_name()));
+    //TODO: only var available here, as to function variable are not done
 }
 
 //float all go die -_-#
@@ -356,9 +391,9 @@ void Factor_id_Node::gen_compute_code(CodeBlock* cb, string result_reg)
     printf("Factor type is %s\n", this->id->sym_unit->type.c_str());
 #endif
     if (this->id->sym_unit->type == "const")
-        cb->add_line("la " + result_reg + " " + this->id->get_name());
-    else if(this->id->sym_unit->type == "integer"){
-        cb->add_line("lw " + result_reg + " " + this->id->get_name());
+        cb->add_line(build_instr("la", result_reg, this->id->get_name()));
+    else if(this->id->sym_unit->type == ".word"){
+        cb->add_line(build_instr("lw", result_reg, this->id->get_name()));
     }else if(this->id->sym_unit->type == "float"){//TODO result_reg
         cb->add_line("lwcZ " + result_reg + " " + this->id->get_name());
     }

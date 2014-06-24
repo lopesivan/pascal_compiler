@@ -634,7 +634,12 @@ string Factor_id_Node::build_symbol_table(string type) {
 		table_unit *p = st->st_lookup(this->id->get_name());
 		this->id->sym_unit = p;
 		//check
-		attr_type = p->type;
+		puts("[debug] Factor_id_Node::build_symbol_table()");
+		printf("type in sym_unit: %s\n", p->type.c_str());
+		if(p->type == ".word")
+			attr_type = "integer";
+		else if(p->type == ".asciiz")
+			attr_type = "string";
 	}
 	return "";
 }

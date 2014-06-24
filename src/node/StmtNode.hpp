@@ -153,7 +153,7 @@ public:
                 new Expression_Node(
                     new Expr_Node(
                         new Factor_id_Node(id))))), id(id){}
-    void gen_code(CodeGenerator* cg, int block_id){}
+    void gen_code(CodeGenerator* cg, int block_id);
     string build_symbol_table(string type);
 
 private:
@@ -165,7 +165,7 @@ public:
     Write_stmt_Node(Expression_Node* expression)
         :Proc_stmt_Node(new Id_Node("write"),
             new Args_list_Node(expression)), expression(expression){}
-    void gen_code(CodeGenerator* cg, int block_id){}
+    void gen_code(CodeGenerator* cg, int block_id);
     string build_symbol_table(string type);
 
 private:
