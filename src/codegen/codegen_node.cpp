@@ -78,6 +78,7 @@ void Const_expr_list_Node::gen_data(CodeGenerator* cg)
     string value = this->const_value->get_val();
     cg->data_blocks.push_back(new DataBlock(name + ": " + type + " " + value));
 #ifdef DEBUG
+    // printf("%p\n", this->id->sym_unit);
     printf("%s\n", cg->data_blocks[cg->data_blocks.size()-1]->generated_data().c_str());
 #endif
   }
@@ -117,12 +118,13 @@ void Name_list_Node::parse_var(CodeGenerator* cg, int block_id)
   {
     // parse global variable
     // Only need to create corresponding data strict.
-    if (type == ".asciiz")
+    if (type.compare(".asciiz") == 0)
       data += ".align 8 asciiz ''";
     else
       data += type + " 0";
     cg->data_blocks.push_back(new DataBlock(data));
 #ifdef DEBUG
+    printf("%p\n", this->id->sym_unit);
     printf("%s\n", cg->data_blocks[cg->data_blocks.size()-1]->generated_data().c_str());
 #endif
   }

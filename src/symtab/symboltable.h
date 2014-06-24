@@ -135,7 +135,7 @@ public:
 		}//table_unit is a list
 		//TODO: l == nullptr ?
 
-		if (l->use == 0) {//empty
+		if (l->use == 1) {//empty
 // >>>>>>> c2f6171731767e0de9b639c924a2545e5a2a5b9d
 			l = new table_unit();
 			l->use = 1;
@@ -152,7 +152,7 @@ public:
 			l->type = type;
 			l->use = 1;
 		}
-
+		// printf("test: %p\n", l);
 		return l;
 // =======
 // 			units[h] = *l; //insert to the front

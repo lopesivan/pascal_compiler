@@ -145,6 +145,7 @@ string Var_decl_Node::build_symbol_table(string type) {	//OK
 		if (this->type != nullptr) {
 			this->type->build_symbol_table(p->get_id()->get_name());
 		}
+		printf("000000%p\n", p->get_id()->sym_unit);
 		p = p->get_prev();
 	}
 
