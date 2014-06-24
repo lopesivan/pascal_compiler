@@ -34,4 +34,4 @@ pascal.tab.c pascal.tab.h: bison/pascal.y
 	bison --debug -d -b pascal bison/pascal.y
 
 clean: 
-	rm -f *.o pascal.tab.c pascal.tab.h scan.c *.out
+	rm -f *.o pascal pascal.tab.c pascal.tab.h scan.c *.out
