@@ -304,7 +304,13 @@ string Val_para_list_Node::build_symbol_table(string type) {
 
 string Procedure_decl_Node::build_symbol_table(string type) {
 	if (this->id != nullptr) {
-		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "procedure");
+		table_unit *tb = st->st_lookup(this->id->get_name());
+		if (tb != nullptr) {
+			printf("[SYB ERROR]: redefined %s\n", this->id->get_name().c_str());
+		}
+		table_unit *p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "");
+		p->type = "null";
+		this->id->sym_unit = p;
 		//create new table
 		symboltable *new_st = new symboltable();
 		new_st->forward = st;
