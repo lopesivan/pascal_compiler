@@ -53,7 +53,10 @@ public:
 	//if record
 	int isrecord;			//if record
 	std::string belong;		//belong to which type
+
 	//if func_proc
+	int isfunc;
+	int isproc;				
 	int isref;				//if func_proc
 
 	//designed for code-gen
@@ -69,7 +72,6 @@ public:
 	symboltable(){ this->forward = this; this->global = 0;};
 	~symboltable(){};
 	
-
 	table_unit * st_lookup(std::string name) {
 		int h = this->hash_find_unit(name);
 		symboltable *p = this;
@@ -193,5 +195,4 @@ public:
 
 
 extern symboltable* st;
-
 #endif

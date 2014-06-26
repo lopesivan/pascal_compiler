@@ -76,6 +76,10 @@ string Const_part_Node::build_symbol_table(string type) {
 
 
 string Const_expr_list_Node::build_symbol_table(string type) {
+	table_unit *tp = st->st_lookup(this->id->get_name());
+	if (tp != nullptr) {
+		printf("[SYB ERROR]: redefined %s\n", this->id->get_name().c_str());
+	}
 	st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "const");
 
 	if (this->prev != nullptr) {
@@ -144,6 +148,7 @@ string Var_decl_Node::build_symbol_table(string type) {	//OK
 	if (this->name_list != nullptr) {
 		this->name_list->build_symbol_table("");
 	}//insert_names
+
 	Name_list_Node *p= this->name_list;
 	while (p->get_prev() != nullptr) {
 		if (this->type != nullptr) {
@@ -168,6 +173,11 @@ string Name_list_Node::build_symbol_table(string type) {	//OK
 	}
 
 	if (this->id != nullptr) {
+		table_unit *tb = st->st_lookup(this->id->get_name());
+		if (tb != nullptr) {
+			printf("[SYB ERROR]: redefined %s\n", this->id->get_name().c_str());
+			printf("%s\n", this->id->get_name().c_str());
+		}
 		table_unit *p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "");
 		this->id->sym_unit = p; //reverse-link
 	}
@@ -193,7 +203,15 @@ string Routine_part_Node::build_symbol_table(string type) {
 
 string Function_decl_Node::build_symbol_table(string type) {
 	if (this->id != nullptr) {
-		st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "function");
+		table_unit *tb = st->st_lookup(this->id->get_name());
+		if (tb != nullptr) {
+			printf("[SYB ERROR]: redefined %s\n", this->id->get_name().c_str());
+		}
+		table_unit *p;
+		p = st->st_insert(this->id->get_name(), this->id->getLineno(), 0, "");
+		this->id->sym_unit = p;
+		this->ret_type->build_symbol_table(this->id->get_name());
+		this->id->sym_unit->isfunc = 1;
 		//create new table
 		symboltable *new_st = new symboltable();
 		printf("%p", new_st);
@@ -486,6 +504,7 @@ string For_stmt_Node::build_symbol_table(string type) {
 	//puts("===for===");
 	if (this->id != nullptr) {
 		table_unit *p = st->st_lookup(this->id->get_name());
+		if (p == nullptr) printf("[SYB ERROR]: no item named %s\n", this->id->get_name().c_str());
 		this->id->sym_unit = p;
 		//check
 	}
