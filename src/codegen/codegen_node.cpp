@@ -7,6 +7,10 @@ namespace {
         return op + " " + dest + ", " + op1 
             + ((op2 == "") ? "" : ", " + op2);
     }
+
+    void emit_label(CodeBlock* cb, const std::string& label){
+        cb->add_line(label + ": ");
+    }
 }
 
 int get_block_id(CodeGenerator* cg)
@@ -117,6 +121,7 @@ void Name_list_Node::parse_var(CodeGenerator* cg, int block_id)
     if (this->prev)
         this->prev->parse_var(cg, block_id);
 
+    auto sym_unit = id->sym_unit;
     string name = this->id->sym_unit->name;
     string data = name + ": ";
     string type = this->id->sym_unit->type;
@@ -127,11 +132,21 @@ void Name_list_Node::parse_var(CodeGenerator* cg, int block_id)
         // Only need to create corresponding data strict.
         if (type.compare(".asciiz") == 0)
             data += ".align 8 asciiz ''";
+        else if(sym_unit->isarray){
+            size_t size = 0;
+            if(type == ".word")
+                size = 4;
+            else if(type == ".byte")
+                size = 1;
+
+            data += ".space " + to_string(size * sym_unit->volumn);
+        }
         else
             data += type + " 0";
         cg->data_blocks.push_back(new DataBlock(data));
 #ifdef DEBUG
         printf("this->id->sym_unit = %p\n", this->id->sym_unit);
+        printf("is array: %d\n", this->id->sym_unit->isarray);
         printf("this->id->sym_unit->type = %s\n", this->id->sym_unit->type.c_str());
         printf("Var: %s", cg->data_blocks[cg->data_blocks.size()-1]->generated_data().c_str());
 #endif
@@ -249,7 +264,8 @@ void Write_stmt_Node::gen_code(CodeGenerator* cg, int block_id){
     CodeBlock* cb = cg->code_blocks[block_id];
     
     // write variable
-    if(expression->get_attr_type() == "integer"){
+    if(expression->get_attr_type() == "integer"
+        || expression->get_attr_type() == "bool"){
         cb->add_line("li $v0, 1");//print int
     }else
         cb->add_line("li $v0, 4");//print string
@@ -267,11 +283,12 @@ void Writeln_stmt_Node::gen_code(CodeGenerator* cg, int block_id)
     printf("Generate code for writeln\n");
     printf("expression's attr_type: %s\n", expression->get_attr_type().c_str());
 #endif
-    string temp_var_reg = alloc_temp_var(cg->code_blocks[block_id]);
     CodeBlock* cb = cg->code_blocks[block_id];
+    string temp_var_reg = alloc_temp_var(cg->code_blocks[block_id]);
     
     // write variable
-    if(expression->get_attr_type() == "integer"){
+    if(expression->get_attr_type() == "integer" 
+        || expression->get_attr_type() == "bool"){
         cb->add_line("li $v0, 1");//print int
     }else
         cb->add_line("li $v0, 4");//print string
@@ -303,6 +320,34 @@ void Read_stmt_Node::gen_code(CodeGenerator* cg, int block_id){
     //TODO: only var available here, as to function variable are not done
 }
 
+void If_stmt_Node::gen_code(CodeGenerator* cg, int block_id){
+    CodeBlock* cb = cg->code_blocks[block_id];
+    std::string temp_var_reg = alloc_temp_var(cg->code_blocks[block_id]);
+    exp->gen_compute_code(cb, temp_var_reg);
+    std::string else_label = cb->alloc_label();
+    cb->add_line(build_instr("beq", temp_var_reg, "$zero", else_label));
+    stmt->gen_code(cg, block_id);
+    if(else_clause == nullptr){
+        emit_label(cb, else_label);
+    }else{
+        std::string out_label = cb->alloc_label();
+        cb->add_line("j " + out_label);
+        emit_label(cb, else_label);
+        else_clause->gen_code(cg, block_id);
+        emit_label(cb, out_label);
+    }
+    free_temp_var(cb);
+}
+
+void Else_clause_Node::gen_code(CodeGenerator* cg, int block_id){
+    stmt->gen_code(cg, block_id);
+}
+
+// void Assign_arr_stmt_Node::gen_code(CodeGenerator* cg, int block_id){
+//     std::string dest = alloc_temp_var(cg->code_blocks[block_id]);
+
+// }
+
 //float all go die -_-#
 void Expression_Node::gen_compute_code(CodeBlock* cb, string result_reg)
 {
@@ -325,6 +370,12 @@ void Expression_Node::gen_compute_code(CodeBlock* cb, string result_reg)
                 break;
             case LE:
                 cb->add_line(build_instr("sle", result_reg, regR, regL));
+                break;
+            case EQ:
+                cb->add_line(build_instr("seq", result_reg, regR, regL));
+                break;
+            case NEQ:
+                cb->add_line(build_instr("sne", result_reg, regR, regL));
                 break;
         }
         free_temp_var(cb);
@@ -399,6 +450,41 @@ void Factor_id_Node::gen_compute_code(CodeBlock* cb, string result_reg)
     }
 }
 
+void Factor_arr_Node::gen_compute_code(CodeBlock* cb, string result_reg){
+    auto sym_unit = id->sym_unit;
+
+    auto reg_index = alloc_temp_var(cb);
+    index->gen_compute_code(cb, reg_index);
+
+    int start = sym_unit->array_start;
+    if(start != 0)
+        cb->add_line(build_instr("addi", reg_index, reg_index, to_string(-start)));
+    //get offset
+
+    auto type = sym_unit->type;
+    size_t shamt;
+    std::string instr;
+    if(type == ".word"){
+        instr = "lw";
+        shamt = 2;
+    }else if(type == ".byte"){
+        instr = "lb";
+        shamt = 1;
+    }
+    if(shamt > 1)
+        cb->add_line(build_instr("sll", reg_index, reg_index, to_string(shamt)));
+
+    cb->add_line(build_instr("la", result_reg, id->get_name()));
+    cb->add_line(build_instr("add", result_reg, result_reg, reg_index));
+
+    cb->add_line(build_instr(instr, result_reg, "0(" + result_reg + ")"));
+    free_temp_var(cb);
+}
+
 void ConstInt_Node::gen_compute_code(CodeBlock* cb, string result_reg){
+    cb->add_line(build_instr("li", result_reg, to_string(val)));
+}
+
+void ConstBool_Node::gen_compute_code(CodeBlock* cb, string result_reg){
     cb->add_line(build_instr("li", result_reg, to_string(val)));
 }

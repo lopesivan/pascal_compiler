@@ -199,7 +199,7 @@ private:
 class Else_clause_Node : public Non_label_stmt_Node{
 public:
     Else_clause_Node(Stmt_Node* stmt):stmt(stmt){}
-    void gen_code(CodeGenerator* cg, int block_id) {}
+    void gen_code(CodeGenerator* cg, int block_id);
     string build_symbol_table(string type);
 
 private:
@@ -210,7 +210,7 @@ class If_stmt_Node : public Non_label_stmt_Node{
 public:
     If_stmt_Node(Expression_Node *exp, Stmt_Node* stmt, 
         Else_clause_Node* else_clause):exp(exp), stmt(stmt), else_clause(else_clause){}
-    void gen_code(CodeGenerator* cg, int block_id) {}
+    void gen_code(CodeGenerator* cg, int block_id);
     string build_symbol_table(string type);
 private:
     Expression_Node* exp;

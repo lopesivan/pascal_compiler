@@ -174,10 +174,6 @@ string Name_list_Node::build_symbol_table(string type) {	//OK
 	return "";
 }
 
-
-
-
-
 string Routine_part_Node::build_symbol_table(string type) {
 	if (this->prev != nullptr) {
 		this->prev->build_symbol_table("");
@@ -282,7 +278,6 @@ string Val_para_list_Node::build_symbol_table(string type) {
 	}
 	return "";
 }
-
 
 string Procedure_decl_Node::build_symbol_table(string type) {
 	if (this->id != nullptr) {
@@ -455,7 +450,7 @@ string If_stmt_Node::build_symbol_table(string type) {
 		this->stmt->build_symbol_table("");
 	}
 	if (this->else_clause != nullptr) {
-		this->stmt->build_symbol_table("");
+		this->else_clause->build_symbol_table("");
 	}
 	return "";
 }
@@ -593,8 +588,11 @@ string Expression_Node::build_symbol_table(string type) {
         fprintf(stderr, "type mismatch for compare at line %d\n left: %s, right: %s",
                     getLineno(), expression->attr_type.c_str(), expr->get_attr_type().c_str());
         exit(0);
-	}else
+	}else{
 		attr_type = expr->get_attr_type();
+		puts("[debug] Expression_Node::build_symbol_table()");
+		printf("Expression_Node is a expr, type: %s\n", attr_type.c_str());
+	}
 	return "";
 }
 
@@ -723,12 +721,15 @@ string Args_list_Node::build_symbol_table(string type) {
 string Array_type_decl_Node::build_symbol_table(string type) {
 	string type_name;
 	string type_range;
-	puts("array");
+	puts("Array_type_decl_Node::build_symbol_table");
+	printf("type: %s\n", type.c_str());
 	if (this->type != nullptr) {
 		type_name = this->type->build_symbol_table(type);
+		printf("type name: %s\n", type_name.c_str());
 	}
 	if (this->range != nullptr) {
 		type_range = this->range->build_symbol_table(type);
+		printf("type range: %s\n", type_range.c_str());
 	}
 	return type_name;
 }
@@ -741,7 +742,7 @@ string Field_decl_Node::build_symbol_table(string type) {
 	}
 
 	if (this->type != nullptr) {
-		this->type->build_symbol_table(type);		//record type_name
+		this->type->build_symbol_table(type); //record type_name
 	}
 	return "";
 }
@@ -802,6 +803,9 @@ string Enum_type_decl_Node::build_symbol_table(string type) {
 
 
 string Subrange_const_value_type_decl_Node::build_symbol_table(string type) {
+	puts("Subrange_const_value_type_decl_Node::build_symbol_table");
+	printf("type: %s\n", type.c_str());
+
 	int low = this->lowerBound->get_value();
 	if (this->isLowerNeg) low = -low;
 	int up = this->upperBound->get_value();

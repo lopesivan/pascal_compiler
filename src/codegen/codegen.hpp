@@ -18,7 +18,8 @@ public:
   int var_count;
   int para_count;
   int temp_var_count;
-  CodeBlock(const string& name){
+
+  CodeBlock(const string& name):label_count(0){
     this->name = name;
     this->code = name + ":\n";
     this->var_count = 0;
@@ -28,16 +29,22 @@ public:
   void add_line(const string& line) {code += "  " + line + "\n";}
   string generated_code() { return code; }
   string get_name() { return name; }
+
+  std::string alloc_label(){
+    return (name + "_" + to_string(label_count++));
+  }
+  
 private:
   string name;
   string code;
+  int label_count;
 };
 
 class DataBlock {
 public:
   DataBlock(const string& data) {this->data = "  " + data + "\n";}
   ~DataBlock() {}
-  string generated_data() {return data;}
+  const string& generated_data() const{return data;}
 private:
   string data;
 };

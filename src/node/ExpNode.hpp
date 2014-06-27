@@ -61,7 +61,6 @@ public:
     virtual string get_type(){};
     string build_symbol_table(string type);
     virtual void gen_compute_code(CodeBlock* cb, string result_reg){}
-    
 protected:
     Const_value_Node(){}
 };
@@ -117,12 +116,12 @@ class ConstBool_Node : public Const_value_Node{
 public:
     ConstBool_Node(bool val): val(val){
         type = ".byte";
-        attr_type = "char";
+        attr_type = "bool";
     }
     string get_val() { if (val) return "1"; else return "0"; }
     string get_type() {return type;}
     void gen_data(CodeGenerator* cg);
-    void gen_compute_code(CodeBlock* cb, string result_reg){}
+    void gen_compute_code(CodeBlock* cb, string result_reg);
 private:
     bool val;
     string type;
@@ -186,7 +185,7 @@ public:
         :id(id), index(index){}
     string build_symbol_table(string);
     void gen_code(CodeGenerator* cg, int block_id) {}
-
+    void gen_compute_code(CodeBlock* cb, string result_reg);
 private:
     Id_Node *id;
     Expression_Node *index;

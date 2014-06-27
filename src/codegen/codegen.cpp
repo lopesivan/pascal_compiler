@@ -31,7 +31,7 @@ void CodeGenerator::gen_code()
 void CodeGenerator::gen_data()
 {
   fprintf(code_file, "\n.data\n");
-  fprintf(code_file, "  __newline__: .asciiz \"\\n\"\n");
+  fprintf(code_file, "  __newline__: .asciiz \"  \\n\"\n");
   for (int i = 0; i < this->data_blocks.size(); i++)
     fprintf(code_file, "%s", data_blocks[i]->generated_data().c_str());
 }
